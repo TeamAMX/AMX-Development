@@ -92,7 +92,7 @@ function loadChildRows(parentObjectId, parentTr, depth) {
     const indent = depth * 24;
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getcreatedchildpart',
+        url: 'http://localhost:8080/amx2x.andromeda/api/datafetchservice/getcreatedchildpart',
         data: { objectid: parentObjectId },
         dataType: 'json',
         success: function (childData) {

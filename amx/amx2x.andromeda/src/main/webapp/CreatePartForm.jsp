@@ -6,208 +6,184 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  margin: 0;
-  background-color: #f9f9f9;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; 
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.10);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: -1;
 }
 
 #createPartForm {
-  width: 100%;
-  max-width: 600px; 
-  padding: 30px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 10px; 
-  overflow-y: auto; 
+    width: 100%;
+    max-width: 560px;
+    max-height: 82vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
 }
 
 h2 {
-  margin-bottom: 15px; 
-  color: #333;
-  font-size: 22px; 
-  font-weight: bold;
+    margin: 0;
+    padding: 22px 24px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    border-radius: 18px 18px 0 0;
+}
+
+.form-body {
+    overflow-y: auto;
+    padding: 22px 24px;
+    max-height: calc(82vh - 140px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 label {
-  font-weight: 600;
-  color: #555;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 6px;
+    display: block;
 }
 
 textarea,
 select,
 input {
-  margin-bottom: 10px; 
-  padding: 8px; 
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-textarea:focus,
-select:focus,
-input:focus {
-  border-color: #00afc4;
-  box-shadow: 0 0 0 0.2rem rgba(0, 175, 196, 0.25);
-}
-
-.subtype-container,
-#variant-container {
-  display: none;
-}
-
-.subtype-container select,
-#variant-container select {
-  width: 100%;
-}
-
-.d-flex {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.d-flex .btn {
-  margin-left: 5px; 
-  padding: 8px 16px;
-  font-size: 14px; 
-}
-
-.mb-3 {
-  margin-bottom: 10px; 
-}
-
-#subtype-container,
-#variant-container {
-  display: none;
-}
-
-#inputDescription,
-#inputResponsibleEngineer {
-  font-size: 14px;
-}
-
-#inputDescription {
-  min-height: 80px; 
-  font-family: Arial, sans-serif;
-  font-size:14px;
-}
-
-
-#inputResponsibleEngineer {
-  height: 30px;
-}
-
-button {
-  padding: 8px 16px; 
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-button[type="submit"] {
-  background-color: #00afc4;
-  color: white;
-  border: none;
-}
-
-button[type="button"].btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-button[type="submit"]:hover {
-  background-color: #007c8d;
-}
-
-button[type="button"].btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-textarea {
-  font-size: 14px;
-}
-
-#inputDescription,
-#inputResponsibleEngineer {
-  height: auto;
-  resize: vertical;
-}
-
-#inputDescription {
-  min-height: 80px;
-}
-
-#inputResponsibleEngineer {
-  height: 30px; 
-}
-
-@media screen and (max-width: 768px) {
-  #createPartForm {
-    padding: 20px;
     width: 100%;
-  }
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
 }
 
-  </style>
+textarea:focus, select:focus, input:focus {
+    border-color: #368ec4;
+    box-shadow: 0 0 0 3px rgba(54, 142, 196, 0.15);
+    outline: none;
+}
+
+input[readonly], textarea[readonly] {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+#inputDescription { min-height: 80px; resize: vertical; }
+#inputResponsibleEngineer { height: 38px; resize: none; }
+
+.form-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #fafbfc;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-radius: 0 0 18px 18px;
+}
+
+.btn-submit {
+    min-width: 110px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background: #111827;
+    color: white;
+}
+
+.btn-submit:hover { background: #1f2937; }
+
+.btn-cancel {
+    min-width: 110px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-cancel:hover { background: #e5e7eb; }
+
+.mb-3 { margin-bottom: 0; }
+</style>
 </head>
 <body>
-  <form id="createPartForm">
+   <form id="createPartForm">
     <h2>Create Part</h2>
-    <div class="mb-3">
-      <label for="supertype" class="form-label">SuperType</label>
-      <select id="supertype" name="supertype" class="form-select" required>
-        <option value="">Select</option>
-      </select>
-    </div>
-    <div class="mb-3">
-      <label for="type" class="form-label">Type</label>
-      <select id="type" name="type" class="form-select" required>
-        <option value="">Select</option>
-      </select>
-    </div>
-    <div class="mb-3">
-      <label for="APN" class="form-label">APN</label>
-      <select id="APN" name="APN" class="form-select" required>
-        <option value="">Select</option>
-      </select>
-    </div>
-    <!--new fields-->
 
-    <div class="mb-3" id="subtype-container" style="display:none;">
-      <label for="subtype" class="form-label">Subtype</label>
-      <select id="subtype" name="subtype" class="form-select">
-        <option value="">Select</option>
-      </select>
-    </div>
-    <div class="mb-3" id="variant-container" style="display:none;">
-      <label for="variant" class="form-label">Variant</label>
-      <select id="variant" name="variant" class="form-select">
-        <option value="">Select</option>
-      </select>
+    <div class="form-body">
+      <div class="mb-3">
+        <label for="supertype">SuperType</label>
+        <select id="supertype" name="supertype" class="form-select" required>
+          <option value="">Select</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="type">Type</label>
+        <select id="type" name="type" class="form-select" required>
+          <option value="">Select</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="APN">APN</label>
+        <select id="APN" name="APN" class="form-select" required>
+          <option value="">Select</option>
+        </select>
+      </div>
+      <div class="mb-3" id="subtype-container" style="display:none;">
+        <label for="subtype">Subtype</label>
+        <select id="subtype" name="subtype" class="form-select">
+          <option value="">Select</option>
+        </select>
+      </div>
+      <div class="mb-3" id="variant-container" style="display:none;">
+        <label for="variant">Variant</label>
+        <select id="variant" name="variant" class="form-select">
+          <option value="">Select</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="inputDescription">Description</label>
+        <textarea id="inputDescription" class="form-control" rows="4" placeholder="Enter description" required></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="inputResponsibleEngineer">Responsible Engineer</label>
+        <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
+      </div>
     </div>
 
-    <div class="mb-3">
-      <label for="inputDescription" class="form-label">Description</label>
-      <textarea id="inputDescription" class="form-control" rows="4" placeholder="Enter description" required></textarea>
-    </div>
-    <div class="mb-3">
-      <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
-      <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
-    </div>
-    <div class="d-flex justify-content-end gap-2">
-       <button type="submit" class="btn btn-primary">Submit</button>
-      <button type="button" class="btn btn-secondary" onclick="window.close()">Cancel</button>
+    <div class="form-footer">
+      <button type="button" class="btn-cancel" onclick="window.close()">Cancel</button>
+      <button type="submit" class="btn-submit">Submit</button>
     </div>
   </form>
 

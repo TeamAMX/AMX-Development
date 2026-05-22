@@ -512,21 +512,35 @@
     }
     
     document.getElementById('createPartLink').addEventListener('click', function (e) {
-    	  e.preventDefault();
-    	  window.open('CreatePartForm.jsp', 'CreatePartPopup','width=600,height=700,resizable=yes,scrollbars=yes');
-    	});  
+        e.preventDefault();
+
+        document.getElementById('homepageWelcome').style.display = 'none';
+
+        const iframe = document.getElementById('contentFrame');
+        iframe.src = 'CreatePartForm.jsp';
+    }); 
     
     document.getElementById('createPartControlLink').addEventListener('click', function (e) {
   	  e.preventDefault();
-  	  window.open('CreatePartControl.jsp', 'CreatePartPopup','width=600,height=700,resizable=yes,scrollbars=yes');
+  	document.getElementById('homepageWelcome').style.display = 'none';
+
+  	const iframe = document.getElementById('contentFrame');
+  	iframe.src = 'CreatePartControl.jsp';
   	});  
+    
   document.getElementById('createPartSpecificationLink').addEventListener('click',function(e){
 	  e.preventDefault();
-	  window.open('CreatePartSpecification.jsp','CreatePartSpecificatioPopup','width=600,height=700,resizable=yes,scrollable=yes');    
+	  document.getElementById('homepageWelcome').style.display = 'none';
+
+	  const iframe = document.getElementById('contentFrame');
+	  iframe.src = 'CreatePartSpecification.jsp';    
   });
   document.getElementById('createMPNLink').addEventListener('click', function (e) {
 	  e.preventDefault();
-	  window.open('CreateMPNForm.jsp', 'CreatePartPopup','width=600,height=700,resizable=yes,scrollbars=yes');
+	  document.getElementById('homepageWelcome').style.display = 'none';
+
+	  const iframe = document.getElementById('contentFrame');
+	  iframe.src = 'CreateMPNForm.jsp';
 	});  
  
  

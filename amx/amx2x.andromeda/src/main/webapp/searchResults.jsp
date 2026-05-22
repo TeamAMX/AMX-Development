@@ -411,13 +411,13 @@ background-color: #f8f9fa;
             if (!objectId) return;
             let propertiesUrl = '';
             if (type === 'apn') {
-                propertiesUrl = '/andromeda/Properties.jsp?name=' + encodeURIComponent(objectId);
+                propertiesUrl = '/amx2x.andromeda/Properties.jsp?name=' + encodeURIComponent(objectId);
             } else if (type === 'pc-name') {
-                propertiesUrl = '/andromeda/Partcontroldetails.jsp?name=' + encodeURIComponent(objectId);
+                propertiesUrl = '/amx2x.andromeda/Partcontroldetails.jsp?name=' + encodeURIComponent(objectId);
             } else if (type === 'person-username') {
-                propertiesUrl = '/andromeda/PersonProperties.jsp?name=' + encodeURIComponent(objectId);
+                propertiesUrl = '/amx2x.andromeda/PersonProperties.jsp?name=' + encodeURIComponent(objectId);
             } else {
-                propertiesUrl = '/andromeda/Properties.jsp?name=' + encodeURIComponent(objectId);
+                propertiesUrl = '/amx2x.andromeda/Properties.jsp?name=' + encodeURIComponent(objectId);
             }
 
             window.location.href = propertiesUrl;
