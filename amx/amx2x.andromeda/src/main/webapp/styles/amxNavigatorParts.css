@@ -1,0 +1,132 @@
+:root {
+  --dx-bg: #f8f9fa;
+  --dx-text-main: #333333;
+  --dx-text-secondary: #6c757d;
+  --dx-border: #e9ecef;
+  --dx-link: #005686;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  background-color: #ffffff;
+  color: var(--dx-text-main);
+  font-size: 13px;
+}
+
+/* Top Workspace Header Structure */
+.workspace-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.workspace-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+/* Compact Table Container Boundary Layout */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid var(--dx-border) !important;
+}
+
+/* Reset layout grid properties back to clean base standards */
+table.dataTable, 
+table.table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Clean Header Formatting Block */
+table.dataTable thead th, 
+table.table thead th {
+  background-color: #fdfdfd !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px;
+  padding: 10px 14px !important;
+  border-bottom: 1px solid var(--dx-border) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  text-align: left !important;
+}
+
+/* Dense Data Cell Micro Layout */
+table.dataTable tbody td, 
+table.table tbody td {
+  padding: 10px 14px !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid var(--dx-border) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  color: var(--dx-text-main) !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+}
+
+/* Dynamic Interactive Anchors */
+table.dataTable a.part-link,
+table.table a.part-link {
+  color: #111827 !important;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+table.dataTable tbody tr:hover,
+table.table tbody tr:hover {
+  background-color: #f8fafc !important;
+  cursor: pointer;
+}
+
+/* --- LIGHT-TINT COMPACT STATE PILLS --- */
+.state-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+  text-align: center;
+  min-width: 72px;
+}
+
+/* Soft color profiles derived matching the layout preview style */
+.state-badge.InWork {
+  background-color: #fff6e6 !important;
+  color: #d97706 !important;
+}
+
+.state-badge.Frozen {
+  background-color: #f1f3f5 !important;
+  color: #495057 !important;
+}
+
+.state-badge.Released {
+  background-color: #e6f6ec !important;
+  color: #157b3a !important;
+}
+
+.state-badge.Obsolete {
+  background-color: #fde8e8 !important;
+  color: #c81e1e !important;
+}
+
+.error {
+  text-align: center;
+  margin-top: 20px;
+  color: #dc3545;
+  font-weight: 500;
+}
