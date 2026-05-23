@@ -48,20 +48,30 @@ table.table {
 }
 
 /* Clean Header Formatting Block */
-table.dataTable thead th, 
+table.dataTable thead th,
 table.table thead th {
-  background-color: #fdfdfd !important;
-  color: #495057 !important;
-  font-weight: 600 !important;
+  background-color: #1f2937 !important;
+  color: #e2e8f0 !important;
+  font-weight: 700 !important;
   font-size: 11px !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px;
   padding: 10px 14px !important;
-  border-bottom: 1px solid var(--dx-border) !important;
+  border-bottom: 2px solid #334155 !important;
+  border-right: 1px solid #334155 !important;
   border-top: none !important;
   border-left: none !important;
-  border-right: none !important;
   text-align: left !important;
+}
+
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc:after {
+  color: rgba(255,255,255,0.75) !important;
+  opacity: 1 !important;
 }
 
 /* Dense Data Cell Micro Layout */
@@ -93,36 +103,21 @@ table.table tbody tr:hover {
 }
 
 /* --- LIGHT-TINT COMPACT STATE PILLS --- */
+
 .state-badge {
   display: inline-block;
   padding: 3px 10px;
-  border-radius: 4px;
+  border-radius: 999px;
   font-weight: 600;
   font-size: 11px;
   text-align: center;
   min-width: 72px;
+  color: white;
 }
-
-/* Soft color profiles derived matching the layout preview style */
-.state-badge.InWork {
-  background-color: #fff6e6 !important;
-  color: #d97706 !important;
-}
-
-.state-badge.Frozen {
-  background-color: #f1f3f5 !important;
-  color: #495057 !important;
-}
-
-.state-badge.Released {
-  background-color: #e6f6ec !important;
-  color: #157b3a !important;
-}
-
-.state-badge.Obsolete {
-  background-color: #fde8e8 !important;
-  color: #c81e1e !important;
-}
+.state-badge.InWork   { background-color: #5bc0de !important; color: #fff !important; }
+.state-badge.Frozen   { background-color: #6c757d !important; color: #fff !important; }
+.state-badge.Released { background-color: #28a745 !important; color: #fff !important; }
+.state-badge.Obsolete { background-color: #ffc107 !important; color: #000 !important; }
 
 .error {
   text-align: center;

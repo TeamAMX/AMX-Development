@@ -36,7 +36,7 @@
 </div>
 <div class="container">
   <div class="sidebar">
-    <a class="nav-link active">Part Properties</a>
+    <a class="nav-link active"><i class="fa-solid fa-tag"></i>Part Properties</a>
     <a class="nav-link" href="EngineeringBOM.jsp?name=<%= partName %>"><i class="fa-solid fa-sitemap"></i> Engineering BOM</a>
     <a class="nav-link" href="APNEquivalents.jsp?name=<%= partName %>"><i class="fa-solid fa-code-compare"></i> Equivalents</a>
     <a class="nav-link" href="Parthistory.jsp?name=<%= partName %>"><i class="fa-regular fa-clock"></i> History</a>

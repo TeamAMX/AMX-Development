@@ -11,6 +11,10 @@
 <meta charset="UTF-8" />
 <title>Control Management</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -19,6 +23,7 @@
     color: #333;
   }
 
+  /* ===== TOPBAR ===== */
   .topbar {
     display: flex;
     background: #f5f7fa;
@@ -27,7 +32,6 @@
     font-size: 13px;
     color: #333;
   }
-
   .topbar > div {
     display: flex;
     align-items: center;
@@ -37,28 +41,8 @@
     border-right: none;
     white-space: nowrap;
   }
-
-  .topbar > div:last-child {
-    border-right: 1px solid #cfd3db;
-  }
-
-  .folder-box {
-    background: #e3e7eb;
-    border: 1px solid #d1d6dc;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
-
-  .folder-box img {
-    width: 16px;
-    height: 16px;
-  }
-
+  .topbar > div:last-child { border-right: 1px solid #cfd3db; }
+  .topbar > div:not(:last-child) { margin-right: -1px; }
   .part-number {
     font-weight: 700;
     font-size: 14px;
@@ -66,16 +50,6 @@
     border-right: 1px solid #cfd3db;
     margin-right: 12px;
   }
-
-  .description {
-    font-weight: 600;
-    font-size: 13px;
-    color: #555;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
-  }
-
   .state-box {
     font-weight: 600;
     font-size: 13px;
@@ -86,283 +60,206 @@
     padding-right: 12px;
     border-right: 1px solid #cfd3db;
   }
-
-  .state-label {
-    margin-right: 4px;
-  }
-
-  .btn-submit {
-    background-color: #5c8bff;
-    border: 1px solid #3f70ff;
-    color: white;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-submit:hover {
-    background-color: #3f70ff;
-  }
-
-  .btn-evaluate {
-    background-color: #e5e7ea;
-    border: 1px solid #c6cad2;
-    color: #555;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-evaluate:hover {
-    background-color: #c6cad2;
-  }
-
+  .state-label { margin-right: 4px; }
   .info-box {
     font-size: 11px;
     color: #666;
     padding-left: 4px;
     line-height: 1.3;
   }
+  .vertical-line img { height: 20px; width: 1px; margin: 0 10px; }
 
-  .info-box strong {
-    color: #444;
-  }
-  .topbar > div:not(:last-child) {
-    margin-right: -1px; 
-  }
-	
-	.vertical-line img {
-  height: 20px;  
-  width: 1px;    
-  margin: 0 10px;
-}
-
+  /* ===== LAYOUT ===== */
   .container {
     display: flex;
     height: calc(100vh - 56px);
+    overflow: hidden;
+    width: 100%;
     font-size: 13px;
   }
-.sidebar {
-  width: 20%;
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-  padding: 20px;
-  font-size: 14px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden; 
-}
 
-.sidebar a {
-  display: block;
-  padding: 8px;
-  color: #333;
-  text-decoration: none;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 19%;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    font-size: 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: #4b5563;
+    text-decoration: none;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .sidebar a:hover {
+    background-color: #e3e7ea;
+    color: #111827;
+  }
+  .sidebar a.active {
+    background-color: #4b5563;
+    color: white;
+    font-weight: 600;
+  }
+  .sidebar a i {
+    width: 16px;
+    font-size: 13px;
+    color: #6b7280;
+  }
+  .sidebar a.active i { color: #ffffff; }
 
-.sidebar a:hover {
-  background-color: #e3e7ea; 
-}
+  /* ===== MAIN PANEL ===== */
+  .main-panel {
+    flex-grow: 1;
+    padding: 0;
+    overflow-y: auto;
+    min-width: 0;
+    width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
 
-.sidebar a.active {
-  background-color:#808080;
-  color: white;
-   font-weight: bold;
-}
-.main-panel {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-  font-size: 13px;
-  box-sizing: border-box;
-}
-
-.container {
-  display: flex;
-  height: calc(100vh - 56px); 
-}
-
-.topbar {
-  display: flex;
-  background: #f5f7fa;
-  border-bottom: 1px solid #cfd3db;
-  padding: 6px 12px;
-  font-size: 13px;
-  color: #333;
-}
-
+  /* ===== TOOLBAR ===== */
   .toolbar {
-    margin-bottom: 5px;
-    padding-left: 2px;
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
+    border-radius: 0;
   }
   .toolbar button {
     background: none;
     border: none;
     cursor: pointer;
-    margin-right: 6px;
-    vertical-align: middle;
-    padding: 2px 4px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
   }
   .toolbar button img {
-    vertical-align: middle;
     width: 18px;
     height: 18px;
+    filter: invert(1);
   }
-  .toolbar button:hover {
-    background-color: #e3f2fd;
-    border-radius: 2px;
+  .toolbar button:hover { background-color: #334155; }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label {
+    font-weight: 700;
+    font-size: 13px;
+    margin: 10px 16px 6px 16px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-table.properties {
-  width: 100%; 
+  /* ===== STATE BADGES ===== */
+  .state-box .state-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
+  .state-badge.InWork   { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.Frozen   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Released { background: #dcfce7; color: #166534; }
+  .state-badge.Obsolete { background: #fef9c3; color: #854d0e; }
+
+  #partControlTable {
+  width: 100% !important;
+  white-space: nowrap;
   border-collapse: collapse;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  margin: 0 auto;
 }
-
-table.properties th,
-table.properties td {
-  padding: 12px 16px;
-  border: 1px solid #ddd; 
-  vertical-align: middle;
+  #partControlTable thead th {
+    background: #393a3c !important;
+    color: #e2e8f0 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 10px 26px 10px 12px !important;  /* increased right padding */
+    border-bottom: 2px solid #334155 !important;
+    border-right: 1px solid #334155 !important;
+    white-space: nowrap !important;
 }
+  #partControlTable thead .sorting:before,
+  #partControlTable thead .sorting:after,
+  #partControlTable thead .sorting_asc:before,
+  #partControlTable thead .sorting_asc:after,
+  #partControlTable thead .sorting_desc:before,
+  #partControlTable thead .sorting_desc:after {
+    color: rgba(255,255,255,0.75) !important;
+    opacity: 1 !important;
+  }
+  #partControlTable tbody td {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-right: none !important;
+    vertical-align: middle !important;
+    color: #111111 !important;
+    background: #ffffff !important;
+    font-size: 13px !important;
+  }
+  #partControlTable tbody tr:hover td { background: #f8fafc !important; }
 
-table.properties th {
-  background: #fafafa;
-  font-weight: bold;
-  width: 200px;
-  text-align: left;
-}
+  /* ===== HIDE DATATABLES UI ===== */
+  .dataTables_info,
+  .dataTables_paginate,
+  .dataTables_length,
+  .dataTables_filter { display: none !important; }
 
-  .folder-icon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 6px;
+  /* ===== CREATE PANEL ===== */
+  #createPanel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+    overflow-y: auto;
+    transition: right 0.3s ease;
+    z-index: 1051;
+    padding: 0;
+  }
+  #createPanel.active { right: 0; }
+  #createPanel iframe {
+    border: none;
+    width: 100%;
+    height: calc(100% - 56px);
   }
 
-.properties-container {
-  max-height: 600px; 
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  margin-top: 0;
-}
   #loadingSpinner {
     display: none;
     position: fixed;
-    top: 10px;
-    right: 10px;
-    font-size: 14px;
-    color: #666;
+    top: 10px; right: 10px;
+    font-size: 14px; color: #666;
   }
-
   #errorMessage {
-    display: none;
     color: red;
-    margin: 10px 0;
+    margin: 10px 16px;
     font-weight: bold;
   }
-#detailsTable {
-   width: 100%;
-   border-collapse: collapse;
-   margin-top: 10px;
-}
-th, td {
-   border: 1px solid #dee2e6;
-   padding: 12px;
-   text-align: left;
-   font-wrap-mode:nowrap;
-}
-th {
-background-color: #f8f9fa;
-width: 200px;
-forn-wrap-mode:nowrap;
-}
-.nav-tabs {
-            margin-bottom: 20px;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #e9ecef;
-            font-weight: bold;
-        }
-        .toolbar {
-            background-color: #f8f9fa;
-            padding: 6px 10px;
-            border: 1px solid #dee2e6;
-            border-bottom: none;
-            display: flex;
-            gap: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-         #createPanel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 400px;
-            height: 100%;
-            background: #fff;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-            overflow-y: auto;
-            transition: right 0.3s ease;
-            z-index: 1051;
-            padding: 0;
-        }
-        #createPanel.active {
-            right: 0;
-        }
-        #createPanel iframe {
-            border: none;
-            width: 100%;
-            height: calc(100% - 56px);
-        }
-         #partControlTable {
-        white-space: nowrap;
-        text-wrap-mode:nowrap;
-    }
-    .section-label {
-    font-weight: bold;
-    font-size: 14px;
-    margin: 10px 0 5px 0;
-    color: #333;
-  }
- .state-box .state-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 13px;
-  color: white;
-  margin-left: 8px;
-  user-select: none;
-  text-transform: uppercase;
-  min-width: 80px;
-  text-align: center;
-}
-.state-badge.InWork {
-  background-color: #5bc0de;
-}
-.state-badge.Frozen {
-  background-color: #6c757d;
-}
-.state-badge.Released {
-  background-color: #28a745;
-  color: #fff;
-}
-.state-badge.Obsolete {
-    background-color: #ffc107;
-    color: #000;
-}
-
 </style>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -394,16 +291,15 @@ forn-wrap-mode:nowrap;
 </div>
 <div class="container">
     <div class="sidebar">
-       <a class="nav-link" href="Properties.jsp?name=<%= request.getParameter("name") %>">Part Properties</a>
-       <a class="nav-link" href="EngineeringBOM.jsp?name=<%= request.getParameter("name") %>">Engineering BOM</a>
-       <a class="nav-link"href="APNEquivalents.jsp?name=<%= request.getParameter("name") %>">Equivalents</a>
-        <a class="nav-link" href="Parthistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-        <a class="nav-link" href="Lifecycle.jsp?name=<%= request.getParameter("name") %>">LifeCycle</a>
-        <a class="nav-link active" href="ControlManagement.jsp?name=<%= request.getParameter("name") %>">Control Management</a>
-   		<a class="nav-link" href="PartSpecification.jsp?name=<%= request.getParameter("name") %>">PartSpecification</a>
-   		<a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%=request.getParameter("name") %>">SpecificationDocument</a>
-   		
-    </div>
+  <a class="nav-link" href="Properties.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-tag"></i> Part Properties</a>
+  <a class="nav-link" href="EngineeringBOM.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-sitemap"></i> Engineering BOM</a>
+  <a class="nav-link" href="APNEquivalents.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-code-compare"></i> Equivalents</a>
+  <a class="nav-link" href="Parthistory.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clock"></i> History</a>
+  <a class="nav-link" href="Lifecycle.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-arrows-rotate"></i> LifeCycle</a>
+  <a class="nav-link active" href="ControlManagement.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-shield-halved"></i> Control Management</a>
+  <a class="nav-link" href="PartSpecification.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clipboard"></i> PartSpecification</a>
+  <a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-file"></i> SpecificationDocument</a>
+</div>
    <div class="main-panel">
     <div class="toolbar mt-2">
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part Control" id="openCreatePanelBtn">
@@ -419,14 +315,12 @@ forn-wrap-mode:nowrap;
     <div id="loadingSpinner"></div>
     <div id="errorMessage" class="error"></div>
         <div class="section-label">PartControlTable</div>
-    <table class="table table-bordered mt-2" id="partControlTable">
-    <thead>
-        <tr>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+	<div style="overflow-x: auto; padding: 0 16px; width: 100%;">
+  <table id="partControlTable">
+    <thead><tr></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
 </div>
     <div id="createPanel">
         <iframe id="createIframe" src=""></iframe>
@@ -534,7 +428,7 @@ function loadPartControlTable() {
                 order: [[columns.findIndex(c => c.data === 'createddate') || 0, 'desc']],
                 paging: false,
                 searching: false,
-                scrollX: true,
+                scrollX: false,
                 info: false,
                 destroy: true
             });

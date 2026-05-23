@@ -81,12 +81,12 @@ input {
     font-family: 'Inter', sans-serif;
 }
 
-textarea:focus, select:focus, input:focus {
-    border-color: #368ec4;
-    box-shadow: 0 0 0 3px rgba(54, 142, 196, 0.15);
+textarea:focus,
+input:focus {
+    border-color: #4b5563;
+    box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.12);
     outline: none;
 }
-
 input[readonly], textarea[readonly] {
     background-color: #f3f4f6;
     color: #6b7280;
@@ -134,6 +134,30 @@ input[readonly], textarea[readonly] {
 .btn-cancel:hover { background: #e5e7eb; }
 
 .mb-3 { margin-bottom: 0; }
+
+select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d6dbe3;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+
+    background-color: #ffffff;
+    color: #111827;
+
+    transition: all 0.15s ease;
+}
+
+select:hover {
+    border-color: #9ca3af;
+}
+
+select:focus {
+    border-color: #4b5563;
+    box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.12);
+    outline: none;
+}
 </style>
 </head>
 <body>
@@ -182,7 +206,7 @@ input[readonly], textarea[readonly] {
     </div>
 
     <div class="form-footer">
-      <button type="button" class="btn-cancel" onclick="window.close()">Cancel</button>
+      <button type="button" class="btn-cancel" id="cancelCreatePartBtn">Cancel</button>
       <button type="submit" class="btn-submit">Submit</button>
     </div>
   </form>
@@ -197,6 +221,23 @@ input[readonly], textarea[readonly] {
       const descriptionInput = document.getElementById('inputDescription');
       const engineerInput = document.getElementById('inputResponsibleEngineer');
       const form = document.getElementById('createPartForm');
+      
+      const cancelBtn = document.getElementById('cancelCreatePartBtn');
+
+      cancelBtn.addEventListener('click', () => {
+
+          if (window.parent) {
+
+              const iframe = window.parent.document.getElementById('contentFrame');
+              if (iframe) {
+                  iframe.src = '';
+              }
+              const homepage = window.parent.document.getElementById('homepageWelcome');
+              if (homepage) {
+                  homepage.style.display = 'flex';
+              }
+          }
+      });
 
       let dropdownData = {};
 
@@ -373,12 +414,25 @@ input[readonly], textarea[readonly] {
     	            + "Name: " + formData.APN;
     	        alert(successMessage);
 
-    	        const objectId = result.ObjectId; 
+    	        const objectId = result.ObjectId;
+
     	        if (objectId) {
-    	            if (window.opener && window.opener.loadPartPropertiesInIframe) {
-    	                window.opener.loadPartPropertiesInIframe(objectId); 
+
+    	            if (window.parent) {
+
+    	                const iframe = window.parent.document.getElementById('contentFrame');
+
+    	                if (iframe) {
+    	                    iframe.src = 'Properties.jsp?name=' + encodeURIComponent(objectId);
+    	                }
+
+    	                const homepage = window.parent.document.getElementById('homepageWelcome');
+
+    	                if (homepage) {
+    	                    homepage.style.display = 'none';
+    	                }
     	            }
-    	            window.close();
+
     	        } else {
     	            alert('Could not retrieve the ID for the new part.');
     	        }

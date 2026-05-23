@@ -11,6 +11,9 @@
 <meta charset="UTF-8" />
 <title>Equivalents</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -18,6 +21,8 @@
     background: #fff;
     color: #333;
   }
+
+  /* ===== TOPBAR ===== */
   .topbar {
     display: flex;
     background: #f5f7fa;
@@ -35,9 +40,8 @@
     border-right: none;
     white-space: nowrap;
   }
-  .topbar > div:last-child {
-    border-right: 1px solid #cfd3db;
-  }
+  .topbar > div:last-child { border-right: 1px solid #cfd3db; }
+  .topbar > div:not(:last-child) { margin-right: -1px; }
   .part-number {
     font-weight: 700;
     font-size: 14px;
@@ -62,19 +66,20 @@
     padding-left: 4px;
     line-height: 1.3;
   }
-  .topbar > div:not(:last-child) { margin-right: -1px; }
-  .vertical-line img {
-    height: 20px;
-    width: 1px;
-    margin: 0 10px;
-  }
+  .vertical-line img { height: 20px; width: 1px; margin: 0 10px; }
+
+  /* ===== LAYOUT ===== */
   .container {
     display: flex;
     height: calc(100vh - 56px);
+    overflow: hidden;
+    width: 100%;
     font-size: 13px;
   }
+
+  /* ===== SIDEBAR ===== */
   .sidebar {
-    width: 20%;
+    width: 19%;
     background-color: #f8f9fa;
     border-right: 1px solid #ddd;
     padding: 20px;
@@ -84,108 +89,162 @@
     overflow-x: hidden;
   }
   .sidebar a {
-    display: block;
-    padding: 8px;
-    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: #4b5563;
     text-decoration: none;
-    margin-bottom: 10px;
-    border-radius: 4px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
   }
-  .sidebar a:hover { background-color: #e3e7ea; }
+  .sidebar a:hover {
+    background-color: #e3e7ea;
+    color: #111827;
+  }
   .sidebar a.active {
-    background-color: #808080;
+    background-color: #4b5563;
     color: white;
-    font-weight: bold;
+    font-weight: 600;
   }
+  .sidebar a i {
+    width: 16px;
+    font-size: 13px;
+    color: #6b7280;
+  }
+  .sidebar a.active i { color: #ffffff; }
+
+  /* ===== MAIN PANEL ===== */
   .main-panel {
     flex-grow: 1;
-    padding: 20px;
+    padding: 0;
     overflow-y: auto;
-    font-size: 13px;
+    min-width: 0;
+    width: 0;
     box-sizing: border-box;
-  }
-  .toolbar {
-    background-color: #f8f9fa;
-    padding: 6px 10px;
-    border: 1px solid #dee2e6;
-    border-bottom: none;
     display: flex;
-    gap: 10px;
-    border-radius: 4px;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    flex-direction: column;
+  }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
+    border-radius: 0;
   }
   .toolbar button {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 2px 4px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
   }
   .toolbar button img {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    filter: invert(1);
   }
-  .toolbar button:hover {
-    background-color: #e3f2fd;
-    border-radius: 2px;
-  }
+  .toolbar button:hover { background-color: #334155; }
+
+  /* ===== SECTION LABEL ===== */
   .section-label {
-    font-weight: bold;
-    font-size: 14px;
-    margin: 10px 0 5px 0;
+    font-weight: 700;
+    font-size: 13px;
+    margin: 10px 16px 6px 16px;
     color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
+
+  /* ===== STATE BADGES ===== */
+  .state-box .state-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
+  .state-badge.InWork   { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.Frozen   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Released { background: #dcfce7; color: #166534; }
+  .state-badge.Obsolete { background: #fef9c3; color: #854d0e; }
+
+  /* ===== MPN TABLE ===== */
+  #mpnTable_wrapper {
+    margin: 0 16px 16px 16px;
+    
+    overflow: hidden;
+    overflow-x: auto;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  #mpnTable {
+    width: 100% !important;
+    min-width: 900px;
+    white-space: nowrap;
+    border-collapse: collapse;
+  }
+  #mpnTable thead th {
+    background: #393a3c !important;
+    color: #e2e8f0 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 10px 12px !important;
+    border-bottom: 2px solid #334155 !important;
+    border-right: 1px solid #334155 !important;
+    white-space: nowrap !important;
+  }
+  #mpnTable thead .sorting:before,
+  #mpnTable thead .sorting:after,
+  #mpnTable thead .sorting_asc:before,
+  #mpnTable thead .sorting_asc:after,
+  #mpnTable thead .sorting_desc:before,
+  #mpnTable thead .sorting_desc:after {
+    color: rgba(255,255,255,0.75) !important;
+    opacity: 1 !important;
+  }
+  #mpnTable tbody td {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-right: none !important;
+    vertical-align: middle !important;
+    color: #111111 !important;
+    background: #ffffff !important;
+    font-size: 13px !important;
+  }
+  #mpnTable tbody tr:hover td { background: #f8fafc !important; }
+
+  /* ===== HIDE DATATABLES UI ===== */
+  .dataTables_info,
+  .dataTables_paginate,
+  .dataTables_length,
+  .dataTables_filter { display: none !important; }
+
   #loadingSpinner {
     display: none;
     position: fixed;
-    top: 10px;
-    right: 10px;
-    font-size: 14px;
-    color: #666;
+    top: 10px; right: 10px;
+    font-size: 14px; color: #666;
   }
   #errorMessage {
     color: red;
-    margin: 10px 0;
+    margin: 10px 16px;
     font-weight: bold;
   }
-  #mpnTable {
-    white-space: nowrap;
-  }
-  .state-box .state-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 13px;
-    color: white;
-    margin-left: 8px;
-    user-select: none;
-    text-transform: uppercase;
-    min-width: 80px;
-    text-align: center;
-  }
-  .state-badge.InWork  { background-color: #5bc0de; }
-  .state-badge.Frozen  { background-color: #6c757d; }
-  .state-badge.Released { background-color: #28a745; }
-  .state-badge.Obsolete { background-color: #ffc107; color: #000;
-   }
-  #mpnTable thead th {
-  background-color: #e9ecef;
-  color: #333;
-  font-weight: bold;
-  border-bottom: 2px solid #ccc;
-  white-space: nowrap;
-}
-#mpnTable_wrapper {
-  overflow-x: auto;
-  width: 100%;
-}
-
-#mpnTable {
-  min-width: 900px;
-}
-
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -220,15 +279,15 @@
 
 <div class="container">
   <div class="sidebar">
-    <a class="nav-link" href="Properties.jsp?name=<%= request.getParameter("name") %>">Part Properties</a>
-    <a class="nav-link" href="EngineeringBOM.jsp?name=<%= request.getParameter("name") %>">Engineering BOM</a>
-    <a class="nav-link active" href="APNEquivalents.jsp?name=<%= request.getParameter("name") %>">Equivalents</a>
-    <a class="nav-link" href="Parthistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-    <a class="nav-link" href="Lifecycle.jsp?name=<%= request.getParameter("name") %>">LifeCycle</a>
-    <a class="nav-link" href="ControlManagement.jsp?name=<%= request.getParameter("name") %>">Control Management</a>
-    <a class="nav-link" href="PartSpecification.jsp?name=<%= request.getParameter("name") %>">PartSpecification</a>
-    <a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%= request.getParameter("name") %>">SpecificationDocument</a>
-  </div>
+  <a class="nav-link" href="Properties.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-tag"></i> Part Properties</a>
+  <a class="nav-link" href="EngineeringBOM.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-sitemap"></i> Engineering BOM</a>
+  <a class="nav-link active" href="APNEquivalents.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-code-compare"></i> Equivalents</a>
+  <a class="nav-link" href="Parthistory.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clock"></i> History</a>
+  <a class="nav-link" href="Lifecycle.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-arrows-rotate"></i> LifeCycle</a>
+  <a class="nav-link" href="ControlManagement.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-shield-halved"></i> Control Management</a>
+  <a class="nav-link" href="PartSpecification.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clipboard"></i> PartSpecification</a>
+  <a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-file"></i> SpecificationDocument</a>
+</div>
 
   <div class="main-panel">
     <div class="toolbar">
