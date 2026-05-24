@@ -859,7 +859,7 @@ public class NavigatorUtilites {
                 if (isMPNAlreadyLinked(conn, mpnId)) {
                     Map<String, String> error = new HashMap<>();
                     error.put("Status", "Error");
-                    error.put("Message", "MPN " + mpnId + " is already linked to a part.");
+                    error.put("Message", "MPN " + mpnName + " is already linked to a part.");
                     return Response.status(Response.Status.CONFLICT).entity(error).build();
                 }
 
@@ -1026,7 +1026,7 @@ public class NavigatorUtilites {
                 if (isMPNAlreadyLinked(conn, objectid)) {
                     Map<String, String> error = new HashMap<>();
                     error.put("Status", "Error");
-                    error.put("Message", "MPN " + objectid + " is already linked to a part.");
+                    error.put("Message", "Selected MPN " + " is already linked to a part.");
                     return Response.status(Response.Status.CONFLICT).entity(error).build();
                 }
                 
@@ -1110,7 +1110,7 @@ public class NavigatorUtilites {
 
             String currentState = getCurrentState(conn, dataTable, objectId);
             if (currentState == null) {
-                return Response.ok("{\"error\": \"MPN not found for objectId: " + objectId + "\"}").build();
+                return Response.ok("{\"error\": \"MPN not found " + "\"}").build();
             }
 
             List<String> validStates = getStateSequence(conn, ruleName);
@@ -1171,7 +1171,7 @@ public class NavigatorUtilites {
         try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
             String currentState = getCurrentState(conn, dataTable, objectId);
             if (currentState == null) {
-                return Response.ok("{\"error\": \"MPN not found for objectId: " + objectId + "\"}").build();
+                return Response.ok("{\"error\": \"MPN not found " + "\"}").build();
             }
             return Response.ok("{\"currentState\": \"" + currentState + "\"}").build();
         } catch (SQLException e) {
@@ -1250,7 +1250,7 @@ public class NavigatorUtilites {
                            histories.add(rs.getString("history"));
                        }
                        if (histories.isEmpty()) {
-                           return Response.ok("{\"error\":\"No history found for objectId:"+ "\"}").build();
+                           return Response.ok("{\"error\":\"No history found"+ "\"}").build();
                        }
                        JSONObject json = new JSONObject();
                        json.put("objectId", objectId);

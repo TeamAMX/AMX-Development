@@ -205,7 +205,7 @@ public class SearchData {
                     if (rowsUpdated == 0) {
                         conn.rollback();
                         return Response.status(Response.Status.NOT_FOUND)
-                                .entity(Map.of("error", "No record found for sourceObjectId: " + sourceObjectId))
+                                .entity(Map.of("error", "No records found " ))
                                 .build();
                     }
                 }
@@ -218,7 +218,7 @@ public class SearchData {
                         .build();
             }
 
-            return Response.ok(Map.of("message", "Part controls and connections successfully added", "connectionid", connectionId)).build();
+            return Response.ok(Map.of("message", "Part controls and connections successfully added")).build();
 
         } catch (Exception e) {
             e.printStackTrace();

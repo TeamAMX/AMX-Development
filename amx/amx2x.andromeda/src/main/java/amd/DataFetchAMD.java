@@ -145,7 +145,7 @@ public class DataFetchAMD {
                 if (rs.next()) {
                     return rs.getString(1);
                 } else {
-                    throw new ObjectIdNotFoundException("ObjectId '" + objectId + "' not found");
+                    throw new ObjectIdNotFoundException("ObjectId '" + "' not found");
                 }
             }
         } catch (SQLException e) {

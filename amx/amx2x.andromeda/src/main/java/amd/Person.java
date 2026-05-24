@@ -70,7 +70,7 @@ public class Person {
                     result.put(meta.getColumnName(i).toLowerCase(), rs.getString(i) != null ? rs.getString(i) : "");
                 }
             } else {
-                throw new RuntimeException("ObjectId '" + objectId + "' not found.");
+                throw new RuntimeException("ObjectId '" + "' not found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -96,7 +96,7 @@ public class Person {
             if (rs.next()) {
                 return rs.getString(1);
             } else {
-                throw new RuntimeException("ObjectId '" + objectId + "' not found.");
+                throw new RuntimeException("ObjectId '" + "' not found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();

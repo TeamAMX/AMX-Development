@@ -447,7 +447,7 @@ public class DataFetchService {
                        histories.add(rs.getString("history"));
                    }
                    if (histories.isEmpty()) {
-                       return Response.ok("{\"error\":\"No history found for objectId:"+ "\"}").build();
+                       return Response.ok("{\"error\":\"No history found for Part object:"+ "\"}").build();
                    }
                    JSONObject json = new JSONObject();
                    json.put("objectId", objectId);
@@ -513,7 +513,7 @@ public class DataFetchService {
 
             if (data == null || data.isEmpty()) {
                 return Response.status(Response.Status.OK)
-                        .entity("{\"error\":\"ObjectId '" + objectid + "' not found\"}").build();
+                        .entity("{\"error\":\" Person'"+ "' not found\"}").build();
             }
 
             return Response.ok(data).build();
@@ -730,7 +730,7 @@ public class DataFetchService {
             if (isPartControlLinkedToSource(sourceObjectId)) {
                 return Response.status(Response.Status.CONFLICT)
                     .entity(Map.of(
-                        "error", "A PartControl linked to the sourceObjectId '" + sourceObjectId + "' already exists."
+                        "error", "A PartControl linked to this Part '"+"' already exists."
                     ))
                     .build();
             }
@@ -1210,7 +1210,7 @@ public class DataFetchService {
                         histories.add(rs.getString("history"));
                     }
                     if (histories.isEmpty()) {
-                        return Response.ok("{\"error\":\"No history found for objectId:"+ "\"}").build();
+                        return Response.ok("{\"error\":\"No history found for Part Control:"+ "\"}").build();
                     }
 
                     JSONObject json = new JSONObject();
@@ -1514,7 +1514,7 @@ public class DataFetchService {
                 }
                 String currentState = getCurrentState(conn, dataTable, objectId);
                 if (currentState == null) {
-                    return Response.ok("{\"error\": \"Part not found for objectId: " + objectId + "\"}").build();
+                    return Response.ok("{\"error\": \"Part not found " + "\"}").build();
                 }
                 List<String> validStates = getStateSequence(conn, ruleName);
                 if (!validStates.contains(newState)) {
@@ -1605,7 +1605,7 @@ public class DataFetchService {
         private String validatePartIsFrozen(Connection conn, String partId) throws SQLException {
             String partState = getCurrentState(conn, "amxcorepartdata", partId);
             if (partState == null || !partState.equalsIgnoreCase ("Frozen")) {
-                return "Part '" + partId + "' is not in Frozen state. The linked part must be Frozen before promoting to InApproval.";
+                return "Part linked to this Part Control'" + "' is not in Frozen state. The linked part must be Frozen before promoting to InApproval.";
             }
             return null;
         }
@@ -1620,7 +1620,7 @@ public class DataFetchService {
                         String mpnId = rs.getString("objectid");
                         String mpnState = getCurrentState(conn, "amxcorempndetails", mpnId);
                         if (mpnState == null || !mpnState.equals("Released")) {
-                            return "MPN '" + mpnId + "' linked to Part '" + partId + "' is not in Released state. All MPNs must be Released before promoting to InApproval.";
+                            return "A MPN '" + "' linked to Part '" + "' is not in Released state. All MPNs must be Released before promoting to InApproval.";
                         }
                     }
                 }
@@ -1655,7 +1655,7 @@ public class DataFetchService {
             try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
                 String currentState = getCurrentState(conn, dataTable, objectId);
                 if (currentState == null) {
-                    return Response.ok("{\"error\": \"Part not found for objectId: " + objectId + "\"}").build();
+                    return Response.ok("{\"error\": \"Part not found "+ "\"}").build();
                 }
                 return Response.ok("{\"currentState\": \"" + currentState + "\"}").build();
             } catch (SQLException e) {
@@ -1794,7 +1794,7 @@ public class DataFetchService {
                 }
 
                 if (isPartSpecificationLinkedToSource(sourceObjectId)) {
-                    return Response.ok(Map.of("error", "A PartSpecification linked to the sourceObjectId '" + sourceObjectId + "' already exists.")).build();
+                    return Response.ok(Map.of("error", "A PartSpecification linked to this Part '"+ "' already exists.")).build();
                 }
                 String generatedName = getNextPartSpecificationName();
                 String generatedPartId = generateHexaId("PASP");
@@ -2304,7 +2304,7 @@ public class DataFetchService {
                         }
                     }
                     if (linkedobjectid == null || linkedobjectid.trim().isEmpty()) {
-                        return Response.ok("{\"error\": \"Cannot promote. linkedPart not found for PartControl : " + objectId + "\"}").build();
+                        return Response.ok("{\"error\": \"Cannot promote. linkedPart not found for PartControl"+ "\"}").build();
                     }
 
                     String partError = validatePartIsFrozen(conn, linkedobjectid);
@@ -2936,7 +2936,7 @@ public class DataFetchService {
               if (isPartLinkedToControl(sourceObjectId)) {
                   return Response.status(Response.Status.CONFLICT)
                       .entity(Map.of(
-                          "error", "A Part linked to the sourceObjectId '" + sourceObjectId + "' already exists."
+                          "error", "A Part linked to this Part Control '"+"' already exists."
                       ))
                       .build();
               }
@@ -3315,7 +3315,7 @@ public class DataFetchService {
                        if (supertype == null || !supertype.equalsIgnoreCase("part")) {
                            Map<String, String> error = new HashMap<>();
                            error.put("Status", "Error");
-                           error.put("Message", "Selected object '" + childObjectId + "' is not a Part.");
+                           error.put("Message", "Invalid selection. Please select only Part objects.");
                            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
                        }
 
@@ -3414,7 +3414,7 @@ public class DataFetchService {
                        if (supertype == null || !supertype.equalsIgnoreCase("AmxControl")) {
                            Map<String, String> error = new HashMap<>();
                            error.put("Status", "Error");
-                           error.put("Message", "Selected object '" + partId + "' is not a PartControl.");
+                           error.put("Message", "Invalid selection. Please select only Part Control objects.");
                            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
                        }
 
@@ -3427,7 +3427,7 @@ public class DataFetchService {
                        if (isPartControlLinkedToSource(objectid)) {
                            return Response.status(Response.Status.CONFLICT)
                                .entity(Map.of(
-                                   "error", "A PartControl linked to the sourceObjectId '" + objectid  + "' already exists."
+                                   "error", "A PartControl linked to the this Part '" + "' already exists."
                                ))
                                .build();
                        }
@@ -3520,7 +3520,7 @@ public class DataFetchService {
                        if (supertype == null || !supertype.equalsIgnoreCase("Document")) {
                            Map<String, String> error = new HashMap<>();
                            error.put("Status", "Error");
-                           error.put("Message", "Selected object '" + partId + "' is not a Part Specification.");
+                           error.put("Message", "Selected object '" + partName + "' is not a Part Specification.");
                            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
                        }
 
@@ -3531,7 +3531,7 @@ public class DataFetchService {
                            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
                        }
                        if (isPartSpecificationLinkedToSource(objectid)) {
-                           return Response.ok(Map.of("error", "A PartSpecification linked to the sourceObjectId '" + objectid + "' already exists.")).build();
+                           return Response.ok(Map.of("error", "A PartSpecification linked to the this Part '" + "' already exists.")).build();
                        }
 
                        if (isPartSpecificationAlreadyLinked(conn, objectid, partId)) {
@@ -3621,7 +3621,7 @@ public class DataFetchService {
                        if (supertype == null || !supertype.equalsIgnoreCase("Part")) {
                            Map<String, String> error = new HashMap<>();
                            error.put("Status", "Error");
-                           error.put("Message", "Selected object '" + partId + "' is not a Part.");
+                           error.put("Message", "Selected object '" + partName + "' is not a Part.");
                            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
                        }
 
@@ -3636,7 +3636,7 @@ public class DataFetchService {
                            return Response.status(Response.Status.CONFLICT)
                                .entity(Map.of(
                                    "Status", "Error",
-                                   "Message", "A Part is already linked to PartControl '" + objectid + "'."
+                                   "Message", "A Part is already linked to this PartControl '" + "'."
                                ))
                                .build();
                        }

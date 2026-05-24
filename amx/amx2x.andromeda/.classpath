@@ -38,17 +38,22 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/manoj/Downloads/json-20250517.jar">
+	<classpathentry kind="lib" path="D:/users/Alen/downloads/jakarta.mail-2.0.3.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/manoj/Downloads/jakarta.activation-2.0.1.jar">
+	<classpathentry kind="lib" path="D:/users/Alen/downloads/jakarta.activation-2.0.1.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/manoj/Downloads/jakarta.mail-2.0.3.jar">
+	<classpathentry kind="lib" path="D:/users/Alen/downloads/postgresql-42.7.8.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/users/Alen/downloads/json-20250517.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
