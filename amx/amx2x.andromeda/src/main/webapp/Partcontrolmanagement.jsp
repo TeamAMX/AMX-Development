@@ -10,378 +10,254 @@
 <head>
 <meta charset="UTF-8" />
 <title>PartControl Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <style>
+  * { box-sizing: border-box; }
+
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     margin: 0; padding: 0;
     background: #fff;
     color: #333;
   }
+
+  /* ===== TOPBAR ===== */
   .topbar {
     display: flex;
-    background: #f5f7fa;
-    border-bottom: 1px solid #cfd3db;
-    padding: 6px 12px;
-    font-size: 13px;
-    color: #333;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e5e9;
+    padding: 12px 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
-
-  .topbar > div {
+  .topbar-left {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    background: #f9fbfd;
-    border: 1px solid #cfd3db;
-    border-right: none;
-    white-space: nowrap;
+    gap: 14px;
   }
-
-  .topbar > div:last-child {
-    border-right: 1px solid #cfd3db;
-  }
-
-  .folder-box {
-    background: #e3e7eb;
-    border: 1px solid #d1d6dc;
-    width: 28px;
-    height: 28px;
+  .topbar-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f1f5f9;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    margin-right: 8px;
+    font-size: 18px;
+    color: #4b5563;
     flex-shrink: 0;
   }
-
-  .folder-box img {
-    width: 16px;
-    height: 16px;
-  }
-
   .part-number {
+    font-size: 16px;
     font-weight: 700;
-    font-size: 14px;
-    padding-right: 13px;
-    padding-left:13px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+    color: #111827;
+    margin: 0 0 2px 0;
+    border: none;
+    padding: 0;
   }
-
-  .description {
-    font-weight: 600;
-    font-size: 13px;
-    color: #555;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+  .part-type {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
   }
-
-  .state-box {
-    font-weight: 600;
-    font-size: 13px;
-    color: #333;
+  .topbar-right {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
   }
 
-  .state-label {
-    margin-right: 4px;
-  }
-
-  .btn-submit {
-    background-color: #5c8bff;
-    border: 1px solid #3f70ff;
-    color: white;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-submit:hover {
-    background-color: #3f70ff;
-  }
-
-  .btn-evaluate {
-    background-color: #e5e7ea;
-    border: 1px solid #c6cad2;
-    color: #555;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-evaluate:hover {
-    background-color: #c6cad2;
-  }
-
-  .info-box {
+  /* State badge */
+  .state-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
     font-size: 11px;
-    color: #666;
-    padding-left: 4px;
-    line-height: 1.3;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
+  .state-badge.InWork      { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.InApproval  { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Completed   { background: #dcfce7; color: #166534; }
+  .state-badge.Cancelled   { background: #1f2937; color: #ffffff; }
 
-  .info-box strong {
-    color: #444;
-  }
-
-  .topbar > div:not(:last-child) {
-    margin-right: -1px; 
-  }
-	
-	.vertical-line img {
-  height: 20px;  
-  width: 1px;   
-  margin: 0 10px;
-}
-
+  /* ===== LAYOUT ===== */
   .container {
     display: flex;
-    height: calc(100vh - 56px);
-    font-size: 13px;
+    height: calc(100vh - 65px);
+    overflow: hidden;
+    width: 100%;
   }
-.sidebar {
-  width: 19%;
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-  padding: 20px;
-  font-size: 14px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
 
-.sidebar a {
-  display: block;
-  padding: 8px;
-  color: #333;
-  text-decoration: none;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
-
-.sidebar a:hover {
-  background-color: #e3e7ea; 
-}
-
-.sidebar a.active {
-  background-color:#808080;
-  color: white;
-   font-weight: bold;
-}
-.main-panel {
-    flex-grow: 1;
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 19%;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
     padding: 20px;
+    font-size: 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: #4b5563;
+    text-decoration: none;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
+  .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
+  .sidebar a i { width: 16px; font-size: 13px; color: #6b7280; }
+  .sidebar a.active i { color: #ffffff; }
+
+  /* ===== MAIN PANEL ===== */
+  .main-panel {
+    flex-grow: 1;
+    padding: 0;
     overflow-y: auto;
     min-width: 0;
     width: 0;
     box-sizing: border-box;
-}
-.container {
     display: flex;
-    height: calc(100vh - 56px);
-    overflow: hidden;
-    width: 100%;
-}
+    flex-direction: column;
+  }
 
-.topbar {
-  display: flex;
-  background: #f5f7fa;
-  border-bottom: 1px solid #cfd3db;
-  padding: 6px 12px;
-  font-size: 13px;
-  color: #333;
-}
-
+  /* ===== TOOLBAR ===== */
   .toolbar {
-    margin-bottom: 5px;
-    padding-left: 2px;
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
+    border-radius: 0;
   }
   .toolbar button {
     background: none;
     border: none;
     cursor: pointer;
-    margin-right: 6px;
-    vertical-align: middle;
-    padding: 2px 4px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
   }
   .toolbar button img {
-    vertical-align: middle;
     width: 18px;
     height: 18px;
+    filter: invert(1);
   }
-  .toolbar button:hover {
-    background-color: #e3f2fd;
-    border-radius: 2px;
+  .toolbar button i {
+    font-size: 16px;
+    color: #e2e8f0;
+  }
+  .toolbar button:hover { background-color: #334155; }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label {
+    font-weight: 700;
+    font-size: 13px;
+    margin: 10px 16px 6px 16px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-table.properties {
-  width: 100%; 
-  border-collapse: collapse;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  margin: 0 auto;
-}
-
-table.properties th,
-table.properties td {
-  padding: 12px 16px;
-  border: 1px solid #ddd; 
-  vertical-align: middle;
-}
-
-table.properties th {
-  background: #fafafa;
-  font-weight: bold;
-  width: 200px; 
-  text-align: left;
-}
-
-#partTable {
+  /* ===== TABLE ===== */
+  #partTable {
+    width: 100% !important;
     white-space: nowrap;
-}
+    border-collapse: collapse;
+  }
+  #partTable thead th {
+    background: #393a3c !important;
+    color: #e2e8f0 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 10px 26px 10px 12px !important;
+    border-bottom: 2px solid #334155 !important;
+    border-right: 1px solid #334155 !important;
+    white-space: nowrap !important;
+  }
+  #partTable thead .sorting:before,
+  #partTable thead .sorting:after,
+  #partTable thead .sorting_asc:before,
+  #partTable thead .sorting_asc:after,
+  #partTable thead .sorting_desc:before,
+  #partTable thead .sorting_desc:after {
+    color: rgba(255,255,255,0.75) !important;
+    opacity: 1 !important;
+  }
+  #partTable tbody td {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-right: none !important;
+    vertical-align: middle !important;
+    color: #111111 !important;
+    background: #ffffff !important;
+    font-size: 13px !important;
+  }
+  #partTable tbody tr:hover td { background: #f8fafc !important; }
 
-#partTable th,
-#partTable td {
-    white-space: nowrap;
-}
+  /* ===== HIDE DATATABLES UI ===== */
+  .dataTables_info,
+  .dataTables_paginate,
+  .dataTables_length,
+  .dataTables_filter { display: none !important; }
 
-.dataTables_wrapper {
+  /* ===== CREATE PANEL ===== */
+  #createPanel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+    overflow-y: auto;
+    transition: right 0.3s ease;
+    z-index: 1051;
+    padding: 0;
+  }
+  #createPanel.active { right: 0; }
+  #createPanel iframe {
+    border: none;
     width: 100%;
-    overflow-x: auto;
-}
-
-  .folder-icon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 6px;
+    height: calc(100% - 56px);
   }
-
-.properties-container {
-  max-height: 600px; 
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  margin-top: 0;
-}
 
   #loadingSpinner {
     display: none;
     position: fixed;
-    top: 10px;
-    right: 10px;
-    font-size: 14px;
-    color: #666;
+    top: 10px; right: 10px;
+    font-size: 14px; color: #666;
   }
   #errorMessage {
-    display: none;
     color: red;
-    margin: 10px 0;
+    margin: 10px 16px;
     font-weight: bold;
   }
-#detailsTable {
-   width: 100%;
-   border-collapse: collapse;
-   margin-top: 10px;
-}
-th, td {
-   border: 1px solid #dee2e6;
-   padding: 12px;
-   text-align: left;
-   font-wrap-mode:nowrap;
-}
-th {
-background-color: #f8f9fa;
-width: 200px;
-forn-wrap-mode:nowrap;
-}
-.nav-tabs {
-            margin-bottom: 20px;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #e9ecef;
-            font-weight: bold;
-        }
-        .toolbar {
-            background-color: #f8f9fa;
-            padding: 6px 10px;
-            border: 1px solid #dee2e6;
-            border-bottom: none;
-            display: flex;
-            gap: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-         #createPanel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 400px;
-            height: 100%;
-            background: #fff;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-            overflow-y: auto;
-            transition: right 0.3s ease;
-            z-index: 1051;
-            padding: 0;
-        }
-        #createPanel.active {
-            right: 0;
-        }
-        #createPanel iframe {
-            border: none;
-            width: 100%;
-            height: calc(100% - 56px);
-        }
-  .section-label{
-   font-weight:bold;
-   font-size:14px;
-   margin:10px 0 5px 0;
-   color:#333;
-  }      
-#partSpecificationTable {
-    display: none;
-}
-  .state-box .state-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 13px;
-  color: white;
-  margin-left: 8px;
-  user-select: none;
-  text-transform: uppercase;
-  min-width: 80px;
-  text-align: center;
-}
-.state-badge.InWork {
-  background-color: #5bc0de;
-}
-
-.state-badge.InApproval {
-  background-color: #6c757d;
-}
-
-.state-badge.Completed {
-  background-color: #28a745;
-}
-
-.state-badge.Cancelled {
-  background-color: #000000;
-  color: #ffffff;
-}
-  
-  
 </style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -391,56 +267,51 @@ forn-wrap-mode:nowrap;
 <body>
 
 <div class="topbar">
-    <div class="left-section">
-        <div class="image-box">
-      <img src="https://img.icons8.com/?size=50&id=WECphWgmeM0g&format=png&color=000000" alt="Folder Icon" />
-        </div>
-        <div class="part-info">
-            <div class="part-number" style="font-weight: 700; font-size: 14px;"></div>
-            <div class="part-type" style="font-size: 12px; color: #666; margin-top: 2px; "></div>
-        </div>
-        <div class="vertical-line"></div>
+  <div class="topbar-left">
+    <div class="topbar-icon">
+      <i class="fa-solid fa-sliders"></i>
     </div>
-    <div class="right-section">
-        <div class="state-box">
-            <span class="state-label">State:</span>
-   
-        </div>
-        <div class="vertical-line"></div>
-        <div class="info-box"></div>
-        <div class="vertical-line"></div>
+    <div>
+      <div class="part-number"></div>
+      <div class="part-type"></div>
     </div>
+  </div>
+  <div class="topbar-right">
+    <span>State:</span>
+    <div class="state-box">
+      <span class="state-label">State:</span>
+    </div>
+  </div>
 </div>
+
 <div class="container">
     <div class="sidebar">
-        <a href="Partcontroldetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link" data-page="Partcontroldetails.jsp">PC-Properties</a>
-        <a class="nav-link" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-        <a href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>" class="nav-link" data-page="Partlifecycle.jsp">LifeCycle</a>
-        <a href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>" class="nav-link active" data-page="Partcontrolmanagement.jsp">Part Management</a>
-    </div>
+  <a href="Partcontroldetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-sliders"></i> PC-Properties</a>
+  <a class="nav-link" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clock"></i> History</a>
+  <a href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-arrows-rotate"></i> LifeCycle</a>
+  <a href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>" class="nav-link active"><i class="fa-solid fa-shield-halved"></i> Part Management</a>
+</div>
     <div class="main-panel">
-        <div class="toolbar mt-2">
-            <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part" id="openCreatePanelBtn">
-               <i class="bi bi-asterisk fs-6" style="color: #9370DB; font-size: 16px;"></i>
-            </button>
-            <button class="btn btn-light" data-bs-toggle="tooltip" title="Add Existing Part" id="addExistingpart">
-                <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
-            </button>
-            <button class="btn btn-light" data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
-            	<img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
-        	</button>
-        </div>
+        <div class="toolbar">
+  <button data-bs-toggle="tooltip" title="Create Part" id="openCreatePanelBtn">
+    <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add">
+  </button>
+  <button data-bs-toggle="tooltip" title="Add Existing Part" id="addExistingpart">
+    <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add">
+  </button>
+  <button data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
+    <img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Export">
+  </button>
+</div>
         <div id="loadingSpinner"></div>
         <div id="errorMessage" class="error"></div>
         <div class="section-label">Part Management Table</div>
-    <table class="table table-bordered mt-2" id="partTable">
-    <thead>
-        <tr>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+    <div style="overflow-x: auto; padding: 0 16px; width: 100%;">
+  <table id="partTable">
+    <thead><tr></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
 </div>
  <div id="createPanel">
         <iframe id="createIframe" src=""></iframe>
@@ -448,6 +319,7 @@ forn-wrap-mode:nowrap;
     </div>
 <script>
 
+const BASIC_URL = '<%= request.getContextPath() %>';
 function receiveSelectedParts(selectedParts) {
     if (!selectedParts || selectedParts.length === 0) return;
 
@@ -466,7 +338,7 @@ function receiveSelectedParts(selectedParts) {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/amx2x.andromeda/api/datafetchservice/linkparttocontrol/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/datafetchservice/linkparttocontrol/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),
@@ -497,7 +369,7 @@ function loadPartTable() {
         return;
     }
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getlinkedpart',
+        url: BASIC_URL+'/api/datafetchservice/getlinkedpart',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -557,27 +429,15 @@ function loadPartTable() {
 
 	const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
         
-        if (partInfo) {
-          $('.part-number').text(partInfo.name || 'NA');
-          $('.part-type').text(partInfo.type || 'NA');
-          $('.state-box .state-label').remove();
-          if (partInfo.currentstate) {
-      	    $('.state-box .state-label').remove();
-      	    const state = partInfo.currentstate;
-      	    const badge = $('<span>')
-      	        .addClass('state-badge ' + state.replace(/\s/g, ''))
-      	        .text(state);
-      	    $('<span>')
-      	        .addClass('state-label')
-      	        .text('State: ')
-      	        .append(badge)
-      	        .prependTo('.state-box');
-      	}
-        }
-        else {
-          $('.part-number').text('NA');
-          $('.part-type').text('NA');
-        }
+	if (partInfo) {
+	    $('.part-number').text(partInfo.name || '');
+	    $('.part-type').text(partInfo.type || '');
+	    if (partInfo.currentstate) {
+	        const state = partInfo.currentstate;
+	        const cls = state.replace(/\s/g, '');
+	        $('.state-box').html('<span class="state-badge ' + cls + '">' + state + '</span>');
+	    }
+	}
         document.getElementById('openCreatePanelBtn').addEventListener('click', function () {
             const urlParams = new URLSearchParams(window.location.search);
             const objectid = urlParams.get('name');

@@ -36,7 +36,7 @@ import jakarta.ws.rs.core.Response;
 	 
 @Path("/searchdata")
 public class SearchData {
-    public static final String url = "jdbc:postgresql://localhost:5432/Andromeda";
+    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
     public static final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

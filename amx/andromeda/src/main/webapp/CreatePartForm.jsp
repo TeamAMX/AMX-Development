@@ -212,6 +212,8 @@ textarea {
   </form>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     window.addEventListener('DOMContentLoaded', async () => {
       const supertypeSelect = document.getElementById('supertype');
       const typeSelect = document.getElementById('type');
@@ -226,7 +228,7 @@ textarea {
 
       // Load dropdown data
       try {
-        const response = await fetch('http://localhost:8080/andromeda/api/db/dropdowns');
+        const response = await fetch(BASIC_URL+'/api/db/dropdowns');
         dropdownData = await response.json();
 
         dropdownData.superTypes = dropdownData.superTypes || [];
@@ -379,7 +381,7 @@ textarea {
 
     	    // Submit data
     	    try {
-    	        const res = await fetch('http://localhost:8080/andromeda/api/navigatorutilites/create', {
+    	        const res = await fetch(BASIC_URL+'/api/navigatorutilites/create', {
     	            method: 'POST',
     	            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     	            credentials: 'include',

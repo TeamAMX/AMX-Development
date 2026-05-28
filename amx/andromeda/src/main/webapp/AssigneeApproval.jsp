@@ -94,6 +94,7 @@
 
 <!-- AJAX Logic -->
 <script>
+const BASIC_URL = '<%= request.getContextPath() %>';
   $(document).ready(function () {
   $('#approvalForm').on('submit', function (e) {
   e.preventDefault();
@@ -109,7 +110,7 @@ const approvalState = $('input[name="approvalState"]:checked').val();
    $('#loadingSpinner').show();
    $('#responseMessage').hide();
     $.ajax({
-     url: 'http://localhost:8080/andromeda/api/datafetchservice/promoteapprovalstate',
+     url: BASIC_URL+'/api/datafetchservice/promoteapprovalstate',
      method: 'POST',
      data: {
      partName: partName,

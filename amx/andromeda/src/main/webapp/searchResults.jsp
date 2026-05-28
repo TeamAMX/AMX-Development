@@ -180,6 +180,9 @@ background-color: #f8f9fa;
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script>
+    
+    
+    const BASIC_URL = '<%= request.getContextPath() %>';
     document.addEventListener('DOMContentLoaded', async function () {
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get('query');
@@ -259,7 +262,7 @@ background-color: #f8f9fa;
             const formData = new URLSearchParams();
             formData.append("name", query);
             formData.append("filter", filter);
-            const response = await fetch("http://localhost:8080/andromeda/api/navigatorutilites/amxfullsearch?" + formData.toString(), {
+            const response = await fetch(BASIC_URL+"/api/navigatorutilites/amxfullsearch?" + formData.toString(), {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });

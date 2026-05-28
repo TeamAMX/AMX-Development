@@ -94,6 +94,7 @@
   </form>
 
 <script>
+const BASIC_URL = '<%= request.getContextPath() %>';
   const isInIframe = window.self !== window.top;
   document.getElementById('cancelBtn').addEventListener('click', () => {
     if (isInIframe) {
@@ -123,7 +124,7 @@
 
     try {
       
-    	const response = await fetch('http://localhost:8080/andromeda/api/db/dropdowns');
+    	const response = await fetch(BASIC_URL+'/api/db/dropdowns');
         dropdownData = await response.json();
  
         dropdownData.superTypes = dropdownData.superTypes || [];
@@ -291,7 +292,7 @@
 
 
         try {
-            const res = await fetch('http://localhost:8080/andromeda/api/datafetchservice/createpartforcontrolwithconnection', {
+            const res = await fetch(BASIC_URL+'/api/datafetchservice/createpartforcontrolwithconnection', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

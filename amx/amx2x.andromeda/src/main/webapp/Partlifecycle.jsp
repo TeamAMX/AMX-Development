@@ -11,514 +11,328 @@ String username = (String) session.getAttribute("username");
 <head>
 <meta charset="UTF-8" />
 <title>Part Control LifeCycle</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
+  * { box-sizing: border-box; }
+
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     margin: 0; padding: 0;
     background: #fff;
     color: #333;
   }
 
-  /* Top Bar Container */
+  /* ===== TOPBAR ===== */
   .topbar {
-    display: flex;
-    background: #f5f7fa;
-    border-bottom: 1px solid #cfd3db;
-    padding: 6px 12px;
-    font-size: 13px;
-    color: #333;
-  }
-
-  /* Box styling */
-  .topbar > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #eef2f7;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+}
+  .topbar-left {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    background: #f9fbfd;
-    border: 1px solid #cfd3db;
-    border-right: none;
-    white-space: nowrap;
+    gap: 14px;
   }
-
-  /* Last box has right border */
-  .topbar > div:last-child {
-    border-right: 1px solid #cfd3db;
-  }
-
-  /* Folder Icon Box */
-  .folder-box {
-    background: #e3e7eb;
-    border: 1px solid #d1d6dc;
-    width: 28px;
-    height: 28px;
+  .topbar-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f1f5f9;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    margin-right: 8px;
+    font-size: 18px;
+    color: #4b5563;
     flex-shrink: 0;
   }
-
-  .folder-box img {
-    width: 16px;
-    height: 16px;
-  }
-  .part-number {
+  .topbar-name {
+    font-size: 16px;
     font-weight: 700;
-    font-size: 14px;
-    padding-right: 13px;
-    padding-left:13px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+    color: #111827;
+    margin: 0 0 2px 0;
   }
-
-  /* Description box */
-  .description {
-    font-weight: 600;
-    font-size: 13px;
-    color: #555;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+  .topbar-type {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
   }
-
-  /* State box */
-  .state-box {
-    font-weight: 600;
-    font-size: 13px;
-    color: #333;
+  .topbar-right {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
   }
 
-  .state-label {
-    margin-right: 4px;
-  }
-
-  /* Buttons styling */
-  .btn-submit {
-    background-color: #5c8bff;
-    border: 1px solid #3f70ff;
-    color: white;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-submit:hover {
-    background-color: #3f70ff;
-  }
-
-  .btn-evaluate {
-    background-color: #e5e7ea;
-    border: 1px solid #c6cad2;
-    color: #555;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-evaluate:hover {
-    background-color: #c6cad2;
-  }
-
-  /* Info box */
-  .info-box {
+  /* ===== STATE BADGES ===== */
+  .state-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
     font-size: 11px;
-    color: #666;
-    padding-left: 4px;
-    line-height: 1.3;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
+  .state-badge.InWork      { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.InApproval  { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Completed   { background: #dcfce7; color: #166534; }
+  .state-badge.Cancelled   { background: #1f2937; color: #ffffff; }
 
-  .info-box strong {
-    color: #444;
-  }
-  .topbar > div:not(:last-child) {
-    margin-right: -1px; 
-  }
-	
-	.vertical-line img {
-  height: 20px;  
-  width: 1px;   
-  margin: 0 10px; 
-}
-
+  /* ===== LAYOUT ===== */
   .container {
     display: flex;
-    height: calc(100vh - 56px); 
+    height: calc(100vh - 65px);
+    overflow: hidden;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 19%;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    font-size: 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: #4b5563;
+    text-decoration: none;
+    margin-bottom: 6px;
+    border-radius: 8px;
     font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
+  .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
+  .sidebar a i { width: 16px; font-size: 13px; color: #6b7280; }
+  .sidebar a.active i { color: #ffffff; }
+
+  /* ===== MAIN PANEL ===== */
+  .main-panel {
+    flex-grow: 1;
+    padding: 0;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-.sidebar {
-  width: 16%;
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-  padding: 20px;
-  font-size: 14px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden; 
-}
-
-.sidebar a {
-  display: block;
-  padding: 8px;
-  color: #333;
-  text-decoration: none;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
-
-.sidebar a:hover {
-  background-color: #e3e7ea; 
-}
-
-.sidebar a.active {
-  background-color:#808080;
-  color: white;
-   font-weight: bold;
-}
-
-/* Main Panel */
-.main-panel {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-  font-size: 13px;
-  box-sizing: border-box;
-}
-
-
-.container {
-  display: flex;
-  height: calc(100vh - 56px); 
-}
-
-.topbar {
-  display: flex;
-  background: #f5f7fa;
-  border-bottom: 1px solid #cfd3db;
-  padding: 6px 12px;
-  font-size: 13px;
-  color: #333;
-}
-
+  /* ===== TOOLBAR ===== */
   .toolbar {
-    margin-bottom: 5px;
-    padding-left: 2px;
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
   }
-  .toolbar button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-right: 6px;
-    vertical-align: middle;
-    padding: 2px 4px;
+  .toolbar h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
-  .toolbar button img {
-    vertical-align: middle;
+  .lifecycle-icon {
     width: 18px;
     height: 18px;
-  }
-  .toolbar button:hover {
-    background-color: #e3f2fd;
-    border-radius: 2px;
+    filter: invert(1);
   }
 
-table.properties {
-  width: 100%; /* full width */
-  border-collapse: collapse;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  margin: 0 auto;
-}
-
-table.properties th,
-table.properties td {
-  padding: 12px 16px;
-  border: 1px solid #ddd; 
-  vertical-align: middle;
-}
-
-table.properties th {
-  background: #fafafa;
-  font-weight: bold;
-  width: 200px; 
-  text-align: left;
-}
-
-
-  .folder-icon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 6px;
+  /* ===== LIFECYCLE AREA ===== */
+  .lifecycle-wrapper {
+    padding: 32px 24px;
+    flex: 1;
+    overflow-y: auto;
   }
 
+  .lifecycle-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #9ca3af;
+    margin-bottom: 24px;
+  }
 
-.properties-container {
-  max-height: 600px; 
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  margin-top: 0;
-}
+  .lifecycle-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: visible;
+  }
 
-  .nav-tabs {
-        margin-bottom: 20px;
-    }
-    #loadingSpinner {
-        display: none;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    #errorMessage {
-       
-        text-align: center;
-        margin-top: 20px;
- }
-    .nav-tabs .nav-link.active {
-        background-color: #e9ecef !important; 
-        font-weight: bold;
-        border-color: #dee2e6 #dee2e6 #fff;
-    }
-    .toolbar {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px; 
-        background-color: #f8f9fa; 
-        padding: 8px 12px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-    }
-    .toolbar i.bi-clock-history {
-        color: #9370DB;
-        font-size: 1.5rem;
-        margin-right: 10px;
-    }
-    .toolbar h4 {
-        margin: 0;
-        font-weight: 600;
-        color: #444;
-        font-size: 1rem; 
-    }
-        #inWorkLabel {
-            background-color:#5bc0de; 
-        }
-        #inapprovalLabel {
-            background-color: #6c757d; 
-        }
-        #completedLabel {
-            background-color: #28a745;
-        }
-        #cancelledLabel {
-            background-color:  #ffc107; 
-        }
-        .state-label:hover {
-            background-color: #ddd;
-        }
-        #stateMessages {
-            margin-top: 20px;
-            font-size: 16px;
-            color: #333;
-        }
-        #stateMessages .message {
-            margin: 10px 0;
-        }
-        .state-label {
-            padding: 10px 20px;
-            margin: 5px;
-            cursor: pointer;
-            display: inline-block;
-            border-radius: 5px;
-        }
-   .lifecycle-icon {
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-  vertical-align: middle;
-}  
-.lifecycle-flow {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin: 30px 0 20px 0;
-  padding: 0 10px;
-  flex-wrap: wrap;
-}
+  .state-node {
+    position: relative;
+    padding: 10px 18px;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    min-width: 90px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    user-select: none;
+  }
+  .state-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+  .state-node.active {
+    box-shadow: 0 0 0 3px #1f2937, 0 0 0 5px rgba(31,41,55,0.15);
+  }
 
-.state-node {
-  padding: 12px 20px;
-  background-color: #5bc0de; /* default color */
-  color: white;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 14px;
-  text-align: center;
-  min-width: 100px;
-  transition: background 0.3s ease;
-}
+  /* State colors */
+  #stateInWork      { background: #5bc0de; }
+  #stateInApproval  { background: #6c757d; }
+  #stateCompleted   { background: #28a745; }
+  #stateCancelled   { background: #1f2937; color: #ffffff; }
 
-.state-node#stateInApproval { background-color: #6c757d; }
-.state-node#stateCompleted { background-color: #28a745; }
-.state-node#stateCancelled { background-color: #ffb6b6; color: #000; }
+  .arrow {
+    margin: 0 12px;
+    font-size: 20px;
+    color: #d1d5db;
+    flex-shrink: 0;
+  }
+  .arrow.no-gap { margin: 0; }
 
-.arrow {
-  margin: 0 15px;
-  font-size: 24px;
-  color: #999;
-}
+  .arrow-segment {
+    display: flex;
+    align-items: center;
+  }
+  .arrow-segment .line {
+    height: 2px;
+    background-color: #d1d5db;
+    width: 12px;
+  }
+  .popup-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin: 0 4px;
+  }
 
-.state-node.active {
-  border: 3px solid #444;
-  box-shadow: 0 0 8px rgba(0,0,0,0.3);
-}
-@keyframes arrowPulse {
-  0% { color: #999; transform: scale(1); }
-  50% { color: #007bff; transform: scale(1.5); }
-  100% { color: #999; transform: scale(1); }
-}
-.arrow.animate {
-  animation: arrowPulse 0.8s ease-in-out;
-}
-  .state-box .state-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 13px;
-  color: white;
-  margin-left: 8px;
-  user-select: none;
-  text-transform: uppercase;
-  min-width: 80px;
-  text-align: center;
-}
-.state-badge.InWork {
-  background-color: #5bc0de;
-}
+  /* State message */
+  #stateMessages {
+    margin: 20px 24px 0 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #166534;
+    background: #dcfce7;
+    border: 1px solid #a8d5b0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: none;
+  }
+  #stateMessages.error {
+    color: #c0392b;
+    background: #fde8e8;
+    border-color: #f5b0aa;
+  }
 
-.state-badge.InApproval {
-  background-color: #6c757d;
-}
-
-.state-badge.Completed {
-  background-color: #28a745;
-}
-
-.state-badge.Cancelled {
-  background-color: #000000; 
-  color: #ffffff; 
-}
-  
- .arrow-segment {
-  display: flex;
-  align-items: center;
-}
-
-.arrow-segment .line {
-  height: 2px;
-  background-color: #999;
-  width: 24px;
-  margin: 0;
-  padding: 0;
-}
-
-.popup-icon {
-  width: 22px;
-  height: 22px;
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
-}
-
-.arrow.no-gap {
-  font-size: 24px;
-  color: #999;
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-}
- 
+  #loadingSpinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #e2e5e9;
+    border-top: 3px solid #4b5563;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 16px 24px;
+  }
+  @keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  #errorMessage {
+    margin: 12px 24px;
+    font-size: 13px;
+    color: #c0392b;
+    font-weight: 500;
+  }
 </style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="topbar">
-  <div class="left-section">
-    <div class="image-box">
-      <img src="https://img.icons8.com/?size=50&id=WECphWgmeM0g&format=png&color=000000" alt="Folder Icon" />
-    </div>
-<div class="part-info">
-            <div class="part-number" style="font-weight: 700; font-size: 14px;"></div>
-            <div class="part-type" style="font-size: 12px; color: #666; margin-top: 2px; padding-left:13px;"></div>
-        </div>
-    <div class="vertical-line"></div>
-  </div>
-  <div class="right-section">
-    <div class="state-box">
-      <span class="state-label">State:</span>
 
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-icon">
+      <i class="fa-solid fa-sliders"></i>
     </div>
-    <div class="vertical-line"></div>
-    <div class="info-box">
-      
+    <div>
+      <div class="topbar-name" id="pcName">Part Control</div>
+      <div class="topbar-type" id="pcType">PartControl</div>
     </div>
-    <div class="vertical-line"></div>
+  </div>
+  <div class="topbar-right">
+    <span>State:</span>
+    <div id="stateBadgeWrapper"></div>
   </div>
 </div>
+
 <div class="container">
   <div class="sidebar">
-    <a href="Partcontroldetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link" data-page="Partcontroldetails.jsp">PC-Properties</a>
-    <a class="nav-link" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-     <a href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>" class="nav-link active" data-page="Partlifecycle.jsp">LifeCycle</a>
-    <a href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>" class="nav-link" data-page="Partcontrolmanagement.jsp">Part Management</a>
-  </div>
+  <a href="Partcontroldetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-sliders"></i> PC-Properties</a>
+  <a class="nav-link" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clock"></i> History</a>
+  <a href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>" class="nav-link active"><i class="fa-solid fa-arrows-rotate"></i> LifeCycle</a>
+  <a href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Part Management</a>
+</div>
 
-  <div class="main-panel">
-    <!-- Toolbar -->
-    <div class="toolbar">
-  		<img src="lifecycle.gif" alt="Lifecycle Icon" class="lifecycle-icon" />
-  		<h4>Life Cycle</h4>
-	</div>
+<div class="main-panel">
+  <div class="toolbar">
+    <img src="lifecycle.gif" alt="Lifecycle Icon" class="lifecycle-icon" />
+    <h4>Life Cycle</h4>
+  </div>
+  <div class="lifecycle-wrapper">
+    <div class="lifecycle-section-title">Click a state to transition</div>
     <div class="lifecycle-flow">
-  <div class="state-node" id="stateInWork" data-state="InWork" title="Click to change to 'In Work'">In Work</div>
-  <div class="arrow" id="arrow-InWork-InApproval">➝</div>
-  <div class="state-node" id="stateInApproval" data-state="InApproval" title="Click to change to 'Frozen'">In Approval</div>
-<div class="arrow-segment">
-  <div class="line"></div>
-<img id="reviewIconInApproval"src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000"alt="Review Icon"class="popup-icon"
-     title="Open RoutePopup Page"onclick="openPopup('InApproval')" style="display: none;" />
-   <div class="arrow no-gap">➝</div>
-</div>
-  <div class="state-node" id="stateCompleted" data-state="Completed" title="Click to change to 'Approved'">Completed</div>
-<div class="arrow-segment">
-  <div class="line"></div>
-<img id="reviewIconCompleted"src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000"alt="Review Icon"class="popup-icon"
-     title="Open RouteStatePopup Page"onclick="openPopup('Completed')" style="display: none;" />
-   <div class="arrow no-gap">➝</div>
-</div>
-  <div class="state-node" id="stateCancelled" data-state="Cancelled" title="Click to change to 'Released'">Cancelled</div>
-</div>
-        <div id="stateMessages"></div>
+      <div class="state-node" id="stateInWork" data-state="InWork">In Work</div>
+      <div class="arrow" id="arrow-InWork-InApproval">➝</div>
+      <div class="state-node" id="stateInApproval" data-state="InApproval">In Approval</div>
+      <div class="arrow-segment">
+        <div class="line"></div>
+        <img id="reviewIconInApproval" src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000" alt="Review Icon" class="popup-icon" title="Open RoutePopup Page" onclick="openPopup('InApproval')" style="display:none;" />
+        <div class="arrow no-gap">➝</div>
+      </div>
+      <div class="state-node" id="stateCompleted" data-state="Completed">Completed</div>
+      <div class="arrow-segment">
+        <div class="line"></div>
+        <img id="reviewIconCompleted" src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000" alt="Review Icon" class="popup-icon" title="Open RouteStatePopup Page" onclick="openPopup('Completed')" style="display:none;" />
+        <div class="arrow no-gap">➝</div>
+      </div>
+      <div class="state-node" id="stateCancelled" data-state="Cancelled">Cancelled</div>
+    </div>
+    <div id="stateMessages"></div>
     <div id="loadingSpinner"></div>
     <div id="errorMessage"></div>
-    </div>
+  </div>
+</div>
+
 </div>
 <script>
     const loginUser = "<%= username %>";
@@ -526,6 +340,8 @@ table.properties th {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 let attemptedPromotionState = null;
 
 function getQueryParam(param) {
@@ -536,7 +352,9 @@ function getQueryParam(param) {
 function showMessage(msg, isError = false) {
     const container = $("#stateMessages");
     container.text(msg);
-    container.css("color", isError ? "red" : "green");
+    container.toggleClass('error', isError);
+    container.show();
+    setTimeout(() => container.fadeOut(), 4000);
 }
 
 function setLoading(loading) {
@@ -553,7 +371,7 @@ function setLoading(loading) {
 function fetchStateOnly(objectId) {
     setLoading(true);
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/updatestate/' + encodeURIComponent(objectId),
+        url: BASIC_URL+'/api/datafetchservice/updatestate/' + encodeURIComponent(objectId),
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -598,7 +416,7 @@ function showReviewIcon(currentState) {
 function promoteToInApproval(objectId, targetState) {
     setLoading(true);
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/promote/' + encodeURIComponent(objectId),
+        url: BASIC_URL+'/api/datafetchservice/promote/' + encodeURIComponent(objectId),
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ selectedState: targetState }),
@@ -642,34 +460,43 @@ function promoteToInApproval(objectId, targetState) {
 }
 
 $(document).ready(function() {
-    const objectId = getQueryParam("name");
+    
     const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
+    const objectId = getQueryParam("name");
+
+    if (!partInfo && objectId) {
+        $.ajax({
+            url: BASIC_URL + '/api/datafetchservice/getinfospc',
+            method: 'GET',
+            data: { objectId: objectId },
+            dataType: 'json',
+            success: function(data) {
+                if (data && !$.isEmptyObject(data)) {
+                    sessionStorage.setItem('partInfo', JSON.stringify(data));
+                    $('#pcName').text(data.name || '');
+                    $('#pcType').text(data.type || '');
+                    if (data.currentstate) {
+                        const state = data.currentstate;
+                        const cls = state.replace(/\s/g, '');
+                        $('#stateBadgeWrapper').html('<span class="state-badge ' + cls + '">' + state + '</span>');
+                        highlightCurrentState(state);
+                        showReviewIcon(state);
+                    }
+                }
+            }
+        });
+    }
+    
     if (partInfo) {
-        $('.part-number').text(partInfo.name || '');
-        $('.part-type').text(partInfo.type || '');
-        const icon = (partInfo.type && partInfo.type.toLowerCase() === 'fastener') 
-            ? 'https://img.icons8.com/?size=50&id=20544&format=png&color=000000' 
-            : 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000';
-        $('#typeIcon').attr('src', icon);
-        $('.state-box .state-label').remove();
+        $('#pcName').text(partInfo.name || '');
+        $('#pcType').text(partInfo.type || '');
         if (partInfo.currentstate) {
             const state = partInfo.currentstate;
-            const badge = $('<span>')
-                .addClass('state-badge ' + state.replace(/\s/g, ''))
-                .text(state);
-            $('<span>')
-                .addClass('state-label')
-                .text('State: ')
-                .append(badge)
-                .prependTo('.state-box');
+            const cls = state.replace(/\s/g, '');
+            $('#stateBadgeWrapper').html('<span class="state-badge ' + cls + '">' + state + '</span>');
             highlightCurrentState(state);
             showReviewIcon(state);
         }
-    } else {
-        $('.part-number').text('');
-        $('.part-type').text('');
-        $('#typeIcon').attr('src', 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000');
-        $('.state-box .state-label').remove();
     }
 
     if (!objectId) {
@@ -695,7 +522,7 @@ $(document).ready(function() {
         } else {
             setLoading(true);
             $.ajax({
-                url: 'http://localhost:8080/andromeda/api/datafetchservice/updatestate/' + encodeURIComponent(objectId),
+                url: BASIC_URL+'/api/datafetchservice/updatestate/' + encodeURIComponent(objectId),
                 type: 'PUT',
                 contentType: "application/json",
                 data: JSON.stringify({ state: selectedState }),

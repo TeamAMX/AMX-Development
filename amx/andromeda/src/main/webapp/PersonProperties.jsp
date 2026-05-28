@@ -2,7 +2,7 @@
 <%
     String userAccess = (String) session.getAttribute("userAccess");
     if (userAccess == null) {
-        userAccess = "";
+        
     }
 %>
 <!DOCTYPE html>
@@ -127,6 +127,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <script>
+    
+    const BASIC_URL = '<%= request.getContextPath() %>';
         let originalPersonData = {};
         let accessOptions = [];
 
@@ -139,7 +141,7 @@
 
             showLoading(true);
             $.ajax({
-                url: 'http://localhost:8080/andromeda/api/datafetchservice/persons',
+                url: BASIC_URL+'/api/datafetchservice/persons',
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -168,7 +170,7 @@
                 }
             });
             $.ajax({
-                url: 'http://localhost:8080/andromeda/api/datafetchservice/personaccess',
+                url: BASIC_URL+'/api/datafetchservice/personaccess',
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -198,7 +200,7 @@
                 });
 
                 $.ajax({
-                    url: 'http://localhost:8080/andromeda/api/datafetchservice/updatePerson/' + encodeURIComponent(objectId),
+                    url: BASIC_URL+'/api/datafetchservice/updatePerson/' + encodeURIComponent(objectId),
                     method: 'PUT',
                     contentType: 'application/json',
                     data: JSON.stringify(updatedData),

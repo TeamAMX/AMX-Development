@@ -96,6 +96,8 @@
 </div>
 
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 let dataTable;
 
 function getQueryParam(param) {
@@ -186,7 +188,7 @@ $(document).ready(function () {
 
     $.ajax({
 
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getMPNHistory',
+        url:BASIC_URL+'/api/navigatorutilites/getMPNHistory',
         method: 'GET',
         data: { objectId: objectId },
         dataType: 'json',

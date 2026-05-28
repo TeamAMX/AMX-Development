@@ -257,6 +257,8 @@
     </div>
 </div>
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     var loggedInUserAccess = "<%= userAccess.trim() %>";
     $(document).ready(function () {
       function runQuery(query) {
@@ -266,7 +268,7 @@
         const spinnerStartTime = Date.now();
 
         $.ajax({
-          url: "http://localhost:8080/andromeda/api/datafetchservice/executequery",
+          url: BASIC_URL+"/api/datafetchservice/executequery",
           type: "GET",
           data: { sql: query, _: new Date().getTime() },
           success: function (response) {

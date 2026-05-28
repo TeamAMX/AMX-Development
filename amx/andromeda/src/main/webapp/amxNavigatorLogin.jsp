@@ -257,6 +257,8 @@
   </div>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(() => {
       function toggleForm(formType) {
         if (formType === 'login') {
@@ -292,7 +294,7 @@
         }
         disableForm('#loginForm', true);
         $.ajax({
-          url: 'http://localhost:8080/andromeda/api/myresource/login',
+          url: BASIC_URL+'/api/myresource/login',
           type: 'POST',
           contentType: 'application/x-www-form-urlencoded',
           data: $.param({
@@ -355,7 +357,7 @@
         disableForm('#registerForm', true);
 
         $.ajax({
-          url: 'http://localhost:8080/andromeda/api/myresource/register',
+          url: BASIC_URL+'/api/myresource/register',
           type: 'POST',
           contentType: 'application/x-www-form-urlencoded',
           data: $.param({

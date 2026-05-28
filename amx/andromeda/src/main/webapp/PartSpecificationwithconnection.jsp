@@ -82,6 +82,8 @@
   </form>
 
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
   const isInIframe = window.self !== window.top;
   document.getElementById('cancelBtn').addEventListener('click', () => {
     if (isInIframe) {
@@ -101,7 +103,7 @@
 	  let dropdownData = {};
 
 	  try {
-	    const res = await fetch('http://localhost:8080/andromeda/api/db/dropdowns');
+	    const res = await fetch(BASIC_URL+'/api/db/dropdowns');
 	    if (!res.ok) throw new Error('Failed to load dropdown data');
 	    dropdownData = await res.json();
 
@@ -162,7 +164,7 @@
 		    };
 
 		    try {
-		        const res = await fetch('http://localhost:8080/andromeda/api/datafetchservice/partspecificationwithconnection', {
+		        const res = await fetch(BASIC_URL+'/api/datafetchservice/partspecificationwithconnection', {
 		            method: 'POST',
 		            headers: {
 		                'Content-Type': 'application/json',

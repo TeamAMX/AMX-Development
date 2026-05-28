@@ -489,6 +489,8 @@ table.properties th {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
@@ -513,7 +515,7 @@ function setLoading(loading) {
 function fetchStateOnly(objectId) {
     setLoading(true);
     $.ajax({
-    	url: 'http://localhost:8080/andromeda/api/datafetchservice/updatestate/' + encodeURIComponent(objectId),
+    	url: BASIC_URL+'/api/datafetchservice/updatestate/' + encodeURIComponent(objectId),
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -589,7 +591,7 @@ $(document).ready(function() {
         setLoading(true);
 
         $.ajax({
-            url: 'http://localhost:8080/andromeda/api/datafetchservice/updatestate/' +encodeURIComponent(objectId),
+            url: BASIC_URL+'/api/datafetchservice/updatestate/' +encodeURIComponent(objectId),
             type: 'PUT',
             contentType: "application/json",
             data: JSON.stringify({ state: selectedState }),
@@ -611,7 +613,7 @@ $(document).ready(function() {
     $("#nextStateBtn").on("click", function() {
         setLoading(true);
         $.ajax({
-        	url: 'http://localhost:8080/andromeda/api/datafetchservice/updatestate/' +encodeURIComponent(objectId),
+        	url: BASIC_URL+'/api/datafetchservice/updatestate/' +encodeURIComponent(objectId),
             type: 'PUT',
             contentType: "application/json",
             success: function(response) {

@@ -6,7 +6,7 @@ import java.util.*;
 *@usage This class will perform the Part spec object process
 */
 public class AmxPartSpecification {
-	  public static final String URL = "jdbc:postgresql://localhost:5432/Andromeda";
+	  public static final String URL = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
 	    public static final String USERNAME = "postgres";
 	    public static final String PASSWORD = "admin@1234";
 		public  String objectId; 

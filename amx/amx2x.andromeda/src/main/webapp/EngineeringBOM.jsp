@@ -54,13 +54,13 @@ href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
    <div class="main-panel">
     <div class="toolbar mt-2">
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part" id="openCreatePanelBtn">
-            <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add" style="width:20px height:20px;">
+        <i class="fa-solid fa-hammer" style="color:white; font-size:18px;"></i> 
         </button>
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Add Existing Part" id="addExistingpart">
-            <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add Existing Part" style="width: 20px; height: 20px;">
+		<i class="fa-solid fa-puzzle-piece" style="color:white; font-size:18px;"></i> 
         </button>
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
-            <img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Export" style="width: 20px; height: 20px;">
+		<i class="fa-solid fa-download" style="color:white; font-size:18px;"></i> 
         </button>
     </div>
     <div id="loadingSpinner"></div>
@@ -79,6 +79,7 @@ href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
 </div>
 <script>
 
+const BASIC_URL = '<%= request.getContextPath() %>';
 function removeDescendants(objectId) {
     $('#EBOMTable tbody tr.child-row[data-parent="' + objectId + '"]').each(function() {
         const childId = $(this).data('objectid');
@@ -92,7 +93,7 @@ function loadChildRows(parentObjectId, parentTr, depth) {
     const indent = depth * 24;
 
     $.ajax({
-        url: 'http://localhost:8080/amx2x.andromeda/api/datafetchservice/getcreatedchildpart',
+        url: BASIC_URL+'/api/datafetchservice/getcreatedchildpart',
         data: { objectid: parentObjectId },
         dataType: 'json',
         success: function (childData) {
@@ -157,7 +158,7 @@ function loadEBOMTable() {
         return;
     }
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getcreatedebom',
+        url:BASIC_URL+'/api/datafetchservice/getcreatedebom',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -312,7 +313,7 @@ function receiveSelectedParts(selectedParts) {
     }
     
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/linkebomparts/' + encodeURIComponent(parentObjectId),
+        url: BASIC_URL+'/api/datafetchservice/linkebomparts/' + encodeURIComponent(parentObjectId),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),

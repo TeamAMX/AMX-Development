@@ -4,267 +4,402 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Andromeda - Login & Register</title>
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+  
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Times New Roman', serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       height: 100vh;
       background-color: #ffffff;
       overflow: hidden;
     }
 
-    .left, .right {
-      flex: 1;
-      height: 100vh;
-    }
-
     .left {
-      flex: 0.7; 
-      background: url('andro.png') no-repeat center;
-      background-size: contain;
-      background-color: #ffffff;
-      border-right: 2px solid #e0e0e0;
+      width: 60%;
+      height: 100vh;
+      background-color: #222222; 
+      background-image: url('newCar.avif'); 
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .right {
-      flex: 1.3; 
+      width: 40%;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 20px;
-      max-width: 480px;
-      margin: auto;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .left::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .brand-title {
+      position: relative;
+      color: #ffffff;
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      z-index: 2;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      margin-left: 0.3em; 
     }
 
     .form-container {
       width: 100%;
-      animation: fadeIn 0.3s ease-in-out;
+      max-width: 400px;
+      animation: fadeIn 0.4s ease-out;
     }
+
     h1 {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 25px;
-      color: #2c3e50;
-      text-align: center;
-      font-style: italic;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+      color: #666666;
+      margin-bottom: 32px;
+      line-height: 1.5;
     }
 
     form {
-      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 16px;
+    }
+    
+    .input-row .input-group {
+      flex: 1;
     }
 
     label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-      font-style: italic;
-      color: #2c3e50;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #333333;
     }
-	  .form-container:nth-of-type(2) {
-      padding: 10px 20px;
-      max-height: 600px;
-      overflow-y: auto;
-    }
-    
+
     input[type="text"],
     input[type="password"],
     input[type="email"],
     select {
-      width: 80%;
-      padding: 10px;
-      border: 2px solid #ccc;
+      width: 100%;
+      padding: 12px 14px;
+      background-color: #f7f7f7;
+      border: 1px solid #d1d1d1;
       border-radius: 6px;
-      margin-bottom: 18px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
+      font-size: 0.9rem;
+      color: #000000;
+      font-family: inherit;
+      transition: all 0.2s ease;
     }
 
-  
-#registerForm input[type="text"],
-#registerForm input[type="password"],
-#registerForm input[type="email"],
-#registerForm select {
-  padding: 5px 8px;
-  font-size: 0.85rem;
-  margin-bottom: 10px;
-}
+    input::placeholder {
+      color: #999999;
+    }
 
-#registerForm label {
-  margin-bottom: 4px;
-  font-size: 0.85rem;
-}
-
-
-    input[type="text"]:focus,
-    input[type="password"]:focus,
-    input[type="email"]:focus,
-    select:focus {
-      border-color: #2980b9;
+    input:focus, select:focus {
+      border-color: #000000;
+      background-color: #ffffff;
       outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .password-wrapper input {
+      padding-right: 40px !important; 
+    }
+
+    .peek-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #666666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      padding: 0;
+      transition: color 0.2s ease;
+    }
+
+    .peek-btn:hover {
+      color: #000000;
     }
 
     input[type="submit"] {
-      width: 80%;
-      padding: 12px;
-      background-color: #2980b9;
-      color: white;
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      background-color: #000000;
+      color: #ffffff;
       border: none;
       border-radius: 6px;
-      font-size: 1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.2s ease;
     }
 
     input[type="submit"]:hover:not(:disabled) {
-      background-color: #1c6690;
+      background-color: #333333;
     }
 
     input[type="submit"]:disabled {
-      background-color: #7f9bbd;
+      background-color: #cccccc;
+      color: #666666;
       cursor: not-allowed;
     }
 
     .toggle-link {
-      font-size: 0.9rem;
-      margin-top: 10px;
+      font-size: 0.875rem;
+      color: #666666;
+      margin-top: 24px;
+      text-align: center;
     }
 
     .toggle-link a {
-      color: #2980b9;
-      font-weight: bold;
+      color: #000000;
+      font-weight: 600;
       text-decoration: none;
-      cursor: pointer;
+      margin-left: 4px;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
     }
 
     .toggle-link a:hover {
-      text-decoration: underline;
+      border-color: #000000;
     }
 
     .message-box {
       width: 100%;
-      padding: 15px;
+      max-width: 400px;
+      padding: 12px 16px;
       margin-bottom: 20px;
       border-radius: 6px;
-      font-size: 1rem;
-      text-align: center;
-      font-style: italic;
-      font-weight: bold;
+      font-size: 0.9rem;
+      font-weight: 500;
       display: none;
     }
 
     .message-success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
+      background-color: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
     }
 
     .message-error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
+      background-color: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    input[readonly] {
+      background-color: #eeeeee;
+      color: #777777;
+      cursor: not-allowed;
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-      .left, .right {
-        flex: none;
-        width: 100%;
-        height: auto;
-      }
-      .left {
-        height: 200px;
-        background-size: cover;
-        background-position: center;
-      }
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      .left { width: 100%; height: 250px; flex: none; }
+      .right { width: 100%; height: auto; flex: 1; padding: 24px; justify-content: flex-start; }
+      .brand-title { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
-  <div class="left"></div>
+  
+  <div class="left">
+    <div class="brand-title">ANDROMEDA</div>
+  </div>
+
   <div class="right">
     <div id="messageBox" class="message-box"></div>
-    <!-- Login Form -->
-    <div class="form-container">
-      <h1>Welcome to Andromeda Application</h1>
+    
+    <div class="form-container" id="loginContainer">
+      <h1>Welcome Back!</h1>
+      <p class="subtitle">Sign in to continue to Andromeda Workspace Portal.</p>
+      
       <form id="loginForm">
-        <label for="loginUsername">Username:</label>
-        <input type="text" id="loginUsername" name="username" required autocomplete="username" />
-        <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" name="password" required/>
+        <div class="input-group">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" name="username" placeholder="Enter your username" required autocomplete="username" />
+        </div>
+        
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
+            <button type="button" class="peek-btn" title="Toggle password visibility">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+        
         <input type="submit" value="Login" />
       </form>
+      
       <div class="toggle-link">
-        Don't have an account?
-        <a href="#" onclick="toggleForm('register'); return false;">Create an account</a>
+        Don't have an account? 
+        <a href="#" onclick="toggleForm('register'); return false;">Sign up</a>
       </div>
     </div>
-    <!-- Register Form -->
-    <div class="form-container" style="display:none;">
-      <h1>Create Your Account</h1>
+
+
+    <div class="form-container" id="registerContainer" style="display:none;">
+      <h1>Create your Account</h1>
+      <p class="subtitle">Enter your details to register.</p>
+      
       <form id="registerForm">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
-        <label for="regUsername">Username:</label>
-        <input type="text" id="regUsername" name="username" required />
-        <label for="firstname">First Name:</label>
-        <input type="text" id="firstname" name="firstname" required />
-        <label for="lastname">Last Name:</label>
-        <input type="text" id="lastname" name="lastname" required />
-        <label for="regPassword">Password:</label>
-        <input type="password" id="regPassword" name="password" required />
-        <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required />
-        <label for="country">Country:</label>
-        <select id="country" name="country" required>
-          <option value="">Select Country</option>
-          <option value="Australia">Australia</option>
-          <option value="Canada">Canada</option>
-          <option value="Germany">Germany</option>
-          <option value="India">India</option>
-          <option value="United States">United States</option>
-        </select>
-        <label for="access">Access:</label>
-      <input type="text" value="Reader" readonly />
-      <input type="hidden" name="Access" value="Reader" />
-        <input type="submit" value="Register" />
+        
+        <div class="input-row">
+          <div class="input-group">
+            <label for="firstname">First Name</label>
+            <input type="text" id="firstname" name="firstname" placeholder="John" required />
+          </div>
+          <div class="input-group">
+            <label for="lastname">Last Name</label>
+            <input type="text" id="lastname" name="lastname" placeholder="Doe" required />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="name@company.com" required />
+        </div>
+
+        <div class="input-group">
+          <label for="regUsername">Username</label>
+          <input type="text" id="regUsername" name="username" placeholder="Choose a username" required />
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="regPassword">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="regPassword" name="password" placeholder="Min 8 characters" required />
+              <button type="button" class="peek-btn" title="Toggle password visibility">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="confirmPassword">Confirm</label>
+            <div class="password-wrapper">
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat password" required />
+              <button type="button" class="peek-btn" title="Toggle password visibility">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="country">Country</label>
+            <select id="country" name="country" required>
+              <option value="" disabled selected>Select Country</option>
+              <option value="Australia">Australia</option>
+              <option value="Canada">Canada</option>
+              <option value="Germany">Germany</option>
+              <option value="India">India</option>
+              <option value="United States">United States</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label for="accessDisplay">Access Level</label>
+            <input type="text" id="accessDisplay" value="Reader" readonly />
+            <input type="hidden" name="Access" value="Reader" />
+          </div>
+        </div>
+
+        <input type="submit" value="Get Started" />
       </form>
+      
       <div class="toggle-link">
-        Already have an account?
-        <a href="#" onclick="toggleForm('login'); return false;">Login here</a>
+        Already have an account? 
+        <a href="#" onclick="toggleForm('login'); return false;">Sign in here</a>
       </div>
     </div>
   </div>
 
   <script>
+    const BASIC_URL = '<%= request.getContextPath() %>';
+    
     $(document).ready(() => {
+
+      $('.peek-btn').on('click', function() {
+        const $input = $(this).siblings('input');
+        const $icon = $(this).find('i');
+        
+        if ($input.attr('type') === 'password') {
+          $input.attr('type', 'text');
+          $icon.removeClass('bi-eye').addClass('bi-eye-slash');
+        } else {
+          $input.attr('type', 'password');
+          $icon.removeClass('bi-eye-slash').addClass('bi-eye');
+        }
+      });
+
       function toggleForm(formType) {
         if (formType === 'login') {
-          $('#registerForm').closest('.form-container').hide();
-          $('#loginForm').closest('.form-container').fadeIn();
+          $('#registerContainer').hide();
+          $('#loginContainer').fadeIn();
         } else {
-          $('#loginForm').closest('.form-container').hide();
-          $('#registerForm').closest('.form-container').fadeIn();
+          $('#loginContainer').hide();
+          $('#registerContainer').fadeIn();
         }
       }
 
@@ -272,7 +407,7 @@
         $(`${formSelector} :input`).prop('disabled', disabled);
       }
 
-      function showMessage(message, type = 'success', duration = 3000) {
+      function showMessage(message, type = 'success', duration = 3500) {
         const box = $('#messageBox');
         box.removeClass('message-success message-error');
         box.addClass(type === 'success' ? 'message-success' : 'message-error');
@@ -286,13 +421,16 @@
         e.preventDefault();
         const username = $('#loginUsername').val().trim();
         const password = $('#loginPassword').val().trim();
+        
         if (!username || !password) {
           showMessage('Please enter both username and password.', 'error');
           return;
         }
+        
         disableForm('#loginForm', true);
+        
         $.ajax({
-          url: 'http://localhost:8080/andromeda/api/myresource/login',
+          url: BASIC_URL + '/api/myresource/login',
           type: 'POST',
           contentType: 'application/x-www-form-urlencoded',
           data: $.param({
@@ -304,12 +442,12 @@
             if (res.Status === "Success") {
               showMessage('Login successful!', 'success');
               sessionStorage.setItem('loggedInUser', JSON.stringify({
-            	  username: res.Username,
-            	  email: res.Email,
-            	  firstname: res.Firstname,
-            	  lastname: res.Lastname,
-            	  access: res.Access 
-            	}));
+                username: res.Username,
+                email: res.Email,
+                firstname: res.Firstname,
+                lastname: res.Lastname,
+                access: res.Access 
+              }));
               setTimeout(() => {
                 window.location.href = 'amxNavigatorHome.jsp';
               }, 1000);
@@ -355,7 +493,7 @@
         disableForm('#registerForm', true);
 
         $.ajax({
-          url: 'http://localhost:8080/andromeda/api/myresource/register',
+          url: BASIC_URL + '/api/myresource/register',
           type: 'POST',
           contentType: 'application/x-www-form-urlencoded',
           data: $.param({
@@ -366,7 +504,7 @@
             Password: password,
             ConfirmPassword: confirmPassword,
             Country: country,
-            Access:access
+            Access: access
           }),
           success: (response) => {
             const res = typeof response === 'string' ? JSON.parse(response) : response;

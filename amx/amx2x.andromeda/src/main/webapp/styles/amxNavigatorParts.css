@@ -8,29 +8,12 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  padding: 20px;
-  background-color: #ffffff;
+  padding: 28px 24px;
+  background-color: #f7f9fa;
   color: var(--dx-text-main);
   font-size: 13px;
 }
 
-/* Top Workspace Header Structure */
-.workspace-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.workspace-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #212529;
-  margin: 0;
-  letter-spacing: -0.2px;
-}
-
-/* Compact Table Container Boundary Layout */
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -39,7 +22,6 @@ body {
   border: 1px solid var(--dx-border) !important;
 }
 
-/* Reset layout grid properties back to clean base standards */
 table.dataTable, 
 table.table {
   border-collapse: collapse !important;
@@ -47,8 +29,6 @@ table.table {
   margin: 0 !important;
 }
 
-/* Clean Header Formatting Block */
-table.dataTable thead th,
 table.table thead th {
   background-color: #1f2937 !important;
   color: #e2e8f0 !important;
@@ -56,12 +36,29 @@ table.table thead th {
   font-size: 11px !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px;
-  padding: 10px 14px !important;
+  letter-spacing: 0.6px !important;
+   padding: 14px 32px 14px 18px !important;
+  padding-right: 30px !important; 
+  position: relative;
   border-bottom: 2px solid #334155 !important;
   border-right: 1px solid #334155 !important;
   border-top: none !important;
   border-left: none !important;
   text-align: left !important;
+}
+table.dataTable thead th {
+    background-color: #1f2937 !important;
+    color: #e2e8f0 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    position: relative !important; 
+    padding: 14px 40px !important;     
+    border-bottom: 2px solid #334155 !important;
+    border-right: 1px solid #334155 !important;
+    text-align: left !important;
+    white-space: nowrap !important;
 }
 
 table.dataTable thead .sorting:before,
@@ -70,11 +67,13 @@ table.dataTable thead .sorting_asc:before,
 table.dataTable thead .sorting_asc:after,
 table.dataTable thead .sorting_desc:before,
 table.dataTable thead .sorting_desc:after {
-  color: rgba(255,255,255,0.75) !important;
-  opacity: 1 !important;
+    position: absolute !important;
+    top: 50% !important;
+    right: 10px !important;
+    transform: translateY(-50%) !important;
+    opacity: 0.5 !important;
 }
 
-/* Dense Data Cell Micro Layout */
 table.dataTable tbody td, 
 table.table tbody td {
   padding: 10px 14px !important;
@@ -88,7 +87,6 @@ table.table tbody td {
   white-space: nowrap !important;
 }
 
-/* Dynamic Interactive Anchors */
 table.dataTable a.part-link,
 table.table a.part-link {
   color: #111827 !important;
@@ -101,8 +99,6 @@ table.table tbody tr:hover {
   background-color: #f8fafc !important;
   cursor: pointer;
 }
-
-/* --- LIGHT-TINT COMPACT STATE PILLS --- */
 
 .state-badge {
   display: inline-block;
@@ -124,4 +120,73 @@ table.table tbody tr:hover {
   margin-top: 20px;
   color: #dc3545;
   font-weight: 500;
+}
+
+.page-header {
+  width: 100%;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px 14px 0 0;
+  padding: 20px 24px;
+  margin-bottom: 0;
+  border-bottom: none;
+  box-sizing: border-box;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #374151;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.header-content {
+  display: flex;
+  flex-direction: column;
+}
+.table-container {
+  border-radius: 0 0 14px 14px;
+  border-top: none !important;
 }

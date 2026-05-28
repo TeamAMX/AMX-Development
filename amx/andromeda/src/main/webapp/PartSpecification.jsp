@@ -435,6 +435,8 @@
 </div>
 
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function receiveSelectedParts(selectedParts) {
     if (!selectedParts || selectedParts.length === 0) return;
 
@@ -453,7 +455,7 @@ function receiveSelectedParts(selectedParts) {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/linkpartspecification/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/datafetchservice/linkpartspecification/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),
@@ -488,7 +490,7 @@ function loadPartSpecificationTable() {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getcreatedpartspecification',
+        url: BASIC_URL+'/api/datafetchservice/getcreatedpartspecification',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,

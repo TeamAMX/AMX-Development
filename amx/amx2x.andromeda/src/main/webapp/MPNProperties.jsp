@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="true" %>
 <%
     String userAccess = (String) session.getAttribute("userAccess");
     if (userAccess == null) {
@@ -10,117 +10,93 @@
 <head>
 <meta charset="UTF-8" />
 <title>MPN Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <style>
+  * { box-sizing: border-box; }
+
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     margin: 0; padding: 0;
-    background: #fff;
+    background: #f7f9fa;
     color: #333;
   }
+
+  /* ===== TOPBAR ===== */
   .topbar {
     display: flex;
-    background: #f5f7fa;
-    border-bottom: 1px solid #cfd3db;
-    padding: 6px 12px;
-    font-size: 13px;
-    color: #333;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e5e9;
+    padding: 12px 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
-  .topbar > div {
+  .topbar-left {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    background: #f9fbfd;
-    border: 1px solid #cfd3db;
-    border-right: none;
-    white-space: nowrap;
+    gap: 14px;
   }
-  .topbar > div:last-child {
-    border-right: 1px solid #cfd3db;
-  }
-  .folder-box {
-    background: #e3e7eb;
-    border: 1px solid #d1d6dc;
-    width: 28px;
-    height: 28px;
+  .topbar-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f1f5f9;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    margin-right: 8px;
+    font-size: 18px;
+    color: #4b5563;
     flex-shrink: 0;
   }
-  .folder-box img {
-    width: 16px;
-    height: 16px;
-  }
-  .part-number {
+  .topbar-name {
+    font-size: 16px;
     font-weight: 700;
-    font-size: 14px;
-    padding-right: 13px;
-    padding-left: 13px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+    color: #111827;
+    margin: 0 0 2px 0;
   }
-  .description {
-    font-weight: 600;
-    font-size: 13px;
-    color: #555;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+  .topbar-type {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
   }
-  .state-box {
-    font-weight: 600;
-    font-size: 13px;
-    color: #333;
+  .topbar-right {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-  }
-  .state-label {
-    margin-right: 4px;
-  }
-  .btn-submit {
-    background-color: #5c8bff;
-    border: 1px solid #3f70ff;
-    color: white;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .btn-submit:hover { background-color: #3f70ff; }
-  .btn-evaluate {
-    background-color: #e5e7ea;
-    border: 1px solid #c6cad2;
-    color: #555;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .btn-evaluate:hover { background-color: #c6cad2; }
-  .info-box {
-    font-size: 11px;
-    color: #666;
-    padding-left: 4px;
-    line-height: 1.3;
-  }
-  .info-box strong { color: #444; }
-  .topbar > div:not(:last-child) { margin-right: -1px; }
-  .vertical-line img {
-    height: 20px;
-    width: 1px;
-    margin: 0 10px;
-  }
-  .container {
-    display: flex;
-    height: calc(100vh - 56px);
     font-size: 13px;
+    font-weight: 500;
+    color: #374151;
   }
+
+  /* ===== STATE BADGE ===== */
+  .state-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .state-badge.InWork      { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.Frozen      { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Released    { background: #dcfce7; color: #166534; }
+  .state-badge.Obsolete    { background: #fef9c3; color: #854d0e; }
+
+  /* ===== LAYOUT ===== */
+  .page-container {
+    display: flex;
+    height: calc(100vh - 65px);
+    overflow: hidden;
+  }
+
+  /* ===== SIDEBAR ===== */
   .sidebar {
     width: 19%;
     background-color: #f8f9fa;
@@ -132,435 +108,516 @@
     overflow-x: hidden;
   }
   .sidebar a {
-    display: block;
-    padding: 8px;
-    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: #4b5563;
     text-decoration: none;
-    margin-bottom: 10px;
-    border-radius: 4px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
   }
-  .sidebar a:hover { background-color: #e3e7ea; }
-  .sidebar a.active {
-    background-color: #808080;
-    color: white;
-    font-weight: bold;
-  }
+  .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
+  .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
+  .sidebar a i { width: 16px; font-size: 13px; color: #6b7280; }
+  .sidebar a.active i { color: #ffffff; }
+
+  /* ===== MAIN PANEL ===== */
   .main-panel {
     flex-grow: 1;
-    padding: 20px;
+    padding: 20px 28px;
     overflow-y: auto;
-    font-size: 13px;
     box-sizing: border-box;
   }
+
+  /* ===== TOOLBAR ===== */
   .toolbar {
-    margin-bottom: 5px;
-    padding-left: 2px;
-    margin-top: -5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
   }
   .toolbar button {
-    background: none;
-    border: none;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    margin-right: 6px;
-    vertical-align: middle;
-    padding: 2px 4px;
+    color: #4b5563;
+    font-size: 14px;
+    transition: all 0.15s;
   }
-  .toolbar button img {
-    vertical-align: middle;
-    width: 20px;
-    height: 20px;
-  }
-  .toolbar button:hover {
-    background-color: #e3f2fd;
-    border-radius: 2px;
-  }
-  table.properties {
+  .toolbar button:hover { background: #e5e7eb; color: #111827; }
+
+  /* ===== DETAILS CARD ===== */
+  .details-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e5e9;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    margin: 0 auto;
+    max-width: 1100px;
   }
-  table.properties th,
-  table.properties td {
-    padding: 12px 16px;
-    border: 1px solid #ddd;
-    vertical-align: middle;
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
+    gap: 24px 40px;
+    width: 100%;
   }
-  table.properties th {
-    background: #fafafa;
-    font-weight: bold;
-    width: 200px;
-    text-align: left;
+
+  .detail-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
   }
-  .folder-icon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 6px;
+
+  .detail-field-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4b5563;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
   }
-  .properties-container {
-    max-height: 600px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    margin-top: 0;
+
+  .detail-field-content { flex: 1; }
+
+  .detail-field-label {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 500;
+    margin-bottom: 3px;
+    text-transform: capitalize;
   }
+
+  .detail-field-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  /* ===== LOADING / ERROR ===== */
   #loadingSpinner {
     display: none;
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    font-size: 14px;
-    color: #666;
+    width: 36px;
+    height: 36px;
+    border: 3px solid #e2e5e9;
+    border-top: 3px solid #4b5563;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 40px auto;
+  }
+  @keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   #errorMessage {
-    display: none;
-    color: red;
-    margin: 10px 0;
-    font-weight: bold;
-  }
-  #editPanel {
-    display: none;
-    position: fixed;
-    top: 60px;
-    right: 20px;
-    width: 320px;
-    max-height: 80vh;
-    overflow-y: auto;
-    background: #f9fbfd;
-    border: 1px solid #cfd3db;
-    padding: 15px 15px 50px 15px;
-    box-shadow: 2px 2px 12px rgba(0,0,0,0.15);
-    z-index: 1000;
-  }
-  #editPanel.active { display: block; }
-  #editPanel .mb-3 { margin-bottom: 10px; }
-  #editPanel label {
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: block;
-  }
-  #editPanel input {
-    width: 100%;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-  }
-  #editPanel button {
-    margin-right: 10px;
-    padding: 6px 14px;
+    color: #c0392b;
+    margin: 20px;
+    text-align: center;
     font-size: 13px;
-    border-radius: 3px;
+    display: none;
+  }
+
+  /* ===== EDIT MODAL ===== */
+  #editPanel {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease;
+  }
+  #editPanel.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .edit-modal {
+    width: 560px;
+    max-width: 92%;
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+    animation: popupScale 0.2s ease;
+  }
+
+  .edit-modal h5 {
+    padding: 22px 26px;
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    border-bottom: 1px solid #eef2f7;
+  }
+
+  .edit-form-body {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 22px 26px;
+  }
+
+  .edit-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 26px;
+    border-top: 1px solid #eef2f7;
+    background: #fafbfd;
+  }
+
+  #editForm .form-control {
+    height: 42px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  #editForm .form-label {
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  @keyframes popupScale {
+    from { transform: scale(0.96); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+
+  #saveBtn {
+    background: #1f2937;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
   }
-  #saveBtn {
-    background-color: #5c8bff;
-    border: 1px solid #3f70ff;
-    color: white;
-  }
-  #saveBtn:hover { background-color: #3f70ff; }
+  #saveBtn:hover { background: #374151; }
+
   #cancelBtn {
-    background-color: #e5e7ea;
-    border: 1px solid #c6cad2;
-    color: #555;
-  }
-  #cancelBtn:hover { background-color: #c6cad2; }
-  #typeIcon {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-  }
-  .state-box .state-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-weight: 700;
+    background: #f3f4f6;
+    color: #374151;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
     font-size: 13px;
-    color: white;
-    margin-left: 8px;
-    user-select: none;
-    text-transform: uppercase;
-    min-width: 80px;
-    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
   }
-  .state-badge.InWork  { background-color: #5bc0de; }
-  .state-badge.Frozen  { background-color: #6c757d; }
-  .state-badge.Released { background-color: #28a745; color: #fff; }
-  .state-badge.Obsolete { background-color: #ffc107; color: #000; }
+  #cancelBtn:hover { background: #e5e7eb; }
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
 
+<!-- Topbar -->
 <div class="topbar">
-  <div class="left-section">
-    <div class="image-box">
-      <img id="typeIcon" src="" alt="Type Icon" />
+  <div class="topbar-left">
+    <div class="topbar-icon">
+      <i class="fa-solid fa-microchip"></i>
     </div>
-    <div class="part-info">
-      <div class="part-number" style="font-weight:700; font-size:14px;"></div>
-      <div class="part-type" style="font-size:12px; color:#666; margin-top:2px; padding-left:13px;"></div>
+    <div>
+      <div class="topbar-name" id="mpnName">MPN Properties</div>
+      <div class="topbar-type" id="mpnType">ManufacturerPartAssembly</div>
     </div>
-    <div class="vertical-line"></div>
   </div>
-  <div class="right-section">
-    <div class="state-box">
-      <span class="state-label">State:</span>
-    </div>
-    <div class="vertical-line"></div>
-    <div class="info-box"></div>
-    <div class="vertical-line"></div>
+  <div class="topbar-right">
+    <span>State:</span>
+    <div id="stateBadgeWrapper"></div>
   </div>
 </div>
 
-<div class="container">
+<div class="page-container">
+
+  <!-- Sidebar -->
   <div class="sidebar">
-    <a class="nav-link active">MPN Properties</a>
-    <a class="nav-link" href="MPNEquivalents.jsp?name=<%= request.getParameter("name") %>">Equivalents</a>
-    <a class="nav-link" href="MPNHistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-    <a class="nav-link" href="MPNLifecycle.jsp?name=<%= request.getParameter("name") %>">LifeCycle</a>
+    <a class="nav-link active" href="MPNProperties.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-microchip"></i> MPN Properties
+    </a>
+    <a class="nav-link" href="MPNEquivalents.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-code-compare"></i> Equivalents
+    </a>
+    <a class="nav-link" href="MPNHistory.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-regular fa-clock"></i> History
+    </a>
+    <a class="nav-link" href="MPNLifecycle.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-arrows-rotate"></i> LifeCycle
+    </a>
   </div>
 
+  <!-- Main Panel -->
   <div class="main-panel">
     <div class="toolbar">
-      <button id="editBtn" title="Edit">
-        <img src="https://img.icons8.com/?size=100&id=43068&format=png&color=000000" alt="Edit" />
+      <button id="editBtn" title="Edit" style="display:none;">
+        <i class="fa-solid fa-pen"></i>
       </button>
       <button id="refreshBtn" title="Refresh">
-        <img src="https://img.icons8.com/ios-glyphs/30/000000/refresh.png" alt="Refresh" />
+        <i class="fa-solid fa-arrows-rotate"></i>
       </button>
     </div>
 
     <div id="loadingSpinner"></div>
-    <div id="errorMessage" class="error"></div>
-    <table id="detailsTable" class="properties"></table>
+    <div id="errorMessage"></div>
+
+    <div class="details-card">
+      <div class="details-grid" id="detailsCard"></div>
+    </div>
   </div>
 </div>
 
-<!-- Edit Side Panel -->
+<!-- Edit Modal -->
 <div id="editPanel">
-  <h5>Edit MPN Details</h5>
-  <form id="editForm"></form>
-  <div class="mt-3">
-    <button id="saveBtn" type="button">Save</button>
-    <button id="cancelBtn" type="button">Cancel</button>
+  <div class="edit-modal">
+    <h5>Edit MPN Details</h5>
+    <div class="edit-form-body">
+      <form id="editForm"></form>
+    </div>
+    <div class="edit-footer">
+      <button id="cancelBtn" type="button">Cancel</button>
+      <button id="saveBtn" type="button">Save</button>
+    </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   const loggedInUserAccess = "<%= userAccess %>";
-</script>
-<script>
-let currentMPNData = {};
+  const BASIC_URL = '<%= request.getContextPath() %>';
 
-$(document).ready(function () {
+  let currentMPNData = {};
+
+  const fieldIcons = {
+    name:         'fa-solid fa-tag',
+    mpn:          'fa-solid fa-barcode',
+    description:  'fa-solid fa-align-left',
+    type:         'fa-solid fa-cube',
+    supertype:    'fa-solid fa-layer-group',
+    manufacturer: 'fa-solid fa-industry',
+    owner:        'fa-regular fa-user',
+    email:        'fa-regular fa-envelope',
+    createddate:  'fa-regular fa-calendar',
+    modifieddate: 'fa-regular fa-calendar-check',
+    currentstate: 'fa-solid fa-circle-dot',
+    version:      'fa-solid fa-code-branch'
+  };
+
+  const skipFields   = ['fts_document', 'objectid', 'historylist', 'connectionid', 'manufacturerid'];
+  const editableFields = ['description'];
+
+  $(document).ready(function () {
     const objectId = getQueryParam('name');
     if (!objectId) {
-        showError("No 'name' (ObjectId) parameter found in the URL.");
-        return;
+      showError("No 'name' (ObjectId) parameter found in the URL.");
+      return;
     }
 
     showLoading(true);
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getMPN',
-        method: 'GET',
-        data: { objectId },
-        dataType: 'json',
-        success: function (data) {
-            if (!data || $.isEmptyObject(data)) {
-                showError("No details found for ObjectId: " + objectId);
-                return;
-            }
-            currentMPNData = data;
-            sessionStorage.setItem('mpnInfo', JSON.stringify(data));
-            populateTopBar(data);
-            populateTable(data);
-            if (loggedInUserAccess.toLowerCase() === 'admin' || loggedInUserAccess.toLowerCase() === 'leader') {
-                $('#editBtn').show();
-            }
-        },
-        error: function () {
-            showError("Error fetching MPN details.");
-        },
-        complete: function () {
-            showLoading(false);
+      url: BASIC_URL + '/api/navigatorutilites/getMPN',
+      method: 'GET',
+      data: { objectId },
+      dataType: 'json',
+      success: function (data) {
+        if (!data || $.isEmptyObject(data)) {
+          showError("No details found for ObjectId: " + objectId);
+          return;
         }
+        currentMPNData = data;
+        sessionStorage.setItem('mpnInfo', JSON.stringify(data));
+        populateTopBar(data);
+        populateCard(data);
+
+        if (loggedInUserAccess.toLowerCase() === 'admin' ||
+            loggedInUserAccess.toLowerCase() === 'leader') {
+          $('#editBtn').show();
+        }
+      },
+      error: function () {
+        showError("Error fetching MPN details.");
+      },
+      complete: function () {
+        showLoading(false);
+      }
     });
 
+    // Edit button
     $('#editBtn').on('click', function () {
-        if (!$.isEmptyObject(currentMPNData)) {
-            openEditPanel(currentMPNData);
-        } else {
-            alert("Data not loaded yet.");
-        }
+      if (!$.isEmptyObject(currentMPNData)) {
+        openEditPanel(currentMPNData);
+      } else {
+        alert("Data not loaded yet.");
+      }
     });
 
+    // Cancel
     $('#cancelBtn').on('click', closeEditPanel);
 
+    // Save
     $('#saveBtn').on('click', function () {
-        const objectId = getQueryParam('name');
-        const descriptionValue = $('[name="description"]').val();
+      const descriptionValue = $('[name="description"]').val();
+      if (!descriptionValue || descriptionValue.trim() === '') {
+        alert("Description cannot be empty.");
+        return;
+      }
 
-        if (!descriptionValue || descriptionValue.trim() === '') {
-            alert("Description cannot be empty.");
-            return;
+      $.ajax({
+        url: BASIC_URL + '/api/navigatorutilites/updateMPN/' + encodeURIComponent(objectId),
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ description: descriptionValue }),
+        success: function () {
+          alert("MPN updated successfully!");
+          location.reload();
+        },
+        error: function (xhr) {
+          let msg = "Failed to update MPN.";
+          try {
+            const errResp = JSON.parse(xhr.responseText);
+            if (errResp.Message) msg = errResp.Message;
+          } catch (e) {}
+          alert(msg);
         }
+      });
 
-        const updatedData = { description: descriptionValue };
-
-        $.ajax({
-            url: 'http://localhost:8080/andromeda/api/navigatorutilites/updateMPN/' + encodeURIComponent(objectId),
-            method: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(updatedData),
-            success: function () {
-                alert("MPN updated successfully!");
-                location.reload();
-            },
-            error: function (xhr) {
-                let msg = "Failed to update MPN.";
-                try {
-                    const errResp = JSON.parse(xhr.responseText);
-                    if (errResp.Message) msg = errResp.Message;
-                } catch (e) {}
-                alert(msg);
-            }
-        });
-
-        closeEditPanel();
+      closeEditPanel();
     });
 
+    // Refresh
     $('#refreshBtn').on('click', function () {
-        location.reload();
+      location.reload();
     });
-});
+  });
 
-function populateTopBar(data) {
-    $('.part-number').text(data.name || '');
-    $('.part-type').text(data.type || '');
-
-    // MPN always uses a circuit-board / component icon
-    $('#typeIcon').attr('src', 'https://img.icons8.com/?size=50&id=13114&format=png&color=000000');
-
-    $('.state-box .state-label').remove();
+  /* ── Populate topbar ── */
+  function populateTopBar(data) {
+    $('#mpnName').text(data.name || 'MPN Properties');
+    $('#mpnType').text((data.type || '') + (data.supertype ? ' · ' + data.supertype : ''));
     if (data.currentstate) {
-        const state = data.currentstate;
-        const badge = $('<span>')
-            .addClass('state-badge ' + state.replace(/\s/g, ''))
-            .text(state);
-        $('<span>')
-            .addClass('state-label')
-            .text('State: ')
-            .append(badge)
-            .prependTo('.state-box');
+      const state = data.currentstate;
+      const cls   = state.replace(/\s/g, '');
+      $('#stateBadgeWrapper').html(
+        '<span class="state-badge ' + cls + '">' + state + '</span>'
+      );
     }
-}
+  }
 
-function populateTable(mpn) {
-    const table = $('#detailsTable');
-    table.empty();
-    $('#errorMessage').hide();
-    $('#detailsTable').show();
+  /* ── Populate detail card ── */
+  function populateCard(mpn) {
+    const card = $('#detailsCard');
+    card.empty();
 
-    // Fields to skip entirely
-    const skip = ['fts_document', 'objectid', 'historylist', 'connectionid', 'manufacturerid'];
-
-    // Show name first
-    if (mpn.name) {
-        const row = $('<tr>');
-        row.append($('<th>').text('Name'));
-        row.append($('<td>').text(mpn.name));
-        table.append(row);
-    }
+    // Name always first
+    if (mpn.name) card.append(buildField('name', 'Name', mpn.name));
 
     for (const key in mpn) {
-        if (!mpn.hasOwnProperty(key)) continue;
-        if (skip.includes(key.toLowerCase())) continue;
-        if (key.toLowerCase() === 'name') continue; // already shown above
-        if (key.toLowerCase() === 'currentstate' && (!mpn[key] || mpn[key].trim() === '')) continue;
-
-        const row = $('<tr>');
-        row.append($('<th>').text(prettyLabel(key.toLowerCase())));
-        row.append($('<td>').text(mpn[key] ?? 'N/A'));
-        table.append(row);
+      if (!mpn.hasOwnProperty(key)) continue;
+      if (skipFields.includes(key.toLowerCase())) continue;
+      if (key.toLowerCase() === 'name') continue;
+      if (key.toLowerCase() === 'currentstate' && (!mpn[key] || mpn[key].trim() === '')) continue;
+      card.append(buildField(key.toLowerCase(), prettyLabel(key.toLowerCase()), mpn[key] ?? 'N/A'));
     }
-}
+  }
 
-function openEditPanel(mpn) {
+  function buildField(key, label, value) {
+	    const icon = fieldIcons[key] || 'fa-solid fa-circle-dot';
+	    return '<div class="detail-field">' +
+	             '<div class="detail-field-icon"><i class="' + icon + '"></i></div>' +
+	             '<div class="detail-field-content">' +
+	               '<div class="detail-field-label">' + label + '</div>' +
+	               '<div class="detail-field-value">' + value + '</div>' +
+	             '</div>' +
+	           '</div>';
+	}
+
+  /* ── Edit panel ── */
+  function openEditPanel(mpn) {
     const form = $('#editForm');
     form.empty();
 
-    const editableFields = ['description'];
-    const skip = ['objectid', 'historylist', 'fts_document', 'connectionid', 'manufacturerid'];
-
     for (const key in mpn) {
-        if (!mpn.hasOwnProperty(key)) continue;
-        if (skip.includes(key.toLowerCase())) continue;
-        if (key.toLowerCase() === 'currentstate' && (!mpn[key] || mpn[key].trim() === '')) continue;
+      if (!mpn.hasOwnProperty(key)) continue;
+      if (skipFields.includes(key.toLowerCase())) continue;
+      if (key.toLowerCase() === 'currentstate' && (!mpn[key] || mpn[key].trim() === '')) continue;
 
-        const rawValue = mpn[key] ?? '';
-        const safeId = 'edit_' + key.replace(/[^a-zA-Z0-9]/g, '_');
-        const lowerKey = key.toLowerCase();
-        const isEditable = editableFields.includes(lowerKey);
+      const lowerKey  = key.toLowerCase();
+      const safeId    = 'edit_' + key.replace(/[^a-zA-Z0-9]/g, '_');
+      const isEdit    = editableFields.includes(lowerKey);
 
-        const formGroup = $('<div class="mb-3"></div>');
-        const labelEl = $('<label></label>')
-            .addClass('form-label')
-            .attr('for', safeId)
-            .text(prettyLabel(lowerKey));
-        const inputEl = $('<input>')
-            .attr('type', 'text')
-            .addClass('form-control')
-            .attr('id', safeId)
-            .attr('name', lowerKey)
-            .val(rawValue);
+      const group = $('<div class="mb-3"></div>');
+      group.append(
+        $('<label class="form-label"></label>').attr('for', safeId).text(prettyLabel(lowerKey))
+      );
+      const input = $('<input type="text" class="form-control">')
+        .attr('id', safeId)
+        .attr('name', lowerKey)
+        .val(mpn[key] ?? '');
+      if (!isEdit) input.attr('readonly', true);
 
-        if (!isEditable) inputEl.attr('readonly', true);
-
-        formGroup.append(labelEl).append(inputEl);
-        form.append(formGroup);
+      group.append(input);
+      form.append(group);
     }
 
     $('#editPanel').addClass('active');
-}
+  }
 
-function closeEditPanel() {
+  function closeEditPanel() {
     $('#editPanel').removeClass('active');
-}
+  }
 
-function getQueryParam(param) {
+  /* ── Helpers ── */
+  function getQueryParam(param) {
     return new URLSearchParams(window.location.search).get(param);
-}
+  }
 
-function showLoading(show) {
+  function showLoading(show) {
     $('#loadingSpinner').css('display', show ? 'block' : 'none');
-}
+  }
 
-function showError(msg) {
+  function showError(msg) {
     $('#errorMessage').text(msg).show();
-    $('#detailsTable').hide();
+    $('#detailsCard').hide();
     showLoading(false);
-}
+  }
 
-function prettyLabel(key) {
+  function prettyLabel(key) {
     const map = {
-        mpn:          "MPN",
-        name:         "Name",
-        title:        "Title",
-        type:         "Type",
-        supertype:    "Supertype",
-        manufacturer: "Manufacturer",
-        description:  "Description",
-        owner:        "Owner",
-        createddate:  "Created Date",
-        modifieddate: "Modified Date",
-        currentstate: "Current State"
+      mpn:          'MPN',
+      name:         'Name',
+      title:        'Title',
+      type:         'Type',
+      supertype:    'Supertype',
+      manufacturer: 'Manufacturer',
+      description:  'Description',
+      owner:        'Owner',
+      createddate:  'Created Date',
+      modifieddate: 'Modified Date',
+      currentstate: 'Current State'
     };
-    return map[key] || key;
-}
+    return map[key] || key.charAt(0).toUpperCase() + key.slice(1);
+  }
 </script>
 </body>
 </html>

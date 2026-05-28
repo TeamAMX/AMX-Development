@@ -92,6 +92,8 @@
 </div>
 
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function loadLinkedTable() {
     const objectid = new URLSearchParams(window.location.search).get('name');
     if (!objectid) {
@@ -100,7 +102,7 @@ function loadLinkedTable() {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getLinkedAPNs',
+        url: BASIC_URL+'/api/navigatorutilites/getLinkedAPNs',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -210,7 +212,7 @@ function receiveSelectedPart(selectedParts) {
     const objectid = new URLSearchParams(window.location.search).get('name');
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/linkAPN/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/navigatorutilites/linkAPN/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),

@@ -50,7 +50,6 @@
       <button id="editBtn" title="Edit">
         <img src="https://img.icons8.com/?size=100&id=43068&format=png&color=000000" alt="Edit" />
       </button>
-      <button title="History"></button>
       <button id="refreshBtn" title="Refresh">
         <img src="https://img.icons8.com/ios-glyphs/30/000000/refresh.png" alt="Refresh" />
       </button>
@@ -79,6 +78,8 @@
     const loggedInUserAccess = "<%= userAccess %>";
 </script>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 let currentPartData = {};
 
 $(document).ready(function () {
@@ -91,7 +92,7 @@ $(document).ready(function () {
     showLoading(true);
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/infos',
+        url: BASIC_URL+'/api/datafetchservice/infos',
         method: 'GET',
         data: { objectId },
         dataType: 'json',
@@ -140,7 +141,7 @@ $(document).ready(function () {
         };
 
         $.ajax({
-            url: 'http://localhost:8080/andromeda/api/datafetchservice/updatepart/' + encodeURIComponent(objectId),
+            url: BASIC_URL+'/api/datafetchservice/updatepart/' + encodeURIComponent(objectId),
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(updatedData),

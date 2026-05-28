@@ -353,6 +353,8 @@
   const loggedInUserAccess = "<%= userAccess %>";
 </script>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 let currentMPNData = {};
 
 $(document).ready(function () {
@@ -365,7 +367,7 @@ $(document).ready(function () {
     showLoading(true);
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getMPN',
+        url: BASIC_URL+'/api/navigatorutilites/getMPN',
         method: 'GET',
         data: { objectId },
         dataType: 'json',
@@ -412,7 +414,7 @@ $(document).ready(function () {
         const updatedData = { description: descriptionValue };
 
         $.ajax({
-            url: 'http://localhost:8080/andromeda/api/navigatorutilites/updateMPN/' + encodeURIComponent(objectId),
+            url: BASIC_URL+'/api/navigatorutilites/updateMPN/' + encodeURIComponent(objectId),
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(updatedData),

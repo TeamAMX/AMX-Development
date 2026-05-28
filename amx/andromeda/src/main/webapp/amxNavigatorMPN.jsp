@@ -85,11 +85,13 @@
   </div>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(function () {
       const desiredHeaders = ['name', 'manufacturer', 'supertype', 'type', 'description', 'createddate', 'owner', 'email', 'currentstate'];
 
       $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/latestmpns',
+        url: BASIC_URL+'/api/datafetchservice/latestmpns',
         method: 'GET',
         dataType: 'json',
         success: function (data) {

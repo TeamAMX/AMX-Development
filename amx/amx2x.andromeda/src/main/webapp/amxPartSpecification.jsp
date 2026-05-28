@@ -396,6 +396,7 @@ forn-wrap-mode:nowrap;
     </div>
 </div>
 <script>
+const BASIC_URL = '<%= request.getContextPath() %>';
 function receiveSelectedParts(selectedParts) {
     if (!selectedParts || selectedParts.length === 0) {
         return; 
@@ -429,7 +430,7 @@ function loadPartControlTable() {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getpartspecification',
+        url: BASIC_URL+'/api/datafetchservice/getpartspecification',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,

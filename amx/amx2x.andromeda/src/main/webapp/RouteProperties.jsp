@@ -109,6 +109,8 @@
     const loginUser = "<%= username %>"; 
 </script>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 $(document).ready(function () {
     const objectId = getQueryParam('name');
     if (!objectId) {
@@ -119,7 +121,7 @@ $(document).ready(function () {
     showLoading(true);
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getinfospc',
+        url: BASIC_URL+'/api/datafetchservice/getinfospc',
         method: 'GET',
         data: { objectId },
         dataType: 'json',
@@ -130,7 +132,7 @@ $(document).ready(function () {
             }
             populateTable(data);
             $.ajax({
-                url: 'http://localhost:8080/andromeda/api/datafetchservice/checkAssignee',
+                url: BASIC_URL+'/api/datafetchservice/checkAssignee',
                 method: 'GET',
                 data: {
                     objectid: objectId,

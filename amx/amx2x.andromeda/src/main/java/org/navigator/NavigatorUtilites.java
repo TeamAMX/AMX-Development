@@ -50,7 +50,7 @@ import jakarta.ws.rs.core.Response.Status;
 @Path("/navigatorutilites")
 public class NavigatorUtilites {
 
-    public static final String url = "jdbc:postgresql://localhost:5432/Andromeda";
+    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
 

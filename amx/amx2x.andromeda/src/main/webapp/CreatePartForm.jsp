@@ -4,160 +4,143 @@
   <meta charset="UTF-8" />
   <title>Create Part</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <style>
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-    font-family: 'Inter', sans-serif;
+html, body {
+    height: 100%;
+    overflow: hidden; 
+    font-family: 'Inter', -apple-system, sans-serif;
     margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: transparent;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.10);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    z-index: -1;
 }
 
 #createPartForm {
     width: 100%;
-    max-width: 560px;
-    max-height: 82vh;
-    overflow-y: auto;
+    height: 100vh;
     background: #ffffff;
     border-radius: 18px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.18);
     display: flex;
     flex-direction: column;
-    padding: 0;
+    overflow: hidden;
+    border: none;
+    box-shadow: none;
 }
 
 h2 {
     margin: 0;
-    padding: 22px 24px;
-    font-size: 1.15rem;
+    padding: 24px 30px 16px;
+    font-size: 24px;
     font-weight: 700;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #eef2f7;
+    color: #111827;
+    flex: 0 0 auto; 
     background: #ffffff;
-    border-radius: 18px 18px 0 0;
+    z-index: 10;
 }
 
 .form-body {
-    overflow-y: auto;
-    padding: 22px 24px;
-    max-height: calc(82vh - 140px);
+    flex: 1 1 auto; 
+    min-height: 0; 
+    overflow-y: auto; 
+    padding: 24px 30px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 18px;
 }
 
-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
-    margin-bottom: 6px;
-    display: block;
+.form-body::-webkit-scrollbar {
+    width: 8px;
 }
-
-textarea,
-select,
-input {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
+.form-body::-webkit-scrollbar-track {
+    background: transparent;
 }
-
-textarea:focus,
-input:focus {
-    border-color: #4b5563;
-    box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.12);
-    outline: none;
+.form-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
 }
-input[readonly], textarea[readonly] {
-    background-color: #f3f4f6;
-    color: #6b7280;
+.form-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
-
-#inputDescription { min-height: 80px; resize: vertical; }
-#inputResponsibleEngineer { height: 38px; resize: none; }
 
 .form-footer {
-    padding: 16px 24px;
-    border-top: 1px solid #e5e7eb;
-    background: #fafbfc;
+    padding: 16px 30px;
+    border-top: 1px solid #eef2f7;
+    background: #ffffff; 
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    border-radius: 0 0 18px 18px;
+    gap: 12px;
+    flex: 0 0 auto; 
+    z-index: 10;
 }
 
 .btn-submit {
     min-width: 110px;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 0.9rem;
+    padding: 0 20px;
+    height: 40px;
+    border-radius: 6px;
+    font-size: 14px;
     font-weight: 600;
     border: none;
     cursor: pointer;
-    background: #111827;
+    background: #0f172a; 
     color: white;
+    transition: background 0.2s;
 }
-
-.btn-submit:hover { background: #1f2937; }
+.btn-submit:hover { background: #334155; }
 
 .btn-cancel {
     min-width: 110px;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 0.9rem;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 6px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background: #f1f5f9; 
+    color: #475569;
+    border: none;
+    transition: background 0.2s;
 }
-
-.btn-cancel:hover { background: #e5e7eb; }
+.btn-cancel:hover { background: #e2e8f0; }
 
 .mb-3 { margin-bottom: 0; }
 
-select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #d6dbe3;
-    border-radius: 8px;
+label {
     font-size: 13px;
-    font-family: 'Inter', sans-serif;
-
-    background-color: #ffffff;
-    color: #111827;
-
-    transition: all 0.15s ease;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+    display: block;
 }
 
-select:hover {
-    border-color: #9ca3af;
+select, textarea, input {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    border-radius: 6px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease;
+    width: 100%;
 }
 
-select:focus {
-    border-color: #4b5563;
-    box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.12);
+select:focus, textarea:focus, input:focus { 
+    border-color: #6b7280 !important; 
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
     outline: none;
 }
+
+input[readonly], textarea[readonly] {
+    background-color: #e2e8f0 !important;
+    color: #64748b !important;
+    cursor: not-allowed;
+}
+
+#inputDescription { min-height: 80px; resize: vertical; }
+#inputResponsibleEngineer { height: 40px; resize: none; }
 </style>
 </head>
 <body>
@@ -212,6 +195,8 @@ select:focus {
   </form>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     window.addEventListener('DOMContentLoaded', async () => {
       const supertypeSelect = document.getElementById('supertype');
       const typeSelect = document.getElementById('type');
@@ -224,18 +209,13 @@ select:focus {
       
       const cancelBtn = document.getElementById('cancelCreatePartBtn');
 
+      // Updated Cancel Logic using postMessage
       cancelBtn.addEventListener('click', () => {
-
-          if (window.parent) {
-
-              const iframe = window.parent.document.getElementById('contentFrame');
-              if (iframe) {
-                  iframe.src = '';
-              }
-              const homepage = window.parent.document.getElementById('homepageWelcome');
-              if (homepage) {
-                  homepage.style.display = 'flex';
-              }
+          const isInIframe = window.self !== window.top;
+          if (isInIframe) {
+              window.parent.postMessage({ action: 'closeOnly' }, '*');
+          } else {
+              window.close();
           }
       });
 
@@ -243,7 +223,7 @@ select:focus {
 
       // Load dropdown data
       try {
-        const response = await fetch('http://localhost:8080/andromeda/api/db/dropdowns');
+        const response = await fetch(BASIC_URL+'/api/db/dropdowns');
         dropdownData = await response.json();
 
         dropdownData.superTypes = dropdownData.superTypes || [];
@@ -396,7 +376,7 @@ select:focus {
 
     	    // Submit data
     	    try {
-    	        const res = await fetch('http://localhost:8080/andromeda/api/navigatorutilites/create', {
+    	        const res = await fetch(BASIC_URL+'/api/navigatorutilites/create', {
     	            method: 'POST',
     	            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     	            credentials: 'include',
@@ -414,25 +394,23 @@ select:focus {
     	            + "Name: " + formData.APN;
     	        alert(successMessage);
 
-    	        const objectId = result.ObjectId;
-
+    	        const objectId = result.ObjectId; 
+                
+                // Updated loadProperties Logic using postMessage
     	        if (objectId) {
-
-    	            if (window.parent) {
-
-    	                const iframe = window.parent.document.getElementById('contentFrame');
-
-    	                if (iframe) {
-    	                    iframe.src = 'Properties.jsp?name=' + encodeURIComponent(objectId);
-    	                }
-
-    	                const homepage = window.parent.document.getElementById('homepageWelcome');
-
-    	                if (homepage) {
-    	                    homepage.style.display = 'none';
-    	                }
-    	            }
-
+                    const isInIframe = window.self !== window.top;
+                    if (isInIframe) {
+                        window.parent.postMessage({
+                            action: 'loadProperties',
+                            type: 'part',
+                            id: objectId
+                        }, '*');
+                    } else {
+                        if (window.opener && window.opener.loadPartPropertiesInIframe) {
+                            window.opener.loadPartPropertiesInIframe(objectId); 
+                        }
+                        window.close();
+                    }
     	        } else {
     	            alert('Could not retrieve the ID for the new part.');
     	        }

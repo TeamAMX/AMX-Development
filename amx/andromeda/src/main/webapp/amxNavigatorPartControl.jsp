@@ -80,9 +80,11 @@
     <div class="error" id="errorMessage"></div>
   </div>
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(function () {
       $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getallpartcontrol',
+        url: BASIC_URL+'/api/datafetchservice/getallpartcontrol',
         method: 'GET',
         dataType: 'json',
         success: function (response) {

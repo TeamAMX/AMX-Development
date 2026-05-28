@@ -326,6 +326,8 @@ display: none;
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
   function loadPartPropertiesInIframe(objectId) {
 	  const iframe = document.getElementById('contentFrame');
 	  iframe.src = 'Properties.jsp?name=' + encodeURIComponent(objectId);
@@ -369,7 +371,7 @@ display: none;
     	  document.getElementById('emailDisplay').textContent = user.email || '';
     	  document.getElementById('accessDisplay').textContent = user.access || '';
 
-    	  fetch('http://localhost:8080/andromeda/api/navigatorutilites/login', {
+    	  fetch(BASIC_URL+'/api/navigatorutilites/login', {
     	    method: 'POST',
     	    headers: {
     	      'Content-Type': 'application/x-www-form-urlencoded'
@@ -400,7 +402,7 @@ display: none;
     	  let dropdownData = {};
 
     	  try {
-    	    const response = await fetch('http://localhost:8080/andromeda/api/db/dropdowns');
+    	    const response = await fetch(BASIC_URL+'/api/db/dropdowns');
     	    dropdownData = await response.json();
 
     	    dropdownData.superTypes.forEach(supertype => {
@@ -483,7 +485,7 @@ display: none;
     	    }
 
     	    try {
-    	      const res = await fetch('http://localhost:8080/andromeda/api/navigatorutilites/create', {
+    	      const res = await fetch(BASIC_URL+'/api/navigatorutilites/create', {
     	        method: 'POST',
     	        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     	        credentials: 'include',
@@ -514,10 +516,7 @@ display: none;
         if (url === 'amxDataFetch.jsp') {
           iframe.style.backgroundImage = 'none';
           iframe.style.backgroundColor = 'white';
-        } else {
-          iframe.style.backgroundImage = "url('andromeda.png')";
-          iframe.style.backgroundColor = '';
-        }
+        } 
       }
     
     document.getElementById('createPartLink').addEventListener('click', function (e) {

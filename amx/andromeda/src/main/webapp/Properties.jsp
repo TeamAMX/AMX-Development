@@ -438,6 +438,8 @@ table.properties th {
     const loggedInUserAccess = "<%= userAccess %>";
 </script>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 let currentPartData = {};
 
 $(document).ready(function () {
@@ -450,7 +452,7 @@ $(document).ready(function () {
     showLoading(true);
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/infos',
+        url: BASIC_URL+'/api/datafetchservice/infos',
         method: 'GET',
         data: { objectId },
         dataType: 'json',
@@ -499,7 +501,7 @@ $(document).ready(function () {
         };
 
         $.ajax({
-            url: 'http://localhost:8080/andromeda/api/datafetchservice/updatepart/' + encodeURIComponent(objectId),
+            url: BASIC_URL+'/api/datafetchservice/updatepart/' + encodeURIComponent(objectId),
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(updatedData),

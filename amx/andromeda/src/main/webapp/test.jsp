@@ -20,6 +20,8 @@
 
 <script>
 
+const BASIC_URL = '<%= request.getContextPath() %>';
+
 $(document).ready(function () {
 
     $("#manufacturer").autocomplete({
@@ -30,7 +32,7 @@ $(document).ready(function () {
 
             $.ajax({
 
-                url: "http://localhost:8080/andromeda/api/db/manufacturers",
+                url: BASIC_URL+"/api/db/manufacturers",
                 method: "GET",
                 dataType: "json",
 

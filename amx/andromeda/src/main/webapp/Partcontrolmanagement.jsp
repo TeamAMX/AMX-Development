@@ -459,6 +459,8 @@ forn-wrap-mode:nowrap;
     </div>
     </div>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function receiveSelectedParts(selectedParts) {
     if (!selectedParts || selectedParts.length === 0) {
         return; 
@@ -488,7 +490,7 @@ function loadPartTable() {
         return;
     }
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getlinkedpart',
+        url: BASIC_URL+'/api/datafetchservice/getlinkedpart',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -556,7 +558,7 @@ function loadAddExistingPartTable() {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getaddexisting',
+        url: BASIC_URL+'/api/datafetchservice/getaddexisting',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,

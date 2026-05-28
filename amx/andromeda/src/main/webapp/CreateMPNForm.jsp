@@ -284,6 +284,8 @@
   </form>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(function () {
 
       const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
@@ -324,7 +326,7 @@
 
         source: function (request, response) {
         	  $.ajax({
-        	    url: 'http://localhost:8080/andromeda/api/db/manufacturers',
+        	    url:BASIC_URL+'/api/db/manufacturers',
         	    method: 'GET',
         	    dataType: 'json',
         	    data: { search: request.term },
@@ -381,7 +383,7 @@
         }
 
         try {
-          const res = await fetch('http://localhost:8080/andromeda/api/navigatorutilites/createMPN', {
+          const res = await fetch(BASIC_URL+'/api/navigatorutilites/createMPN', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             credentials: 'include',

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -121,11 +121,88 @@
   .dataTables_paginate,
   .dataTables_length,
   .dataTables_filter { display: none !important; }
+  /* ===== PAGE HEADER ===== */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e5e9;
+  border-radius: 12px 12px 0 0;
+  padding: 20px 22px;
+  border-bottom: none;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #1f2937;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.container {
+  border-radius: 0 0 12px 12px;
+  border-top: none;
+}
+  
 </style>
 
 </head>
 <body>
-  <h1>Persons List</h1>
+  <div class="page-header">
+  <div class="header-left">
+    <div class="header-icon">
+      <i class="fa-solid fa-users"></i>
+    </div>
+    <div>
+      <div class="header-title">Persons List</div>
+      <div class="header-subtitle">
+        View and manage person information
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <i class="fa-solid fa-list"></i>
+    <span id="recordCount"> Records</span>
+  </div>
+</div>
   <div class="container">
     <table id="personsTable" class="display" style="width:100%">
       <thead>
@@ -144,9 +221,11 @@
   </div>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(function () {
       $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/persons',
+        url: BASIC_URL+'/api/datafetchservice/persons',
         method: 'GET',
         dataType: 'json',
         success: function (data) {
@@ -154,7 +233,7 @@
             $('#errorMessage').text('No persons data found.');
             return;
           }
-
+          $('#recordCount').text(data.length + ' Records');
           $('#personsTable').DataTable({
     		data: data,
     		columns: [

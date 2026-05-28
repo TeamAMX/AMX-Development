@@ -252,6 +252,9 @@
 </div>
 
 <script>
+
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function loadMPNTable() {
     const objectid = new URLSearchParams(window.location.search).get('name');
     if (!objectid) {
@@ -260,7 +263,7 @@ function loadMPNTable() {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getLinkedMPNs',
+        url: BASIC_URL+'/api/navigatorutilites/getLinkedMPNs',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -392,7 +395,7 @@ function receiveSelectedMPNs(selectedMPNs) {
     const objectid = new URLSearchParams(window.location.search).get('name');
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/linkMPNs/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/navigatorutilites/linkMPNs/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedMPNs),

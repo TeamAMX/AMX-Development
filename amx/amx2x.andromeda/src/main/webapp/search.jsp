@@ -177,6 +177,8 @@
   <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(function () {
       const $errorMessage = $('#errorMessage');
       const $resultsTable = $('#example');
@@ -217,7 +219,7 @@
 
         showLoading(true);
         $.ajax({
-        	  url: 'http://localhost:8080/andromeda/api/searchdata/popupsearch',
+        	  url: BASIC_URL+'/api/searchdata/popupsearch',
         	  method: 'GET',
         	  data: { name: query },
         	  dataType: 'json',

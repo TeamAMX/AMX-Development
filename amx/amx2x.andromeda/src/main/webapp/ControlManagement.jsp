@@ -305,7 +305,7 @@
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part Control" id="openCreatePanelBtn">
             <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add" style="width:20px height:20px;">
         </button>
-        <button class="btn btn-light" data-bs-toggle="tooltip" title="Add Existing Part" id="addExistingpart">
+        <button class="btn btn-light" data-bs-toggle="tooltip" title="Add Existing Part Control" id="addExistingpart">
             <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
         </button>
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
@@ -328,6 +328,7 @@
 </div>
 <script>
 
+const BASIC_URL = '<%= request.getContextPath() %>';
 function receiveSelectedParts(selectedParts) {
     if (!selectedParts || selectedParts.length === 0) return;
 
@@ -346,7 +347,7 @@ function receiveSelectedParts(selectedParts) {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/linkpartcontrol/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/datafetchservice/linkpartcontrol/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),
@@ -382,7 +383,7 @@ function loadPartControlTable() {
         return;
     }
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getcreatedpartcontrol',
+        url: BASIC_URL+'/api/datafetchservice/getcreatedpartcontrol',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,

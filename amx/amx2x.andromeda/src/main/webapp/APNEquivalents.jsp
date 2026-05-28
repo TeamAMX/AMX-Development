@@ -204,6 +204,8 @@
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     padding: 10px 12px !important;
+    padding-right:30px !important;
+    position: relative;
     border-bottom: 2px solid #334155 !important;
     border-right: 1px solid #334155 !important;
     white-space: nowrap !important;
@@ -311,6 +313,8 @@
 </div>
 
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function loadMPNTable() {
     const objectid = new URLSearchParams(window.location.search).get('name');
     if (!objectid) {
@@ -319,7 +323,7 @@ function loadMPNTable() {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getLinkedMPNs',
+        url: BASIC_URL+'/api/navigatorutilites/getLinkedMPNs',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -451,7 +455,7 @@ function receiveSelectedMPNs(selectedMPNs) {
     const objectid = new URLSearchParams(window.location.search).get('name');
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/linkMPNs/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/navigatorutilites/linkMPNs/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedMPNs),

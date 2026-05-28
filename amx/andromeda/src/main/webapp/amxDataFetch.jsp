@@ -67,6 +67,8 @@
     </table>
   </div>
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(function () {
       let dataTable;
       $('#fetchBtn').click(function () {
@@ -79,7 +81,7 @@
           alert('Please enter an Object ID');
           return;
         }
-        let url = 'http://localhost:8080/andromeda/api/datafetchservice/latestparts';
+        let url = BASIC_URL+'/api/datafetchservice/latestparts';
         let data = { objectId };
         if (field) {
           url += 'info';

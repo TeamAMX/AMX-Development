@@ -10,14 +10,17 @@
 <head>
 <meta charset="UTF-8" />
 <title>History</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     margin: 0; padding: 0;
     background: #fff;
     color: #333;
   }
 
+  /* ===== TOPBAR ===== */
   .topbar {
     display: flex;
     background: #f5f7fa;
@@ -26,7 +29,6 @@
     font-size: 13px;
     color: #333;
   }
-
   .topbar > div {
     display: flex;
     align-items: center;
@@ -36,27 +38,8 @@
     border-right: none;
     white-space: nowrap;
   }
-
-  .topbar > div:last-child {
-    border-right: 1px solid #cfd3db;
-  }
-  .folder-box {
-    background: #e3e7eb;
-    border: 1px solid #d1d6dc;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
-
-  .folder-box img {
-    width: 16px;
-    height: 16px;
-  }
-
+  .topbar > div:last-child { border-right: 1px solid #cfd3db; }
+  .topbar > div:not(:last-child) { margin-right: -1px; }
   .part-number {
     font-weight: 700;
     font-size: 14px;
@@ -64,16 +47,6 @@
     border-right: 1px solid #cfd3db;
     margin-right: 12px;
   }
-
-  .description {
-    font-weight: 600;
-    font-size: 13px;
-    color: #555;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
-  }
-
   .state-box {
     font-weight: 600;
     font-size: 13px;
@@ -84,278 +57,232 @@
     padding-right: 12px;
     border-right: 1px solid #cfd3db;
   }
-
-  .state-label {
-    margin-right: 4px;
-  }
-
-  .btn-submit {
-    background-color: #5c8bff;
-    border: 1px solid #3f70ff;
-    color: white;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-submit:hover {
-    background-color: #3f70ff;
-  }
-
-  .btn-evaluate {
-    background-color: #e5e7ea;
-    border: 1px solid #c6cad2;
-    color: #555;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-evaluate:hover {
-    background-color: #c6cad2;
-  }
-
+  .state-label { margin-right: 4px; }
   .info-box {
     font-size: 11px;
     color: #666;
     padding-left: 4px;
     line-height: 1.3;
   }
+  .vertical-line img { height: 20px; width: 1px; margin: 0 10px; }
 
-  .info-box strong {
-    color: #444;
-  }
-  .topbar > div:not(:last-child) {
-    margin-right: -1px; 
-  }
-	
-	.vertical-line img {
-  height: 20px;  
-  width: 1px;  
-  margin: 0 10px;
-}
-
+  /* ===== LAYOUT ===== */
   .container {
     display: flex;
-    height: calc(100vh - 56px); 
+    height: calc(100vh - 56px);
+    overflow: hidden;
+    width: 100%;
     font-size: 13px;
   }
 
-.sidebar {
-  width: 19%;
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-  padding: 20px;
-  font-size: 14px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden; 
-}
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 19%;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    font-size: 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: #4b5563;
+    text-decoration: none;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
+  .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
+  .sidebar a i { width: 16px; font-size: 13px; color: #6b7280; }
+  .sidebar a.active i { color: #ffffff; }
 
-.sidebar a {
-  display: block;
-  padding: 8px;
-  color: #333;
-  text-decoration: none;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
-
-.sidebar a:hover {
-  background-color: #e3e7ea; 
-}
-
-.sidebar a.active {
-  background-color:#808080;
-  color: white;
-   font-weight: bold;
-}
-
-.main-panel {
+  /* ===== MAIN PANEL ===== */
+  .main-panel {
   flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-  font-size: 13px;
+  padding: 0;
+  min-width: 0;
   box-sizing: border-box;
-}
-
-
-.container {
   display: flex;
-  height: calc(100vh - 56px); 
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.topbar {
-  display: flex;
-  background: #f5f7fa;
-  border-bottom: 1px solid #cfd3db;
-  padding: 6px 12px;
-  font-size: 13px;
-  color: #333;
-}
-
+  /* ===== TOOLBAR ===== */
   .toolbar {
-    margin-bottom: 5px;
-    padding-left: 2px;
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
   }
-  .toolbar button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-right: 6px;
-    vertical-align: middle;
-    padding: 2px 4px;
+  .toolbar h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
-  .toolbar button img {
-    vertical-align: middle;
+  .history-icon {
     width: 18px;
     height: 18px;
-    
-  }
-  .toolbar i.bi-clock-history {
-    color: #9370DB;
-    font-size: 24px; 
-    margin-right: 10px;
-}
-  .toolbar button:hover {
-    background-color: #e3f2fd;
-    border-radius: 2px;
+    filter: invert(1);
   }
 
-table.properties {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  margin: 0 auto;
-}
-
-table.properties th,
-table.properties td {
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  vertical-align: middle;
-}
-
-table.properties th {
-  background: #fafafa;
-  font-weight: bold;
-  width: 200px;
-  text-align: left;
-}
-
-
-  .folder-icon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 6px;
+  /* ===== STATE BADGES ===== */
+  .state-box .state-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
   }
+  .state-badge.InWork   { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.Frozen   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Released { background: #dcfce7; color: #166534; }
+  .state-badge.Obsolete { background: #fef9c3; color: #854d0e; }
 
-
-.properties-container {
-  max-height: 600px; 
+  /* ===== TIMELINE ===== */
+  .timeline-wrapper {
+  padding: 24px 28px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  margin-top: 0;
+  flex: 1;
 }
 
-  .nav-tabs {
-        margin-bottom: 20px;
-    }
-    #loadingSpinner {
-        display: none;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    #errorMessage {
-       
-        text-align: center;
-        margin-top: 20px;
-    }
-   #historyTable {
-    display: none;
-    margin-top: 0;
-    font-size: Arial Sans Serif;
-}
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+  }
 
-    .nav-tabs .nav-link.active {
-        background-color: #e9ecef !important; 
-        font-weight: bold;
-        border-color: #dee2e6 #dee2e6 #fff;
-    }
-    .toolbar {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px; 
-        background-color: #f8f9fa; 
-        padding: 8px 12px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-    }
-    .toolbar i.bi-clock-history {
-        color: #9370DB;
-        font-size: 1.5rem;
-        margin-right: 10px;
-    }
-    .toolbar h4 {
-        margin: 0;
-        font-weight: 600;
-        color: #444;
-        font-size: 1rem; 
-    }
-    #historyTable thead {
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 0;
+    padding: 11px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: #fff;
+    transition: background 0.15s;
+  }
+
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-item:hover { background: #f8fafc; }
+
+  /* Bullet dot on the line */
+  .timeline-dot {
+    position: absolute;
+    left: -32px;
+    top: 20px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e5e7eb;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .timeline-dot.dot-created  { background: #22c55e; box-shadow: 0 0 0 2px #22c55e33; }
+  .timeline-dot.dot-promoted { background: #3b82f6; box-shadow: 0 0 0 2px #3b82f633; }
+  .timeline-dot.dot-demoted  { background: #f97316; box-shadow: 0 0 0 2px #f9731633; }
+  .timeline-dot.dot-default  { background: #9ca3af; box-shadow: 0 0 0 2px #9ca3af33; }
+
+  /* Icon circle */
+  .timeline-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .timeline-icon.icon-created  { background: #dcfce7; color: #166534; }
+  .timeline-icon.icon-promoted { background: #dbeafe; color: #1d4ed8; }
+  .timeline-icon.icon-demoted  { background: #ffedd5; color: #c2410c; }
+  .timeline-icon.icon-default  { background: #f3f4f6; color: #4b5563; }
+
+  .timeline-content { flex: 1; }
+
+  .timeline-action {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+
+  .timeline-action .state-highlight {
+    font-weight: 700;
+  }
+
+  .state-highlight.inwork   { color: #5bc0de; }
+  .state-highlight.frozen   { color: #6c757d; }
+  .state-highlight.released { color: #28a745; }
+  .state-highlight.obsolete { color: #d97706; }
+
+  .timeline-sub {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+
+  .timeline-date {
+    font-size: 11px;
+    color: #9ca3af;
+    white-space: nowrap;
+    margin-left: auto;
+    padding-top: 2px;
+  }
+
+  /* Loading / Error */
+  #loadingSpinner {
     display: none;
-} 
-.history-icon {
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-  vertical-align: middle;
-}
- .state-box .state-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 13px;
-  color: white;
-  margin-left: 8px;
-  user-select: none;
-  text-transform: uppercase;
-  min-width: 80px;
-  text-align: center;
-}
-.state-badge.InWork {
-  background-color: #5bc0de;
-}
-.state-badge.Frozen {
-  background-color: #6c757d;
-}
-.state-badge.Released {
-  background-color: #28a745;
-  color: #fff;
-}
-.state-badge.Obsolete {
-    background-color: #ffc107;
-    color: #000;
-}
+    width: 20px;
+    height: 20px;
+    border: 3px solid #e2e5e9;
+    border-top: 3px solid #4b5563;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 24px auto;
+  }
+  @keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  #errorMessage {
+    text-align: center;
+    margin: 20px;
+    color: #c0392b;
+    font-size: 13px;
+  }
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
 <div class="topbar">
@@ -394,133 +321,182 @@ table.properties th {
   <a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-file"></i> SpecificationDocument</a>
 </div>
 
-  <div class="main-panel">
-    <!-- Toolbar -->
-   <div class="toolbar">
-  		<img src="history.gif" alt="History Icon" class="history-icon" />
-  		<h4>History Entries</h4>
-	</div>
-
-
+<div class="main-panel">
+  <div class="toolbar">
+    <img src="history.gif" alt="History Icon" class="history-icon" />
+    <h4>History Timeline</h4>
+  </div>
+  <div class="timeline-wrapper">
     <div id="loadingSpinner"></div>
     <div id="errorMessage"></div>
-    <div id="noHistoryMsg" class="text text-center mt-3" style="display:none;"></div>
-    <table id="historyTable" class="display table table-striped table-bordered" style="width:100%">
-    <thead>
-        <tr>
-            <th></th> 
-        </tr>
-    </thead>
-    <tbody>
-
-    </tbody>
-</table>
+    <div class="timeline" id="timelineContainer"></div>
   </div>
 </div>
+
+</div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 <script>
+const BASIC_URL = '<%= request.getContextPath() %>';
 
-    let dataTable;
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+function showLoading(show) {
+    $('#loadingSpinner').css('display', show ? 'block' : 'none');
+}
+
+function showError(msg) {
+    $('#errorMessage').text(msg).show();
+    showLoading(false);
+}
+
+function getEntryType(entry) {
+    const lower = entry.toLowerCase();
+    if (lower.includes('created'))  return 'created';
+    if (lower.includes('promoted')) return 'promoted';
+    if (lower.includes('demoted'))  return 'demoted';
+    return 'default';
+}
+
+function getStateFromEntry(entry) {
+    const match = entry.match(/to\s+(\w+)/i);
+    return match ? match[1].toLowerCase() : '';
+}
+
+function getIconHtml(type) {
+    const icons = {
+        created:  '<i class="fa-solid fa-plus"></i>',
+        promoted: '<i class="fa-solid fa-arrow-up"></i>',
+        demoted:  '<i class="fa-solid fa-arrow-down"></i>',
+        default:  '<i class="fa-solid fa-circle-dot"></i>'
+    };
+    return icons[type] || icons.default;
+}
+
+function parseEntry(raw) {
+    // Format: "Action by User yyyy-MM-dd HH:mm:ss.SSS"
+    // OR: "Action yyyy-MM-dd HH:mm:ss.SSS"
+    const dateRegex = /(\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(?:[.\d+Z]*)?)/;
+    const dateMatch = raw.match(dateRegex);
+    const date = dateMatch ? dateMatch[1].replace('T', ' ').split('.')[0] : '';
+    let text = raw.replace(dateRegex, '').trim();
+    text = text.replace(/\s+at\s*$/i, '').trim();
+
+    // Extract "by X" only for created entries
+    let by = '';
+    const byMatch = text.match(/\bby\s+(\S+)/i);
+    const type = getEntryType(text);
+    if (type === 'created' && byMatch) {
+        by = byMatch[0];
+        text = text.replace(byMatch[0], '').trim();
+    } else {
+        // Remove "by System" or any "by X" from non-created entries
+        text = text.replace(/\bby\s+\S+/gi, '').trim();
     }
-    function showLoading(show) {
-        $('#loadingSpinner').css('display', show ? 'block' : 'none');
-    }
 
-    function showError(msg) {
-        $('#errorMessage').text(msg).show();
-        $('#historyTable').hide();
-        showLoading(false);
-    }
+    return { text, by, date, type };
+}
 
-    function escapeHtml(text) {
-        return $('<div>').text(text).html();
-    }
-
-    function displayHistory(historyInput) {
-        let entries = [];
-
-        if (Array.isArray(historyInput)) {
-            entries = historyInput.map(e => typeof e === 'string' ? e.trim() : '').filter(e => e !== '');
-        } else if (typeof historyInput === 'string') {
-            entries = historyInput.split('|').map(e => e.trim()).filter(e => e !== '');
-        }
-        if (entries.length === 0) {
-            showError("No valid history entries found.");
-            return;
-        }
-        if ($.fn.DataTable.isDataTable('#historyTable')) {
-            dataTable.clear().destroy();
-        }
-        $('#historyTable tbody').empty();
-
-        entries.forEach(entry => {
-            $('#historyTable tbody').append('<tr><td>' + escapeHtml(entry) + '</td></tr>');
-        });
-        dataTable = $('#historyTable').DataTable({
-            searching: false,
-            paging: false,
-            ordering: false,
-            info: false,
-            lengthChange: false
-        });
-        $('#errorMessage').hide();
-        $('#historyTable').show();
-        showLoading(false);
-    }
-    $(document).ready(function () {
-        const objectId = getQueryParam('name');
-        const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
-        if (partInfo) {
-            $('.part-number').text(partInfo.name || '');
-            $('.part-type').text(partInfo.type || '');
-            const icon = (partInfo.type && partInfo.type.toLowerCase() === 'fastener') 
-                ? 'https://img.icons8.com/?size=50&id=20544&format=png&color=000000' 
-                : 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000';
-
-            $('#typeIcon').attr('src', icon);
-            $('.state-box .state-label').remove();
-            if (partInfo.currentstate) {
-        	    $('.state-box .state-label').remove();
-        	    const state = partInfo.currentstate;
-        	    const badge = $('<span>').addClass('state-badge ' + state.replace(/\s/g, '')).text(state);
-        	    $('<span>').addClass('state-label').text('State: ').append(badge).prependTo('.state-box');
-        	}
-        } else {
-            $('.part-number').text('');
-            $('.part-type').text('');
-            $('#typeIcon').attr('src', 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000');
-            $('.state-box .state-label').remove();
-        }
-
-        if (!objectId) {
-            showError("No 'name' parameter found in URL.");
-            return;
-        }
-
-        showLoading(true);
-
-        $.ajax({
-            url: 'http://localhost:8080/andromeda/api/datafetchservice/history',
-            method: 'GET',
-            data: { objectId: objectId },
-            dataType: 'json',
-            success: function(data) {
-                if (data && data.history) {
-                    displayHistory(data.history);
-                } else {
-                    showError("No history field found.");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX error:", status, error);
-                showError("Failed to fetch history data.");
-            }
-        });
+function buildStateHighlight(text) {
+    return text.replace(/\b(InWork|Frozen|Released|Obsolete)\b/gi, function(match) {
+        return '<span class="state-highlight ' + match.toLowerCase() + '">' + match + '</span>';
     });
+}
+
+function displayHistory(historyInput) {
+    let entries = [];
+    if (Array.isArray(historyInput)) {
+        entries = historyInput.map(e => typeof e === 'string' ? e.trim() : '').filter(e => e !== '');
+    } else if (typeof historyInput === 'string') {
+        entries = historyInput.split('|').map(e => e.trim()).filter(e => e !== '');
+    }
+
+    if (entries.length === 0) {
+        showError('No valid history entries found.');
+        return;
+    }
+
+    const container = $('#timelineContainer');
+    container.empty();
+
+    entries.forEach(function(raw) {
+        const { text, by, date, type } = parseEntry(raw);
+        const actionHtml = buildStateHighlight(text);
+
+        const item = $('<div class="timeline-item"></div>');
+        const dot  = $('<div class="timeline-dot dot-' + type + '"></div>');
+        const icon = $('<div class="timeline-icon icon-' + type + '">' + getIconHtml(type) + '</div>');
+        const content = $('<div class="timeline-content"></div>');
+        const action = $('<div class="timeline-action">' + actionHtml + '</div>');
+
+        content.append(action);
+
+        if (by) {
+            const sub = $('<div class="timeline-sub">' + by + '</div>');
+            content.append(sub);
+        }
+
+        const dateEl = $('<div class="timeline-date">' + date + '</div>');
+
+        item.append(dot).append(icon).append(content).append(dateEl);
+        container.append(item);
+    });
+
+    showLoading(false);
+}
+
+$(document).ready(function () {
+    const objectId = getQueryParam('name');
+    const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
+
+    if (partInfo) {
+        $('.part-number').text(partInfo.name || '');
+        $('.part-type').text(partInfo.type || '');
+        const icon = (partInfo.type && partInfo.type.toLowerCase() === 'fastener')
+            ? 'https://img.icons8.com/?size=50&id=20544&format=png&color=000000'
+            : 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000';
+        $('#typeIcon').attr('src', icon);
+        $('.state-box .state-label').remove();
+        if (partInfo.currentstate) {
+            const state = partInfo.currentstate;
+            const badge = $('<span>').addClass('state-badge ' + state.replace(/\s/g, '')).text(state);
+            $('<span>').addClass('state-label').text('State: ').append(badge).prependTo('.state-box');
+        }
+    } else {
+        $('.part-number').text('');
+        $('.part-type').text('');
+        $('#typeIcon').attr('src', 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000');
+        $('.state-box .state-label').remove();
+    }
+
+    if (!objectId) {
+        showError("No 'name' parameter found in URL.");
+        return;
+    }
+
+    showLoading(true);
+
+    $.ajax({
+        url: BASIC_URL + '/api/datafetchservice/history',
+        method: 'GET',
+        data: { objectId: objectId },
+        dataType: 'json',
+        success: function(data) {
+            if (data && data.history) {
+                displayHistory(data.history);
+            } else {
+                showError('No history field found.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX error:', status, error);
+            showError('Failed to fetch history data.');
+        }
+    });
+});
 </script>
 
 </body>

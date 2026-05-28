@@ -421,6 +421,8 @@ table.properties th {
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
 
+
+const BASIC_URL = '<%= request.getContextPath() %>';
     let dataTable;
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -504,7 +506,7 @@ table.properties th {
         showLoading(true);
 
         $.ajax({
-            url: 'http://localhost:8080/andromeda/api/datafetchservice/history',
+            url: BASIC_URL+'/api/datafetchservice/history',
             method: 'GET',
             data: { objectId: objectId },
             dataType: 'json',

@@ -350,6 +350,8 @@
 </div>
 </div>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 $(document).ready(function () {
     const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
 
@@ -407,7 +409,7 @@ document.getElementById('fileInput').addEventListener('change', function (event)
         });
 
         $.ajax({
-            url: 'http://localhost:8080/andromeda/api/datafetchservice/upload',
+            url:BASIC_URL+'/api/datafetchservice/upload',
             type: 'POST',
             data: payload,
             contentType: 'application/json',
@@ -443,7 +445,7 @@ function loadUploadedFiles() {
     if (!objectId) return;
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getUploadedFiles?objectid=' + encodeURIComponent(objectId),
+        url: BASIC_URL+'/api/datafetchservice/getUploadedFiles?objectid=' + encodeURIComponent(objectId),
         method: 'GET',
         dataType: 'json',
         success: function (data) {
@@ -499,7 +501,7 @@ function downloadFile(fileName) {
     const urlParams = new URLSearchParams(window.location.search);
     const objectId = urlParams.get('name') || '';
     if (!objectId || !fileName) return;
-    const downloadUrl = 'http://localhost:8080/andromeda/api/datafetchservice/download?objectid='+ encodeURIComponent(objectId) + '&fileName=' + encodeURIComponent(fileName);
+    const downloadUrl = BASIC_URL+'/api/datafetchservice/download?objectid='+ encodeURIComponent(objectId) + '&fileName=' + encodeURIComponent(fileName);
     const a = document.createElement('a');
     a.href = downloadUrl;
     a.download = fileName;
@@ -522,7 +524,7 @@ document.getElementById('removeBtn').addEventListener('click', function () {
     const urlParams =new URLSearchParams(window.location.search);
     const objectId = urlParams.get('name') || '';
 
-    $.ajax({ url:'http://localhost:8080/andromeda/api/datafetchservice/deleteFile' + '?objectid=' + encodeURIComponent(objectId) + '&fileName=' + encodeURIComponent(selectedFile),
+    $.ajax({ url:BASIC_URL+'/api/datafetchservice/deleteFile' + '?objectid=' + encodeURIComponent(objectId) + '&fileName=' + encodeURIComponent(selectedFile),
 
         type: 'DELETE',
         success: function () { alert('File deleted successfully');

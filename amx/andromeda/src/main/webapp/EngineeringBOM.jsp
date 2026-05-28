@@ -472,6 +472,8 @@ tr.shown td.expand-btn span {
 </div>
 <script>
 
+const BASIC_URL = '<%= request.getContextPath() %>';
+
 function removeDescendants(objectId) {
     $('#EBOMTable tbody tr.child-row[data-parent="' + objectId + '"]').each(function() {
         const childId = $(this).data('objectid');
@@ -485,7 +487,7 @@ function loadChildRows(parentObjectId, parentTr, depth) {
     const indent = depth * 20;
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getcreatedchildpart',
+        url: BASIC_URL+'/api/datafetchservice/getcreatedchildpart',
         data: { objectid: parentObjectId },
         dataType: 'json',
         success: function (childData) {
@@ -539,7 +541,7 @@ function loadEBOMTable() {
         return;
     }
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getcreatedebom',
+        url: BASIC_URL+'/api/datafetchservice/getcreatedebom',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -693,7 +695,7 @@ function receiveSelectedParts(selectedParts) {
     }
     
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/linkebomparts/' + encodeURIComponent(parentObjectId),
+        url: BASIC_URL+'/api/datafetchservice/linkebomparts/' + encodeURIComponent(parentObjectId),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),

@@ -1,4 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,122 +10,140 @@
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      background-color: #f9f9f9;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+    /* Reset and Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+        height: 100%;
+        overflow: hidden; /* Prevents the whole page from scrolling */
+        font-family: 'Inter', -apple-system, sans-serif;
+        margin: 0;
+        background: transparent;
     }
 
+    /* The Main Container */
     #createMPNForm {
-      width: 100%;
-      max-width: 600px;
-      padding: 30px;
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      overflow-y: auto;
+        width: 100%;
+        height: 100vh; /* Forces the form to be exactly the height of the iframe/window */
+        background: #ffffff;
+        border-radius: 18px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
+    /* Fixed Header */
     h2 {
-      margin-bottom: 15px;
-      color: #333;
-      font-size: 22px;
-      font-weight: bold;
+        margin: 0;
+        padding: 24px 30px 16px;
+        font-size: 24px;
+        font-weight: 700;
+        border-bottom: 1px solid #eef2f7;
+        color: #111827;
+        flex: 0 0 auto; /* Tells flexbox: DO NOT grow, DO NOT shrink */
+        background: #ffffff;
+        z-index: 10;
     }
+
+    /* Scrollable Body */
+    .form-body {
+        flex: 1 1 auto; /* Grow and shrink as needed */
+        min-height: 0; /* CRITICAL: Forces flexbox to allow shrinking, triggering the scrollbar */
+        overflow-y: auto; /* Adds the scrollbar when content overflows */
+        padding: 24px 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    /* Custom Scrollbar */
+    .form-body::-webkit-scrollbar {
+        width: 8px;
+    }
+    .form-body::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .form-body::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+    .form-body::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    /* Fixed Footer */
+    .form-footer {
+        padding: 16px 30px;
+        border-top: 1px solid #eef2f7;
+        background: #ffffff; 
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        flex: 0 0 auto; /* Tells flexbox: DO NOT grow, DO NOT shrink */
+        z-index: 10;
+    }
+
+    /* Buttons (Black/Grey Theme) */
+    .btn-submit {
+        min-width: 110px;
+        padding: 0 20px;
+        height: 40px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        background: #0f172a; /* Dark Slate/Black */
+        color: white;
+        transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #334155; }
+
+    .btn-cancel {
+        min-width: 110px;
+        height: 40px;
+        padding: 0 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        background: #f1f5f9; /* Light Grey */
+        color: #475569;
+        border: none;
+        transition: background 0.2s;
+    }
+    .btn-cancel:hover { background: #e2e8f0; }
+
+    /* Inputs & Labels */
+    .mb-3 { margin-bottom: 0; }
 
     label {
-      font-weight: 600;
-      color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 6px;
+        display: block;
     }
 
-    textarea,
-    select,
-    input {
-      margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-
-    textarea:focus,
-    select:focus,
-    input:focus {
-      border-color: #00afc4;
-      box-shadow: 0 0 0 0.2rem rgba(0, 175, 196, 0.25);
-      outline: none;
-    }
-
-    .d-flex {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .d-flex .btn {
-      margin-left: 5px;
-      padding: 8px 16px;
-      font-size: 14px;
-    }
-
-    .mb-3 {
-      margin-bottom: 10px;
-    }
-
-    #inputDescription {
-      min-height: 80px;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      resize: vertical;
-    }
-
-    #inputResponsibleEngineer {
-      height: 30px;
-      resize: vertical;
-    }
-
-    button {
-      padding: 8px 16px;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    button[type="submit"] {
-      background-color: #00afc4;
-      color: white;
-      border: none;
-    }
-
-    button[type="button"].btn-secondary {
-      background-color: #6c757d;
-      color: white;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    button[type="submit"]:hover {
-      background-color: #007c8d;
-    }
-
-    button[type="button"].btn-secondary:hover {
-      background-color: #5a6268;
-    }
-
-    @media screen and (max-width: 768px) {
-      #createMPNForm {
-        padding: 20px;
+    select, textarea, input {
+        background-color: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        border-radius: 6px !important;
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        transition: all 0.2s ease;
         width: 100%;
-      }
     }
 
+    /* Grey focus rings instead of blue/cyan */
+    select:focus, textarea:focus, input:focus { 
+        border-color: #6b7280 !important; 
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+        outline: none;
+    }
+
+    /* Manufacturer Search Wrapper Styles */
     .mfg-search-wrapper {
       position: relative;
       display: flex;
@@ -134,15 +151,17 @@
     }
 
     .mfg-search-wrapper .search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #aaa;
-  display: flex;
-  align-items: center;
-}
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+      z-index: 5;
+    }
 
     .mfg-search-wrapper .search-icon svg {
       width: 16px;
@@ -155,38 +174,37 @@
     }
 
     .mfg-search-wrapper #manufacturerInput {
-      padding-left: 34px;  
+      padding-left: 40px !important;  
       width: 100%;
       margin-bottom: 0;
     }
 
+    /* Dark grey active state for search icon */
     .mfg-search-wrapper #manufacturerInput:focus + .search-icon,
-    .mfg-search-wrapper #manufacturerInput:focus ~ .search-icon {
-      color: #00afc4;
-    }
-
+    .mfg-search-wrapper #manufacturerInput:focus ~ .search-icon,
     .mfg-search-wrapper:focus-within .search-icon {
-      color: #00afc4;
+      color: #0f172a;
     }
 
     .mfg-clear-btn {
       position: absolute;
-      right: 10px;
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
       cursor: pointer;
       padding: 0;
-      color: #aaa;
+      color: #94a3b8;
       display: none;
       align-items: center;
       line-height: 1;
+      transition: color 0.2s;
+      z-index: 5;
     }
 
     .mfg-clear-btn:hover {
-      color: #555;
-      opacity: 1;
+      color: #0f172a;
     }
 
     .mfg-clear-btn svg {
@@ -198,25 +216,29 @@
       stroke-linecap: round;
     }
 
+    /* Autocomplete Dropdown Styling */
     .ui-autocomplete {
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
       max-height: 200px;
       overflow-y: auto;
       overflow-x: hidden;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
     .ui-menu-item-wrapper {
-      padding: 8px 12px !important;
+      padding: 10px 14px !important;
     }
 
+    /* Dark grey active selection instead of Cyan */
     .ui-state-active,
     .ui-widget-content .ui-state-active {
-      background: #00afc4 !important;
-      border-color: #00afc4 !important;
+      background: #0f172a !important;
+      border-color: #0f172a !important;
       color: white !important;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -224,74 +246,90 @@
   <form id="createMPNForm">
     <h2>Create MPN</h2>
 
-    <div class="mb-3">
-      <label for="supertype" class="form-label">Super Type</label>
-      <input type="text" id="supertype" name="supertype" class="form-control"
-             value="ManufacturerPartAssembly" readonly />
-    </div>
-
-    <div class="mb-3">
-      <label for="type" class="form-label">Type</label>
-      <input type="text" id="type" name="type" class="form-control"
-             value="ManufacturerPart" readonly />
-    </div>
-
-    <div class="mb-3">
-      <label for="mpnTitle" class="form-label">MPN Title</label>
-      <input type="text" id="mpnTitle" name="mpnTitle" class="form-control"
-             placeholder="Enter MPN Title" required />
-    </div>
-
-    <div class="mb-3">
-      <label for="manufacturerInput" class="form-label">Manufacturer</label>
-      <div class="mfg-search-wrapper">
-        <!-- Search icon (left) -->
-        <span class="search-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="11" cy="11" r="7"></circle>
-            <line x1="16.5" y1="16.5" x2="22" y2="22"></line>
-          </svg>
-        </span>
-        <!-- Visible typeahead input -->
-        <input type="text" id="manufacturerInput" class="form-control"
-               placeholder="Search manufacturer..." autocomplete="off" required />
-        <!-- Clear button (right) -->
-        <button type="button" class="mfg-clear-btn" id="mfgClearBtn" title="Clear" tabindex="-1">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+    <div class="form-body">
+      <div class="mb-3">
+        <label for="supertype" class="form-label">Super Type</label>
+        <input type="text" id="supertype" name="supertype" class="form-control"
+               value="ManufacturerPartAssembly" readonly />
       </div>
-      <input type="hidden" id="manufacturer" name="manufacturer" />
+
+      <div class="mb-3">
+        <label for="type" class="form-label">Type</label>
+        <input type="text" id="type" name="type" class="form-control"
+               value="ManufacturerPart" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label for="mpnTitle" class="form-label">MPN Title</label>
+        <input type="text" id="mpnTitle" name="mpnTitle" class="form-control"
+               placeholder="Enter MPN Title" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="manufacturerInput" class="form-label">Manufacturer</label>
+        <div class="mfg-search-wrapper">
+          <span class="search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="16.5" y1="16.5" x2="22" y2="22"></line>
+            </svg>
+          </span>
+          <input type="text" id="manufacturerInput" class="form-control"
+                 placeholder="Search manufacturer..." autocomplete="off" required />
+          <button type="button" class="mfg-clear-btn" id="mfgClearBtn" title="Clear" tabindex="-1">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <input type="hidden" id="manufacturer" name="manufacturer" />
+      </div>
+
+      <div class="mb-3">
+        <label for="inputDescription" class="form-label">Description</label>
+        <textarea id="inputDescription" class="form-control" rows="4"
+                  placeholder="Enter description" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
+        <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
+      </div>
     </div>
 
-    <div class="mb-3">
-      <label for="inputDescription" class="form-label">Description</label>
-      <textarea id="inputDescription" class="form-control" rows="4"
-                placeholder="Enter description" required></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
-      <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
-    </div>
-
-    <div class="d-flex justify-content-end gap-2">
-      <button type="submit" class="btn btn-primary">Submit</button>
-      <button type="button" class="btn btn-secondary" onclick="window.close()">Cancel</button>
+    <div class="form-footer">
+      <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+      <button type="submit" class="btn-submit">Submit</button>
     </div>
   </form>
 
   <script>
+    const BASIC_URL = '<%= request.getContextPath() %>';
+    const isInIframe = window.self !== window.top;
+    
     $(document).ready(function () {
+
+      // Cancel button logic integrated for iframe handling
+      $('#cancelBtn').on('click', function() {
+        if (isInIframe) {
+          window.parent.postMessage({ action: 'closeOnly' }, '*');
+        } else {
+          window.close();
+        }
+      });
 
       const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
       if (user) {
         $('#inputResponsibleEngineer').val(user.username || '');
       } else {
         alert('No logged-in user. Please log in.');
-        window.close();
+        if (isInIframe) {
+          window.parent.postMessage({ action: 'closeOnly' }, '*');
+        } else {
+          window.close();
+        }
+        return;
       }
 
       const $mfgInput   = $('#manufacturerInput');
@@ -324,7 +362,7 @@
 
         source: function (request, response) {
         	  $.ajax({
-        	    url: 'http://localhost:8080/andromeda/api/db/manufacturers',
+        	    url: BASIC_URL+'/api/db/manufacturers',
         	    method: 'GET',
         	    dataType: 'json',
         	    data: { search: request.term },
@@ -381,7 +419,7 @@
         }
 
         try {
-          const res = await fetch('http://localhost:8080/andromeda/api/navigatorutilites/createMPN', {
+          const res = await fetch(BASIC_URL+'/api/navigatorutilites/createMPN', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             credentials: 'include',
@@ -403,12 +441,20 @@
             'Manufacturer: ' + formData.Manufacturer
           );
 
-          const objectId = result.ObjectId;
+const objectId = result.ObjectId;
+          
           if (objectId) {
-            if (window.opener && window.opener.loadMPNPropertiesInIframe) {
-              window.opener.loadMPNPropertiesInIframe(objectId);
+            const isInIframe = window.self !== window.top;
+            if (isInIframe) {
+              // Send message to load MPNProperties.jsp
+              window.parent.postMessage({
+                  action: 'loadProperties',
+                  type: 'mpn',
+                  id: objectId  
+              }, '*');
+            } else {
+              window.close();
             }
-            window.close();
           } else {
             alert('Could not retrieve the ID for the new MPN.');
           }

@@ -434,6 +434,8 @@ forn-wrap-mode:nowrap;
 </div>
 <script>
 
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function receiveSelectedParts(selectedParts) {
     if (!selectedParts || selectedParts.length === 0) return;
 
@@ -452,7 +454,7 @@ function receiveSelectedParts(selectedParts) {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/linkpartcontrol/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/datafetchservice/linkpartcontrol/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),
@@ -488,7 +490,7 @@ function loadPartControlTable() {
         return;
     }
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/getcreatedpartcontrol',
+        url: BASIC_URL+'/api/datafetchservice/getcreatedpartcontrol',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,

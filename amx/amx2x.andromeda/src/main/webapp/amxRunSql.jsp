@@ -5,276 +5,400 @@
         userAccess = "Admin";
     }
 %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AmxRunSQL</title>
-  <style>
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    font-family: Arial, sans-serif;
-    background: #fff;
-    color: #333;
-    overflow: hidden;
-  }
-
-  .container {
-    display: flex;
-    height: 100%;
-    font-size: 13px;
-    position: relative;
-  }
-
-  .sidebar {
-    width: 16%;
-    background-color: #f8f9fa;
-    border-right: 1px solid #ddd;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-
-  .main-panel {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 50px;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-
-  h1 {
-    text-align: center;
-    font-family:Courier New;
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  .input-field {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    align-items: center; 
-  }
-
-  .input-field input {
-    padding: 8px;
-    font-size: 14px;
-    font-family: Courier New;
-    width: 800px;
-    height: 40px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  .input-field button {
-    padding: 12px 20px;
-    font-size: 16px;
-    background-color: #5c8bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-
-  .input-field button:hover {
-    background-color: #3f70ff;
-  }
-
-  .text-area-container {
-    position: relative; 
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    margin: 1.5px;
-  }
-
-  .text-area-container textarea {
-    width: 100%;
-    height: 100%;
-    padding: 8px;
-    font-size: 12.5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: none;
-    font-family: Courier New;
-    box-sizing: border-box;
-    flex-grow: 1;
-  }
-
-  #loadingSpinnerOverlay {
-    display: none;
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #loadingSpinnerOverlay img {
-    width: 48px;
-    height: 48px;
-  }
-
-  #fileViewer {
-    display: none;
-    width: 30%;
-    height: 100%;
-    background-color: #fefefe;
-    border-left: 1px solid #ddd;
-    box-sizing: border-box;
-    overflow-y: auto;
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  #fileViewerContent {
-    padding: 20px;
-    font-family: monospace;
-    font-size: 14px;
-    white-space: pre-wrap;
-    position: relative;
-    height: 100%;
-    box-sizing: border-box;
-     resizable:horizontal;
-  }
-
-  #closeMark {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    color: blue;
-    cursor: pointer;
-    font-weight: bold;
-    z-index: 10;
-    font-size: medium;
-  }
-
-  #closeMark:hover {
-    color: red;
-  }
-
-  #queriesDoc {
-    color: #5c8bff;
-    cursor: pointer;
-    text-decoration: underline;
-    user-select: none;
-    font-size:medium;
-  }
-
-  #queriesDoc:hover {
-    color: #3f70ff;
-  }
-
-  #refreshPage {
-    margin-left: 10px;
-    cursor: pointer;
-    color: #5c8bff;
-  }
-
-  #refreshPage:hover {
-    color: #3f70ff;
-  }
-  .header-row {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .header-row h1 {
-    font-size: 24px;
-    margin: 0 auto;
-  }
-
-  .section-label {
-    font-weight: bold;
-    font-size: 14px;
-    margin: 10px 0 5px 0;
-    color: #333;
-  }
- <div id="loadingSpinnerOverlay" style="display:none;">
-  <img src="images/spinner.gif" alt="Loading..." />
-</div>
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-  </style>
+  <title>ASQL Runner - Minimal</title>
+  
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
   <script>var loggedInUserAccess = '<%= userAccess.trim() %>';</script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      
+      --bg-body: #f7f7f8;        
+      --bg-surface: #ffffff;     
+      --dark-element: #111827;  
+      --dark-hover: #374151;     
+      --text-main: #111827;      
+      --text-muted: #6b7280; 
+      --border-light: #e5e7eb;   
+      --border-focus: #111827;     
+      --radius: 8px;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #e3e3f4;
+      font-family: var(--font-sans);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-header {
+      padding: 12px 32px;
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .app-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--dark-element);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-title i { font-size: 18px; color: var(--dark-element); }
+
+    .btn-header {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      color: var(--dark-element);
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-header:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+
+    .workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 40px;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-header {
+      padding: 12px 20px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      color: var(--dark-element);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .editor-panel { flex-shrink: 0; }
+
+    .editor-body {
+      display: flex;
+      padding: 20px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background: var(--bg-surface);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border-light);
+      transition: all 0.2s ease;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--border-focus);
+    }
+
+    #inputField {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      outline: none;
+    }
+    
+    #inputField::placeholder { color: var(--text-muted); }
+
+    .btn-group { display: flex; gap: 8px; }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      width: 42px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover { background: #f3f4f6; }
+
+    .btn-primary {
+      background: var(--dark-element);
+      color: #ffffff;
+      border: none;
+      padding: 0 24px;
+      height: 42px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--dark-hover); }
+
+    .results-panel {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .terminal-container {
+      flex: 1;
+      position: relative;
+      height: 100%;
+    }
+
+    #textArea {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      color: var(--text-main);
+      border: none;
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(17, 24, 39, 0.4);
+      backdrop-filter: blur(2px);
+      display: none; 
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      width: 600px;
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 12px;
+      box-shadow: var(--shadow-modal);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.show .modal-box {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark-element);
+    }
+
+    #closeModalBtn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    #closeModalBtn:hover { color: var(--dark-element); }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    #fileTextContent {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-main);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      background: #f9fafb;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-light);
+    }
+
+    #loadingSpinnerOverlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    
+    .spinner {
+      width: 24px; height: 24px;
+      border: 3px solid var(--border-light);
+      border-top: 3px solid var(--dark-element);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="main-panel">
-      <div class="header-row">
-        <h1>Run ASQL</h1>
-      </div>
-      <div class="section-label">SQL Command</div>
-      <div class="input-field">
-        <input type="text" id="inputField" placeholder="Enter the query..." />
-        <button id="submitBtn">Run</button>
-        <span id="queriesDoc">Help</span>
-        <img
-          id="refreshPage"
-          src="https://img.icons8.com/?size=100&id=t7r2A42vsY6O&format=png&color=000000"
-          alt="Refresh"
-          title="Refresh"
-          style="margin-left: 10px; cursor: pointer; width: 20px; height: 20px;"
-        />
-      </div>
-      <div class="section-label">Results</div>
-      <div class="text-area-container">
-        <textarea id="textArea" placeholder="Query result...." readonly oncontextmenu="return false;"></textarea>
-        <!-- Spinner overlay -->
-     <div id="loadingSpinnerOverlay" style="display:none;">
-  		<img src="spinner.gif" alt="Loading..." />
-	</div>
-      </div>
-    </div>
-    <div id="fileViewer">
-      <div id="fileViewerContent">
-        <button id="closeMark">Close</button>
-        <pre
-          id="fileTextContent"
-          style="white-space: pre-wrap; margin-top: 10px;"
-        ></pre>
-      </div>
-    </div>
-</div>
-  <script>
-    var loggedInUserAccess = "<%= userAccess.trim() %>";
-    $(document).ready(function () {
-      function runQuery(query) {
-        $("#loadingSpinnerOverlay").show();
 
-        const minSpinnerTime = 3000; 
+  <header class="app-header">
+    <div class="app-title">
+      <i class="bi bi-terminal"></i> ASQL Runner
+    </div>
+    <button id="queriesDoc" class="btn-header">
+      <i class="bi bi-journal-text"></i> Reference Guide
+    </button>
+  </header>
+
+  <div class="workspace">
+    <div class="main-content">
+      
+      <div class="panel editor-panel">
+        <div class="panel-header">Command Input</div>
+        <div class="editor-body">
+          <div class="input-wrapper">
+            <input type="text" id="inputField" placeholder="SELECT * FROM table_name WHERE..." autocomplete="off" autofocus />
+          </div>
+          <div class="btn-group">
+            <button id="refreshPage" class="btn-secondary" title="Clear input">
+              <i class="bi bi-eraser"></i>
+            </button>
+            <button id="submitBtn" class="btn-primary">
+              <i class="bi bi-play-fill"></i> Execute
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel results-panel">
+        <div class="panel-header">Console Output</div>
+        <div class="terminal-container">
+          <textarea id="textArea" placeholder="Results will be displayed here..." readonly oncontextmenu="return false;"></textarea>
+          
+          <div id="loadingSpinnerOverlay">
+              <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="refModalOverlay" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>SQL Reference Guide</h3>
+          <button id="closeModalBtn"><i class="bi bi-x"></i></button>
+        </div>
+        <div class="modal-body">
+          <pre id="fileTextContent">Loading...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BASIC_URL = '<%= request.getContextPath() %>';
+    
+    $(document).ready(function () {
+
+      function runQuery(query) {
+        $("#loadingSpinnerOverlay").css('display', 'flex');
+        const minSpinnerTime = 600; 
         const spinnerStartTime = Date.now();
 
         $.ajax({
-          url: "http://localhost:8080/andromeda/api/datafetchservice/executequery",
+          url: BASIC_URL+'/api/datafetchservice/executequery',
           type: "GET",
           data: { sql: query, _: new Date().getTime() },
           success: function (response) {
-            let resultText =
-              typeof response === "object"
-                ? JSON.stringify(response, null, 2)
-                : response.trim();
-
+            let resultText = typeof response === "object" ? JSON.stringify(response, null, 2) : response.trim();
             runQuery.resultText = resultText || "No data found for the given query.";
           },
           error: function (xhr) {
@@ -283,7 +407,6 @@
               errorMessage = "Error: " + xhr.responseJSON.error;
             }
             runQuery.resultText = errorMessage;
-
             setTimeout(() => $("#textArea").val(""), 4000);
           },
           complete: function () {
@@ -306,7 +429,6 @@
       $("#submitBtn").click(() => {
         const query = $("#inputField").val().trim();
         if (query) runQuery(query);
-        else alert("Please enter a query.");
       });
 
       $("#inputField").keypress((event) => {
@@ -314,39 +436,40 @@
           event.preventDefault();
           const query = $("#inputField").val().trim();
           if (query) runQuery(query);
-          else alert("Please enter a query.");
-        }
-      });
-
-      $("#queriesDoc").click(function () {
-        $.ajax({
-          url: "/andromeda/queries.txt",
-          type: "GET",
-          success: function (data) {
-            $("#fileTextContent").text(data);
-            $("#fileViewer").show();
-          },
-          error: function (xhr, status, error) {
-            $("#fileTextContent").text("Error loading the document.");
-            $("#fileViewer").show();
-          },
-        });
-      });
-
-      $("#closeMark").click(function () {
-        $("#fileViewer").hide();
-      });
-
-      $("#fileViewer").click(function (event) {
-        if (event.target === this) {
-          $(this).hide();
         }
       });
 
       $("#refreshPage").click(function () {
         $("#inputField").val("");
         $("#textArea").val("");
-        $("#fileViewer").hide();
+      });
+
+      const $modalOverlay = $("#refModalOverlay");
+
+      $("#queriesDoc").click(function () {
+        $modalOverlay.addClass('show');
+        $.ajax({
+          url: BASIC_URL+"/queries.txt",
+          type: "GET",
+          success: function (data) {
+            $("#fileTextContent").text(data);
+          },
+          error: function () {
+            $("#fileTextContent").text("Error loading the document.");
+          },
+        });
+      });
+
+      function closeModal() {
+        $modalOverlay.removeClass('show');
+      }
+
+      $("#closeModalBtn").click(closeModal);
+
+      $modalOverlay.click(function(e) {
+        if (e.target === this) {
+          closeModal();
+        }
       });
     });
   </script>

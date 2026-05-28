@@ -6,7 +6,7 @@ import org.json.JSONObject;
 	 *@usage This class will retrive the data from db based on query 
 	 */
 public class AmxQueryFromDB {	
-    public static final String url="jdbc:postgresql://localhost:5432/Andromeda";
+    public static final String url="jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
     public static final String user="postgres";
     public static final String password="admin@1234";
     public String objectid;

@@ -431,6 +431,8 @@ table.properties th {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
  <script>
+ 
+ const BASIC_URL = '<%= request.getContextPath() %>';
 let currentPartData = {};
 let loggedInUserAccess = 'admin';  
 
@@ -445,7 +447,7 @@ $(document).ready(function () {
   showLoading(true);
 
   $.ajax({
-    url: 'http://localhost:8080/andromeda/api/datafetchservice/getinfospc',
+    url: BASIC_URL+'/api/datafetchservice/getinfospc',
     method: 'GET',
     data: { objectId: objectId }, 
     dataType: 'json',
@@ -499,7 +501,7 @@ $(document).ready(function () {
     };
 
     $.ajax({
-      url: 'http://localhost:8080/andromeda/api/datafetchservice/updatepartcontrol/' + encodeURIComponent(objectId),
+      url: BASIC_URL+'/api/datafetchservice/updatepartcontrol/' + encodeURIComponent(objectId),
       method: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify(updatedData),

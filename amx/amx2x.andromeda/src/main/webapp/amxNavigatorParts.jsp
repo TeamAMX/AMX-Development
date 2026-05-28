@@ -7,17 +7,47 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="styles/amxNavigatorParts.css" />
   
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <style>
+table.dataTable thead th, table.table thead th {
+    background-color: #1f2937 !important;
+    color: #e2e8f0 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+    padding: 10px 40px !important;
+    border-bottom: 2px solid #334155 !important;
+    border-right: 1px solid #334155 !important;
+    border-top: none !important;
+    border-left: none !important;
+    text-align: left !important;
+}
+</style>
 </head>
 <body>
 
-  <div class="workspace-header">
-    <h1 class="workspace-title" id="workspaceTitle">Engineering Parts Registry</h1>
+  <div class="page-header">
+  <div class="header-left">
+    <div class="header-icon">
+      <i class="fa-solid fa-cubes"></i>
+    </div>
+    <div class="header-content">
+      <div class="header-title">Parts List</div>
+      <div class="header-subtitle">
+        View and manage part information
+      </div>
+    </div>
   </div>
+  <div class="header-right">
+    <i class="fa-solid fa-list"></i>
+    <span id="recordCount">0 Records</span>
+  </div>
+</div>
 
   <div class="table-container shadow-sm">
     <table id="partsTable" class="table table-hover m-0" style="width:100%">
@@ -29,14 +59,17 @@
     <div class="error" id="errorMessage"></div>
   </div>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
   $(document).ready(function () {
     const desiredHeaders = ['name', 'apn', 'supertype', 'type', 'description', 'createddate', 'owner', 'email', 'currentstate'];
 
     $.ajax({
-      url: 'http://localhost:8080/andromeda/api/datafetchservice/latestparts',
+      url: BASIC_URL+'/api/datafetchservice/latestparts',
       method: 'GET',
       dataType: 'json',
       success: function (data) {
+    	  $('#recordCount').text(data.length + ' Records');
         if (!Array.isArray(data) || data.length === 0) {
           $('#errorMessage').text('No parts data found.');
           return;

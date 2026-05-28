@@ -11,7 +11,7 @@ import java.util.Map;
 */
 public class AmxConnectionManagement {
 
-    public static final String url = "jdbc:postgresql://localhost:5432/Andromeda";
+    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
     public static final String user = "postgres";
     public static final String db_password= "admin@1234";
     public static final String connectionid = "connetionid";

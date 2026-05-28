@@ -57,9 +57,11 @@
   </div>
 
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
     $(document).ready(function () {
       $.ajax({
-        url: 'http://localhost:8080/andromeda/api/datafetchservice/persons',
+        url: BASIC_URL+'/api/datafetchservice/persons',
         method: 'GET',
         dataType: 'json',
         success: function (data) {

@@ -10,37 +10,199 @@
 <head>
 <meta charset="UTF-8" />
 <title>MPN History</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fff; color: #333; }
-  .topbar { display: flex; background: #f5f7fa; border-bottom: 1px solid #cfd3db; padding: 6px 12px; font-size: 13px; color: #333; }
-  .topbar > div { display: flex; align-items: center; padding: 6px 12px; background: #f9fbfd; border: 1px solid #cfd3db; border-right: none; white-space: nowrap; }
-  .topbar > div:last-child { border-right: 1px solid #cfd3db; }
-  .part-number { font-weight: 700; font-size: 14px; padding-right: 12px; border-right: 1px solid #cfd3db; margin-right: 12px; }
-  .state-box { font-weight: 600; font-size: 13px; color: #333; display: flex; align-items: center; gap: 8px; padding-right: 12px; border-right: 1px solid #cfd3db; }
-  .state-label { margin-right: 4px; }
-  .info-box { font-size: 11px; color: #666; padding-left: 4px; line-height: 1.3; }
-  .topbar > div:not(:last-child) { margin-right: -1px; }
-  .vertical-line img { height: 20px; width: 1px; margin: 0 10px; }
-  .container { display: flex; height: calc(100vh - 56px); font-size: 13px; }
-  .sidebar { width: 19%; background-color: #f8f9fa; border-right: 1px solid #ddd; padding: 20px; font-size: 14px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; }
-  .sidebar a { display: block; padding: 8px; color: #333; text-decoration: none; margin-bottom: 10px; border-radius: 4px; }
-  .sidebar a:hover { background-color: #e3e7ea; }
-  .sidebar a.active { background-color: #808080; color: white; font-weight: bold; }
-  .main-panel { flex-grow: 1; padding: 20px; overflow-y: auto; font-size: 13px; box-sizing: border-box; }
-  #loadingSpinner { display: none; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #fff;
+    color: #333;
+  }
+
+  /* ===== TOPBAR ===== */
+  .topbar {
+    display: flex;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e5e9;
+    padding: 12px 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px; background: #f1f5f9;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #4b5563; flex-shrink: 0;
+  }
+  .topbar-name { font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 2px 0; }
+  .topbar-type { font-size: 12px; color: #6b7280; margin: 0; }
+  .topbar-right {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500; color: #374151;
+  }
+
+  /* ===== STATE BADGE ===== */
+  .state-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 4px 12px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .state-badge.InWork   { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.Frozen   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Released { background: #dcfce7; color: #166534; }
+  .state-badge.Obsolete { background: #fef9c3; color: #854d0e; }
+
+  /* ===== LAYOUT ===== */
+  .page-container {
+    display: flex;
+    height: calc(100vh - 65px);
+    overflow: hidden;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 19%;
+    min-width: 180px;
+    flex-shrink: 0;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; overflow-x: hidden;
+  }
+  .sidebar a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; color: #4b5563;
+    text-decoration: none; margin-bottom: 6px;
+    border-radius: 8px; font-size: 13px; font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
+  .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
+  .sidebar a i { width: 16px; font-size: 13px; color: #6b7280; }
+  .sidebar a.active i { color: #ffffff; }
+
+  /* ===== MAIN PANEL ===== */
+  .main-panel {
+    flex-grow: 1;
+    padding: 0;
+    overflow-y: auto; min-width: 0;
+    box-sizing: border-box;
+    display: flex; flex-direction: column;
+  }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+  height:45px;
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
+  }
+  .toolbar h4 {
+    margin: 0;
+    font-size: 13px; font-weight: 600;
+    color: #e2e8f0; letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .history-icon { width: 18px; height: 18px; filter: invert(1); }
+
+  /* ===== TIMELINE ===== */
+  .timeline-wrapper {
+    padding: 24px 28px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px; top: 0; bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: flex-start; gap: 16px;
+    background: #fff;
+    transition: background 0.15s;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-item:hover { background: #f8fafc; }
+
+  .timeline-dot {
+    position: absolute;
+    left: -32px; top: 16px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    flex-shrink: 0; z-index: 1;
+  }
+  .timeline-dot.dot-created  { background: #22c55e; box-shadow: 0 0 0 2px #22c55e33; }
+  .timeline-dot.dot-promoted { background: #3b82f6; box-shadow: 0 0 0 2px #3b82f633; }
+  .timeline-dot.dot-demoted  { background: #f97316; box-shadow: 0 0 0 2px #f9731633; }
+  .timeline-dot.dot-default  { background: #9ca3af; box-shadow: 0 0 0 2px #9ca3af33; }
+
+  .timeline-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .timeline-icon.icon-created  { background: #dcfce7; color: #166534; }
+  .timeline-icon.icon-promoted { background: #dbeafe; color: #1d4ed8; }
+  .timeline-icon.icon-demoted  { background: #ffedd5; color: #c2410c; }
+  .timeline-icon.icon-default  { background: #f3f4f6; color: #4b5563; }
+
+  .timeline-content { flex: 1; }
+  .timeline-action {
+    font-size: 13px; font-weight: 600;
+    color: #111827; margin-bottom: 2px;
+  }
+  .timeline-sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .timeline-date {
+    font-size: 11px; color: #9ca3af;
+    white-space: nowrap; margin-left: auto; padding-top: 2px;
+  }
+
+  .state-highlight.inwork   { color: #5bc0de; font-weight: 700; }
+  .state-highlight.frozen   { color: #6c757d; font-weight: 700; }
+  .state-highlight.released { color: #28a745; font-weight: 700; }
+  .state-highlight.obsolete { color: #d97706; font-weight: 700; }
+
+  #loadingSpinner {
+    display: none;
+    width: 36px; height: 36px;
+    border: 3px solid #e2e5e9;
+    border-top: 3px solid #4b5563;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 40px auto;
+  }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  #errorMessage { text-align: center; margin-top: 20px; }
-  #historyTable { display: none; margin-top: 0; }
-  #historyTable thead { display: none; }
-  .toolbar { display: flex; align-items: center; margin-bottom: 5px; background-color: #f8f9fa; padding: 8px 12px; border-radius: 4px; border: 1px solid #ddd; }
-  .toolbar h4 { margin: 0; font-weight: 600; color: #444; font-size: 1rem; }
-  .history-icon { width: 18px; height: 18px; margin-right: 8px; vertical-align: middle; }
-  .state-box .state-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 13px; color: white; margin-left: 8px; user-select: none; text-transform: uppercase; min-width: 80px; text-align: center; }
-  .state-badge.InWork  { background-color: #5bc0de; }
-  .state-badge.Frozen  { background-color: #6c757d; }
-  .state-badge.Released { background-color: #28a745; color: #fff; }
-  .state-badge.Obsolete { background-color: #ffc107; color: #000; }
+
+  #errorMessage {
+    color: #c0392b; margin: 20px;
+    text-align: center; font-size: 13px;
+  }
 </style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
@@ -48,108 +210,126 @@
 <body>
 
 <div class="topbar">
-  <div class="left-section">
-    <div class="image-box">
-      <img id="typeIcon" src="" alt="Type Icon" />
+  <div class="topbar-left">
+    <div class="topbar-icon"><i class="fa-solid fa-microchip"></i></div>
+    <div>
+      <div class="topbar-name" id="mpnName">MPN History</div>
+      <div class="topbar-type" id="mpnType">ManufacturerPartAssembly</div>
     </div>
-    <div class="part-info">
-      <div class="part-number" style="font-weight:700; font-size:14px;"></div>
-      <div class="part-type" style="font-size:12px; color:#666; margin-top:2px;"></div>
-    </div>
-    <div class="vertical-line"></div>
   </div>
-  <div class="right-section">
-    <div class="state-box">
-      <span class="state-label">State:</span>
-    </div>
-    <div class="vertical-line"></div>
-    <div class="info-box"></div>
-    <div class="vertical-line"></div>
+  <div class="topbar-right">
+    <span>State:</span>
+    <div id="stateBadgeWrapper"></div>
   </div>
 </div>
 
-<div class="container">
-
+<div class="page-container">
   <div class="sidebar">
-    <a class="nav-link" href="MPNProperties.jsp?name=<%= request.getParameter("name") %>">MPN Properties</a>
-    <a class="nav-link" href="MPNEquivalents.jsp?name=<%= request.getParameter("name") %>">Equivalents</a>
-    <a class="nav-link active" href="MPNHistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-    <a class="nav-link" href="MPNLifecycle.jsp?name=<%= request.getParameter("name") %>">LifeCycle</a>
+    <a class="nav-link" href="MPNProperties.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-microchip"></i> MPN Properties
+    </a>
+    <a class="nav-link" href="MPNEquivalents.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-code-compare"></i> Equivalents
+    </a>
+    <a class="nav-link active" href="MPNHistory.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-regular fa-clock"></i> History
+    </a>
+    <a class="nav-link" href="MPNLifecycle.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-arrows-rotate"></i> LifeCycle
+    </a>
   </div>
 
   <div class="main-panel">
     <div class="toolbar">
       <img src="history.gif" alt="History Icon" class="history-icon" />
-      <h4>History Entries</h4>
+      <h4>History Timeline</h4>
     </div>
-
-    <div id="loadingSpinner"></div>
-    <div id="errorMessage"></div>
-    <div id="noHistoryMsg" class="text text-center mt-3" style="display:none;"></div>
-    <table id="historyTable" class="display table table-striped table-bordered" style="width:100%">
-      <thead>
-        <tr><th></th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="timeline-wrapper">
+      <div id="loadingSpinner"></div>
+      <div id="errorMessage"></div>
+      <div class="timeline" id="timelineContainer"></div>
+    </div>
   </div>
 </div>
 
 <script>
-let dataTable;
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 
 function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
+    return new URLSearchParams(window.location.search).get(param);
 }
-
 function showLoading(show) {
     $('#loadingSpinner').css('display', show ? 'block' : 'none');
 }
-
 function showError(msg) {
     $('#errorMessage').text(msg).show();
-    $('#historyTable').hide();
     showLoading(false);
 }
-
-function escapeHtml(text) {
-    return $('<div>').text(text).html();
+function getEntryType(entry) {
+    const lower = entry.toLowerCase();
+    if (lower.includes('created'))  return 'created';
+    if (lower.includes('promoted')) return 'promoted';
+    if (lower.includes('demoted'))  return 'demoted';
+    return 'default';
 }
-
+function getIconHtml(type) {
+    const icons = {
+        created:  '<i class="fa-solid fa-plus"></i>',
+        promoted: '<i class="fa-solid fa-arrow-up"></i>',
+        demoted:  '<i class="fa-solid fa-arrow-down"></i>',
+        default:  '<i class="fa-solid fa-circle-dot"></i>'
+    };
+    return icons[type] || icons.default;
+}
+function parseEntry(raw) {
+    const dateRegex = /(\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(?:[.\d+Z]*)?)/;
+    const dateMatch = raw.match(dateRegex);
+    const date = dateMatch ? dateMatch[1].replace('T', ' ').split('.')[0] : '';
+    let text = raw.replace(dateRegex, '').trim();
+    text = text.replace(/\s+at\s*$/i, '').trim();
+    let by = '';
+    const byMatch = text.match(/\bby\s+(\S+)/i);
+    const type = getEntryType(text);
+    if (type === 'created' && byMatch) {
+        by = byMatch[0];
+        text = text.replace(byMatch[0], '').trim();
+    } else {
+        text = text.replace(/\bby\s+\S+/gi, '').trim();
+    }
+    return { text, by, date, type };
+}
+function buildStateHighlight(text) {
+    return text.replace(/\b(InWork|Frozen|Released|Obsolete)\b/gi, function(match) {
+        return '<span class="state-highlight ' + match.toLowerCase() + '">' + match + '</span>';
+    });
+}
 function displayHistory(historyInput) {
     let entries = [];
-
     if (Array.isArray(historyInput)) {
         entries = historyInput.map(e => typeof e === 'string' ? e.trim() : '').filter(e => e !== '');
     } else if (typeof historyInput === 'string') {
         entries = historyInput.split('|').map(e => e.trim()).filter(e => e !== '');
     }
+    if (entries.length === 0) { showError('No valid history entries found.'); return; }
 
-    if (entries.length === 0) {
-        showError("No valid history entries found.");
-        return;
-    }
+    const container = $('#timelineContainer');
+    container.empty();
 
-    if ($.fn.DataTable.isDataTable('#historyTable')) {
-        dataTable.clear().destroy();
-    }
-    $('#historyTable tbody').empty();
-
-    entries.forEach(entry => {
-        $('#historyTable tbody').append('<tr><td>' + escapeHtml(entry) + '</td></tr>');
+    entries.forEach(function(raw) {
+        const { text, by, date, type } = parseEntry(raw);
+        const actionHtml = buildStateHighlight(text);
+        const item    = $('<div class="timeline-item"></div>');
+        const dot     = $('<div class="timeline-dot dot-' + type + '"></div>');
+        const icon    = $('<div class="timeline-icon icon-' + type + '">' + getIconHtml(type) + '</div>');
+        const content = $('<div class="timeline-content"></div>');
+        const action  = $('<div class="timeline-action">' + actionHtml + '</div>');
+        content.append(action);
+        if (by) content.append($('<div class="timeline-sub">' + by + '</div>'));
+        const dateEl = $('<div class="timeline-date">' + date + '</div>');
+        item.append(dot).append(icon).append(content).append(dateEl);
+        container.append(item);
     });
-
-    dataTable = $('#historyTable').DataTable({
-        searching: false,
-        paging: false,
-        ordering: false,
-        info: false,
-        lengthChange: false
-    });
-
-    $('#errorMessage').hide();
-    $('#historyTable').show();
     showLoading(false);
 }
 
@@ -158,35 +338,21 @@ $(document).ready(function () {
 
     const partInfo = JSON.parse(sessionStorage.getItem('mpnInfo'));
     if (partInfo) {
-        $('.part-number').text(partInfo.name || '');
-        $('.part-type').text(partInfo.type || '');
-        $('#typeIcon').attr('src', 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000');
-
+        $('#mpnName').text(partInfo.name || '');
+        $('#mpnType').text((partInfo.type || '') + (partInfo.supertype ? ' · ' + partInfo.supertype : ''));
         if (partInfo.currentstate) {
             const state = partInfo.currentstate;
-            const badge = $('<span>').addClass('state-badge ' + state.replace(/\s/g, '')).text(state);
-            $('.state-box').empty().append(
-                $('<span>').addClass('state-label').text('State: '),
-                badge
-            );
+            const cls = state.replace(/\s/g, '');
+            $('#stateBadgeWrapper').html('<span class="state-badge ' + cls + '">' + state + '</span>');
         }
-    } else {
-        $('.part-number').text('');
-        $('.part-type').text('');
-        $('#typeIcon').attr('src', 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000');
-        $('.state-box').empty().append($('<span>').addClass('state-label').text('State:'));
     }
 
-    if (!objectId) {
-        showError("No 'name' parameter found in URL.");
-        return;
-    }
+    if (!objectId) { showError("No 'name' parameter found in URL."); return; }
 
     showLoading(true);
 
     $.ajax({
-
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getMPNHistory',
+        url: BASIC_URL + '/api/navigatorutilites/getMPNHistory',
         method: 'GET',
         data: { objectId: objectId },
         dataType: 'json',
@@ -197,12 +363,12 @@ $(document).ready(function () {
                 showError("No history found for this MPN.");
             }
         },
-        error: function(xhr, status, error) {
-            console.error("AJAX error:", status, error);
+        error: function() {
             showError("Failed to fetch MPN history data.");
         }
     });
 });
+
 </script>
 </body>
 </html>

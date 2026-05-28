@@ -84,11 +84,13 @@
     <div class="error" id="errorMessage"></div>
   </div>
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
   $(document).ready(function () {
     const desiredHeaders = ['name', 'apn', 'supertype', 'type', 'description', 'createddate', 'owner', 'email', 'currentstate'];
 
     $.ajax({
-      url: 'http://localhost:8080/andromeda/api/datafetchservice/latestparts',
+      url: BASIC_URL+'/api/datafetchservice/latestparts',
       method: 'GET',
       dataType: 'json',
       success: function (data) {

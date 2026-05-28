@@ -10,539 +10,450 @@
 <head>
 <meta charset="UTF-8" />
 <title>Part Control History</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     margin: 0; padding: 0;
     background: #fff;
     color: #333;
   }
 
-  /* Top Bar Container */
+  /* ===== TOPBAR ===== */
   .topbar {
     display: flex;
-    background: #f5f7fa;
-    border-bottom: 1px solid #cfd3db;
-    padding: 6px 12px;
-    font-size: 13px;
-    color: #333;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e5e9;
+    padding: 12px 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
-
-  /* Box styling */
-  .topbar > div {
+  .topbar-left {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    background: #f9fbfd;
-    border: 1px solid #cfd3db;
-    border-right: none;
-    white-space: nowrap;
+    gap: 14px;
   }
-
-  /* Last box has right border */
-  .topbar > div:last-child {
-    border-right: 1px solid #cfd3db;
-  }
-
-  /* Folder Icon Box */
-  .folder-box {
-    background: #e3e7eb;
-    border: 1px solid #d1d6dc;
-    width: 28px;
-    height: 28px;
+  .topbar-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f1f5f9;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    margin-right: 8px;
+    font-size: 18px;
+    color: #4b5563;
     flex-shrink: 0;
   }
-
-  .folder-box img {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* Part Number box */
-  .part-number {
+  .topbar-name {
+    font-size: 16px;
     font-weight: 700;
-    font-size: 14px;
-    padding-right: 13px;
-    padding-left:13px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+    color: #111827;
+    margin: 0 0 2px 0;
   }
-
-  /* Description box */
-  .description {
-    font-weight: 600;
-    font-size: 13px;
-    color: #555;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+  .topbar-type {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
   }
-
-  /* State box */
-  .state-box {
-    font-weight: 600;
-    font-size: 13px;
-    color: #333;
+  .topbar-right {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
   }
 
-  .state-label {
-    margin-right: 4px;
-  }
-
-  /* Buttons styling */
-  .btn-submit {
-    background-color: #5c8bff;
-    border: 1px solid #3f70ff;
-    color: white;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-submit:hover {
-    background-color: #3f70ff;
-  }
-
-  .btn-evaluate {
-    background-color: #e5e7ea;
-    border: 1px solid #c6cad2;
-    color: #555;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-evaluate:hover {
-    background-color: #c6cad2;
-  }
-
-  /* Info box */
-  .info-box {
+  /* State badge */
+  .state-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
     font-size: 11px;
-    color: #666;
-    padding-left: 4px;
-    line-height: 1.3;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
+  .state-badge.InWork      { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.InApproval  { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Completed   { background: #dcfce7; color: #166534; }
+  .state-badge.Cancelled   { background: #1f2937; color: #ffffff; }
 
-  .info-box strong {
-    color: #444;
-  }
-
-  /* Adjust spacing between boxes */
-  .topbar > div:not(:last-child) {
-    margin-right: -1px; /* To collapse adjacent borders */
-  }
-	
-	.vertical-line img {
-  height: 20px;  /* Adjust height to make it appear like a line */
-  width: 1px;    /* Make it thin like a vertical line */
-  margin: 0 10px; /* Space around the line */
-}
-
-  /* Container with Sidebar + Main */
+  /* ===== LAYOUT ===== */
   .container {
     display: flex;
-    height: calc(100vh - 56px); /* Adjust for topbar height */
+    height: calc(100vh - 65px);
+    overflow: hidden;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 19%;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    font-size: 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: #4b5563;
+    text-decoration: none;
+    margin-bottom: 6px;
+    border-radius: 8px;
     font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
+  .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
+  .sidebar a i { width: 16px; font-size: 13px; color: #6b7280; }
+  .sidebar a.active i { color: #ffffff; }
+
+  /* ===== MAIN PANEL ===== */
+  .main-panel {
+    flex-grow: 1;
+    padding: 0;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  /* Sidebar */
-  /* Sidebar styling */
-.sidebar {
-  width: 16%;
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-  padding: 20px;
-  font-size: 14px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden; 
-}
-
-.sidebar a {
-  display: block;
-  padding: 8px;
-  color: #333;
-  text-decoration: none;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
-
-.sidebar a:hover {
-  background-color: #e3e7ea; 
-}
-
-.sidebar a.active {
-  background-color:#808080;
-  color: white;
-   font-weight: bold;
-}
-
-/* Main Panel */
-.main-panel {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-  font-size: 13px;
-  box-sizing: border-box;
-}
-
-
-.container {
-  display: flex;
-  height: calc(100vh - 56px); 
-}
-
-.topbar {
-  display: flex;
-  background: #f5f7fa;
-  border-bottom: 1px solid #cfd3db;
-  padding: 6px 12px;
-  font-size: 13px;
-  color: #333;
-}
-
+  /* ===== TOOLBAR ===== */
   .toolbar {
-    margin-bottom: 5px;
-    padding-left: 2px;
+    height: 25px;
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
   }
-  .toolbar button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-right: 6px;
-    vertical-align: middle;
-    padding: 2px 4px;
+  .toolbar h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
-  .toolbar button img {
-    vertical-align: middle;
+  .history-icon {
     width: 18px;
     height: 18px;
-    
-  }
-  .toolbar i.bi-clock-history {
-    color: #9370DB;
-    font-size: 24px; /* Increased the size for visibility */
-    margin-right: 10px;
-}
-  .toolbar button:hover {
-    background-color: #e3f2fd;
-    border-radius: 2px;
+    filter: invert(1);
   }
 
-table.properties {
-  width: 100%; /* full width */
-  border-collapse: collapse;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  margin: 0 auto;
-}
-
-table.properties th,
-table.properties td {
-  padding: 12px 16px;
-  border: 1px solid #ddd; /* add borders on all cells */
-  vertical-align: middle;
-}
-
-table.properties th {
-  background: #fafafa;
-  font-weight: bold;
-  width: 200px; /* label column width */
-  text-align: left;
-}
-
-
-  .folder-icon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 6px;
+  /* ===== TIMELINE ===== */
+  .timeline-wrapper {
+    padding: 24px 28px;
+    overflow-y: auto;
+    flex: 1;
   }
 
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+  }
 
-.properties-container {
-  max-height: 600px; 
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  margin-top: 0;
-}
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+  }
 
-  .nav-tabs {
-        margin-bottom: 20px;
-    }
-    #loadingSpinner {
-        display: none;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    #errorMessage {
-       
-        text-align: center;
-        margin-top: 20px;
-    }
-   #historyTable {
+  .timeline-item {
+    position: relative;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: #fff;
+    transition: background 0.15s;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-item:hover { background: #f8fafc; }
+
+  .timeline-dot {
+    position: absolute;
+    left: -32px;
+    top: 16px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .timeline-dot.dot-created  { background: #22c55e; box-shadow: 0 0 0 2px #22c55e33; }
+  .timeline-dot.dot-promoted { background: #3b82f6; box-shadow: 0 0 0 2px #3b82f633; }
+  .timeline-dot.dot-demoted  { background: #f97316; box-shadow: 0 0 0 2px #f9731633; }
+  .timeline-dot.dot-default  { background: #9ca3af; box-shadow: 0 0 0 2px #9ca3af33; }
+
+  .timeline-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .timeline-icon.icon-created  { background: #dcfce7; color: #166534; }
+  .timeline-icon.icon-promoted { background: #dbeafe; color: #1d4ed8; }
+  .timeline-icon.icon-demoted  { background: #ffedd5; color: #c2410c; }
+  .timeline-icon.icon-default  { background: #f3f4f6; color: #4b5563; }
+
+  .timeline-content { flex: 1; }
+
+  .timeline-action {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+
+  .state-highlight.inwork      { color: #5bc0de; }
+  .state-highlight.inapproval  { color: #6c757d; }
+  .state-highlight.completed   { color: #28a745; }
+  .state-highlight.cancelled   { color: #1f2937; }
+
+  .timeline-sub {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+
+  .timeline-date {
+    font-size: 11px;
+    color: #9ca3af;
+    white-space: nowrap;
+    margin-left: auto;
+    padding-top: 2px;
+  }
+
+  #loadingSpinner {
     display: none;
-    margin-top: 0;
-    font-size: Arial Sans Serif;
-}
-
-    .nav-tabs .nav-link.active {
-        background-color: #e9ecef !important; 
-        font-weight: bold;
-        border-color: #dee2e6 #dee2e6 #fff;
-    }
-    .toolbar {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px; 
-        background-color: #f8f9fa; 
-        padding: 8px 12px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-    }
-    .toolbar i.bi-clock-history {
-        color: #9370DB;
-        font-size: 1.5rem;
-        margin-right: 10px;
-    }
-    .toolbar h4 {
-        margin: 0;
-        font-weight: 600;
-        color: #444;
-        font-size: 1rem; 
-    }
-    #historyTable thead {
-    display: none;
-} 
-.history-icon {
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-  .state-box .state-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 13px;
-  color: white;
-  margin-left: 8px;
-  user-select: none;
-  text-transform: uppercase;
-  min-width: 80px;
-  text-align: center;
-}
-.state-badge.InWork {
-  background-color: #5bc0de;
-}
-
-.state-badge.InApproval {
-  background-color: #6c757d;
-}
-
-.state-badge.Completed {
-  background-color: #28a745;
-}
-
-.state-badge.Cancelled {
-  background-color: #000000;
-  color: #ffffff;
-}
- 
+    width: 20px;
+    height: 20px;
+    border: 3px solid #e2e5e9;
+    border-top: 3px solid #4b5563;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 24px auto;
+  }
+  @keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  #errorMessage {
+    text-align: center;
+    margin: 20px;
+    color: #c0392b;
+    font-size: 13px;
+  }
 </style>
 </head>
 <body>
+
+<!-- Topbar -->
 <div class="topbar">
-  <div class="left-section">
-    <div class="image-box">
-      <img src="https://img.icons8.com/?size=50&id=WECphWgmeM0g&format=png&color=000000" alt="Folder Icon" />
+  <div class="topbar-left">
+    <div class="topbar-icon">
+      <i class="fa-solid fa-sliders"></i>
     </div>
-   <div class="part-info">
-            <div class="part-number" style="font-weight: 700; font-size: 14px;"></div>
-            <div class="part-type" style="font-size: 12px; color: #666; margin-top: 2px;padding-left:13px"></div>
-        </div>
-    <div class="vertical-line"></div>
+    <div>
+      <div class="topbar-name" id="pcName">Part Control</div>
+      <div class="topbar-type" id="pcType">PartControl</div>
+    </div>
   </div>
-  <div class="right-section">
-    <div class="state-box">
-      <span class="state-label">State:</span>
-    </div>
-    <div class="vertical-line"></div>
-    <div class="info-box">
-      
-    </div>
-    <div class="vertical-line"></div>
+  <div class="topbar-right">
+    <span>State:</span>
+    <div id="stateBadgeWrapper"></div>
   </div>
 </div>
+
 <div class="container">
+  <!-- Sidebar -->
   <div class="sidebar">
-    <a href="Partcontroldetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link" data-page="Partcontroldetails.jsp">PC-Properties</a>
-    <a class="nav-link active" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-     <a href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>" class="nav-link" data-page="Partlifecycle.jsp">LifeCycle</a>
-    <a href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>" class="nav-link" data-page="Partcontrolmanagement.jsp">Part Management</a>
+    <a href="Partcontroldetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-sliders"></i> PC-Properties</a>
+    <a class="nav-link active" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clock"></i> History</a>
+    <a href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-arrows-rotate"></i> LifeCycle</a>
+    <a href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Part Management</a>
   </div>
 
+  <!-- Main Panel -->
   <div class="main-panel">
-    <!-- Toolbar -->
-   <div class="toolbar">
-  		<img src="history.gif" alt="History Icon" class="history-icon" />
-  		<h4>History Entries</h4>
-	</div>
-    <div id="loadingSpinner"></div>
-    <div id="errorMessage"></div>
-    <div id="noHistoryMsg" class="text text-center mt-3" style="display:none;"></div>
-    <table id="historyTable" class="display table table-striped table-bordered" style="width:100%">
-    <thead>
-        <tr>
-            <th></th> 
-        </tr>
-    </thead>
-    <tbody>
-
-    </tbody>
-</table>
+    <div class="toolbar">
+      <img src="history.gif" alt="History Icon" class="history-icon" />
+      <h4>History Timeline</h4>
+    </div>
+    <div class="timeline-wrapper">
+      <div id="loadingSpinner"></div>
+      <div id="errorMessage"></div>
+      <div class="timeline" id="timelineContainer"></div>
+    </div>
   </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
-    let dataTable;
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramValue = urlParams.get(param);
-        return paramValue;
+const BASIC_URL = '<%= request.getContextPath() %>';
+
+function getQueryParam(param) {
+    return new URLSearchParams(window.location.search).get(param);
+}
+
+function showLoading(show) {
+    $('#loadingSpinner').css('display', show ? 'block' : 'none');
+}
+
+function showError(msg) {
+    $('#errorMessage').text(msg).show();
+    showLoading(false);
+}
+
+function getEntryType(entry) {
+    const lower = entry.toLowerCase();
+    if (lower.includes('created'))  return 'created';
+    if (lower.includes('promoted')) return 'promoted';
+    if (lower.includes('demoted'))  return 'demoted';
+    return 'default';
+}
+
+function getIconHtml(type) {
+    const icons = {
+        created:  '<i class="fa-solid fa-plus"></i>',
+        promoted: '<i class="fa-solid fa-arrow-up"></i>',
+        demoted:  '<i class="fa-solid fa-arrow-down"></i>',
+        default:  '<i class="fa-solid fa-circle-dot"></i>'
+    };
+    return icons[type] || icons.default;
+}
+
+function parseEntry(raw) {
+    const dateRegex = /(\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(?:[.\d+Z]*)?)/;
+    const dateMatch = raw.match(dateRegex);
+    const date = dateMatch ? dateMatch[1].replace('T', ' ').split('.')[0] : '';
+    let text = raw.replace(dateRegex, '').trim();
+    text = text.replace(/\s+at\s*$/i, '').trim();
+
+    let by = '';
+    const byMatch = text.match(/\bby\s+(\S+)/i);
+    const type = getEntryType(text);
+    if (type === 'created' && byMatch) {
+        by = byMatch[0];
+        text = text.replace(byMatch[0], '').trim();
+    } else {
+        text = text.replace(/\bby\s+\S+/gi, '').trim();
     }
 
-    
-    function showLoading(show) {
-        $('#loadingSpinner').css('display', show ? 'block' : 'none');
-    }
+    return { text, by, date, type };
+}
 
-    function showError(message) {
-        $('#noHistoryMsg').text(message).show();
-        $('#historyTable').hide();
-        showLoading(false);
-    }
-    function displayHistory(historyArray) {
-        if (!Array.isArray(historyArray) || historyArray.length === 0) {
-            showError("No history found for this ID.");
-            return;
-        }
-
-        if ($.fn.DataTable.isDataTable('#historyTable')) {
-            dataTable.clear().destroy();
-        }
-        $('#historyTable tbody').empty();
-
-        historyArray.forEach(entry => {
-            $('#historyTable tbody').append('<tr><td>' + $('<div>').text(entry).html() + '</td></tr>');
-        });
-
-        dataTable = $('#historyTable').DataTable({
-            searching: false,
-            paging: false,
-            ordering: false,
-            info: false,
-            lengthChange: false
-        });
-
-        $('#noHistoryMsg').hide();
-        $('#historyTable').show();
-        showLoading(false);
-    }
-
-    $(document).ready(function () {
-        const objectId = getQueryParam('name');  
-        if (!objectId) {
-            showError("No 'name' (ObjectId) parameter found in the URL.");
-            return;
-        }
-        const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
-        
-        if (partInfo) {
-          $('.part-number').text(partInfo.name || '');
-          $('.part-type').text(partInfo.type || '');
-          $('.state-box .state-label').remove();
-          
-          if (partInfo.currentstate) {
-      	    $('.state-box .state-label').remove();
-      	    const state = partInfo.currentstate;
-      	    const badge = $('<span>')
-      	        .addClass('state-badge ' + state.replace(/\s/g, ''))
-      	        .text(state);
-      	    $('<span>')
-      	        .addClass('state-label')
-      	        .text('State: ')
-      	        .append(badge)
-      	        .prependTo('.state-box');
-      	}
-        } else {
-          $('.part-number').text('');
-          $('.part-type').text('');
-        }
-
-        showLoading(true); 
-        $.ajax({
-            url: 'http://localhost:8080/andromeda/api/datafetchservice/partcontrolhistory',
-            method: 'GET',
-            data: { objectId: objectId },  
-            dataType: 'json',
-            success: function (data) {
-                if (
-                    (data.error && data.error.toLowerCase().includes("no history")) ||
-                    (data.message && data.message.toLowerCase().includes("no history"))
-                ) {
-                    showError(data.message || data.error || "No history found for this ID.");
-                } else if (Array.isArray(data.history)) {
-                    displayHistory(data.history);
-                } else {
-                    showError("Unexpected response format.");
-                }
-            },
-            error: function (xhr) {
-                let message = "Failed to fetch history.";
-                if (xhr.status === 404) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        if (response.error && response.error.toLowerCase().includes("no history")) {
-                            message = "No history found for this ID.";
-                        }
-                    } catch (e) {
-                    }
-                }
-                showError(message);
-            },
-            complete: function () {
-                showLoading(false);  
-            }
-        });
+function buildStateHighlight(text) {
+    return text.replace(/\b(InWork|InApproval|Completed|Cancelled)\b/gi, function(match) {
+        return '<span class="state-highlight ' + match.toLowerCase() + '">' + match + '</span>';
     });
-</script>
+}
 
+function displayHistory(historyInput) {
+    let entries = [];
+    if (Array.isArray(historyInput)) {
+        entries = historyInput.map(e => typeof e === 'string' ? e.trim() : '').filter(e => e !== '');
+    } else if (typeof historyInput === 'string') {
+        entries = historyInput.split('|').map(e => e.trim()).filter(e => e !== '');
+    }
+
+    if (entries.length === 0) {
+        showError('No valid history entries found.');
+        return;
+    }
+
+    const container = $('#timelineContainer');
+    container.empty();
+
+    entries.forEach(function(raw) {
+        const { text, by, date, type } = parseEntry(raw);
+        const actionHtml = buildStateHighlight(text);
+
+        const item   = $('<div class="timeline-item"></div>');
+        const dot    = $('<div class="timeline-dot dot-' + type + '"></div>');
+        const icon   = $('<div class="timeline-icon icon-' + type + '">' + getIconHtml(type) + '</div>');
+        const content = $('<div class="timeline-content"></div>');
+        const action  = $('<div class="timeline-action">' + actionHtml + '</div>');
+
+        content.append(action);
+        if (by) content.append($('<div class="timeline-sub">' + by + '</div>'));
+
+        const dateEl = $('<div class="timeline-date">' + date + '</div>');
+        item.append(dot).append(icon).append(content).append(dateEl);
+        container.append(item);
+    });
+
+    showLoading(false);
+}
+
+$(document).ready(function () {
+    const objectId = getQueryParam('name');
+
+    const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
+    if (partInfo) {
+        $('#pcName').text(partInfo.name || '');
+        $('#pcType').text(partInfo.type || '');
+        if (partInfo.currentstate) {
+            const state = partInfo.currentstate;
+            const cls = state.replace(/\s/g, '');
+            $('#stateBadgeWrapper').html('<span class="state-badge ' + cls + '">' + state + '</span>');
+        }
+    }
+
+    if (!objectId) {
+        showError("No 'name' parameter found in URL.");
+        return;
+    }
+
+    showLoading(true);
+
+    $.ajax({
+        url: BASIC_URL + '/api/datafetchservice/partcontrolhistory',
+        method: 'GET',
+        data: { objectId: objectId },
+        dataType: 'json',
+        success: function(data) {
+            if (Array.isArray(data.history)) {
+                displayHistory(data.history);
+            } else {
+                showError(data.message || data.error || 'No history found.');
+            }
+        },
+        error: function(xhr) {
+            showError('Failed to fetch history.');
+        },
+        complete: function() {
+            showLoading(false);
+        }
+    });
+});
+</script>
 </body>
 </html>

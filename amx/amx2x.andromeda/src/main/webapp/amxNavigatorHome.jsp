@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="styles/amxNavigatorHome.css">
   
   <style>
-    /* Premium style layout matching the reference dashboard precisely */
     .right-panel-frame-wrapper {
       flex: 1;
       height: 100%;
@@ -68,7 +67,6 @@
       font-weight: 400;
     }
 
-    /* Transparent on load so the overlay branding shows right through */
     .right-panel {
       width: 100%;
       height: 100%;
@@ -76,16 +74,71 @@
       z-index: 2;
       background-color: transparent; 
     }
+
+    .navbar-brand {
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      text-decoration: none;
+    }
+    
+    .navbar-brand:hover {
+      opacity: 0.8;
+    }
+    
+    .navbar-brand:hover .brand-text {
+      color: #e5e7eb; 
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+
+    .brand-text {
+      color: inherit; 
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 24px; 
+        border-radius: 18px;
+        width: 100%;
+        max-width: 600px; 
+        box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+        overflow: hidden;
+        border: none;
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #64748b;
+        z-index: 50;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+
+    .close-button:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
   </style>
 </head>
 <body>
 
   <nav class="navbar navbar-expand-lg blue-toolbar position-relative">
     <div class="container-fluid">
-      <div class="navbar-brand d-flex align-items-center">
+      <a class="navbar-brand d-flex align-items-center" href="amxNavigatorHome.jsp">
         <img src="rr.png" alt="Logo" class="platform-logo" />
         <b class="ms-2 brand-text">ANDROMEDA</b>
-      </div> 
+      </a> 
       
       <div class="search-wrapper">
         <form id="searchForm">
@@ -133,7 +186,7 @@
   <li>
     <a class="dropdown-item" href="#" id="createPartSpecificationLink">
       <i class="fa-regular fa-file-lines"></i>
-      Create Specification
+      Create Part Specification
     </a>
   </li>
 
@@ -261,46 +314,54 @@
 
   <div id="myModal" class="modal">
     <div class="modal-content">
-      <span class="close-button">&times;</span>
-      <form id="createPartForm">
-        <h2 class="mb-4 form-heading">Create Part</h2>
-        <div class="mb-3">
-          <label for="supertype" class="form-label">SuperType</label>
-          <select id="supertype" name="supertype" class="form-select" required>
-            <option value="">Select</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="type" class="form-label">Type</label>
-          <select id="type" name="type" class="form-select" required>
-            <option value="">Select</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="APN" class="form-label">APN</label>
-          <select id="APN" name="APN" class="form-select" required>
-            <option value="">Select</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="inputDescription" class="form-label">Description</label>
-          <textarea id="inputDescription" class="form-control" rows="4" placeholder="Enter description"></textarea>
-        </div>
-        <div class="mb-3">
-          <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
-          <textarea id="inputResponsibleEngineer" class="form-control" rows="1" placeholder="username" readonly></textarea>
-        </div>
-        <div class="d-flex justify-content-end gap-2 mt-3">
-          <button type="button" class="btn btn-secondary-dx" id="cancelBtn">Cancel</button>
-          <button type="submit" class="btn btn-primary-dx">Submit</button>
-        </div>
-      </form>
+      <span class="close-button" id="modalCloseBtn">&times;</span>
+      
+      <div id="nativeFormContainer">
+        <form id="createPartForm">
+          <h2 class="mb-4 form-heading">Create Part</h2>
+          <div class="mb-3">
+            <label for="supertype" class="form-label">SuperType</label>
+            <select id="supertype" name="supertype" class="form-select" required>
+              <option value="">Select</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <select id="type" name="type" class="form-select" required>
+              <option value="">Select</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="APN" class="form-label">APN</label>
+            <select id="APN" name="APN" class="form-select" required>
+              <option value="">Select</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="inputDescription" class="form-label">Description</label>
+            <textarea id="inputDescription" class="form-control" rows="4" placeholder="Enter description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
+            <textarea id="inputResponsibleEngineer" class="form-control" rows="1" placeholder="username" readonly></textarea>
+          </div>
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-secondary-dx" id="cancelBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary-dx">Submit</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="iframeContainer" style="display: none; width: 100%; height: 100%;"></div>
+
     </div>
   </div>
 
   <div class="loadingSpinner" id="loadingSpinner"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+  
+  const BASIC_URL = '<%= request.getContextPath() %>';
   function loadPartPropertiesInIframe(objectId) {
 	  const iframe = document.getElementById('contentFrame');
 	  iframe.src = 'Properties.jsp?name=' + encodeURIComponent(objectId);
@@ -317,7 +378,6 @@
 	  iframe.src = 'MPNProperties.jsp?name=' + encodeURIComponent(objectId);
 	}
   
-    // Profile dropdown toggle and logout
     function toggleProfileDropdown(event) {
       event.preventDefault();
       const dropdown = document.getElementById('profileDropdown');
@@ -350,7 +410,7 @@
     	  document.getElementById('profileAvatar').textContent =
     	      (user.username || 'U').charAt(0).toUpperCase();
 
-    	  fetch('http://localhost:8080/andromeda/api/navigatorutilites/login', {
+    	  fetch(BASIC_URL+'/api/navigatorutilites/login', {
     	    method: 'POST',
     	    headers: {
     	      'Content-Type': 'application/x-www-form-urlencoded'
@@ -367,6 +427,7 @@
     	    window.location.href = 'amxNavigatorLogin.jsp';
     	  });
     	}
+
     window.addEventListener('DOMContentLoaded', async () => {
     	  updateProfileDropdown();
 
@@ -381,7 +442,7 @@
     	  let dropdownData = {};
 
     	  try {
-    	    const response = await fetch('http://localhost:8080/andromeda/api/db/dropdowns');
+    	    const response = await fetch(BASIC_URL+'/api/db/dropdowns');
     	    dropdownData = await response.json();
 
     	    dropdownData.superTypes.forEach(supertype => {
@@ -419,30 +480,19 @@
     	    	    });
     	    	  }
     	    	});
-    	    apnSelect.addEventListener('change', () => {
-    	    });
-
 
     	  } catch (err) {
     	    console.error('Error loading dropdown data:', err);
     	    alert('Failed to load dropdown data.');
     	  }
 
-
     	  const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
     	  if (user) {
     	    engineerInput.value = user.username || '';
     	  }
 
-    	  const openModalBtn = document.getElementById('openModalBtn');
-    	    if (openModalBtn) {
-    	      openModalBtn.addEventListener('click', e => {
-    	        e.preventDefault();
-    	        modal.style.display = 'block';
-    	      });
-    	    }
-    	    
-    	  document.querySelector('.close-button').addEventListener('click', () => modal.style.display = 'none');
+          // Modal Close Logic
+    	  document.getElementById('modalCloseBtn').addEventListener('click', () => modal.style.display = 'none');
     	  document.getElementById('cancelBtn').addEventListener('click', () => modal.style.display = 'none');
     	  window.addEventListener('click', (event) => {
     	    if (event.target === modal) modal.style.display = 'none';
@@ -455,7 +505,6 @@
     	      Type: typeSelect.value.trim(),
     	      APN: apnSelect.value.trim(),
     	      Description: descriptionInput.value.trim(),
-
     	    };
 
     	    if (!formData.SuperType || !formData.Type || !formData.APN || !formData.Description) {
@@ -464,7 +513,7 @@
     	    }
 
     	    try {
-    	      const res = await fetch('http://localhost:8080/andromeda/api/navigatorutilites/create', {
+    	      const res = await fetch(BASIC_URL+'/api/navigatorutilites/create', {
     	        method: 'POST',
     	        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     	        credentials: 'include',
@@ -487,68 +536,54 @@
     	  });
     	});
 
-    
     function loadRightPanel(url, element) {
-
         const iframe = document.getElementById('contentFrame');
         iframe.src = url;
 
-        // Remove active class from all sidebar links
         document.querySelectorAll('.core-navigation .nav-link')
             .forEach(link => link.classList.remove('active'));
 
-        // Add active class to clicked link
         if (element) {
             element.classList.add('active');
         }
-
-        if (url === 'amxDataFetch.jsp') {
-            iframe.style.backgroundImage = 'none';
-            iframe.style.backgroundColor = 'white';
-        } else {
-            iframe.style.backgroundImage = "url('andromeda.png')";
-            iframe.style.backgroundColor = '';
-        }
     }
-    
+
     document.getElementById('createPartLink').addEventListener('click', function (e) {
         e.preventDefault();
-
-        document.getElementById('homepageWelcome').style.display = 'none';
-
-        const iframe = document.getElementById('contentFrame');
-        iframe.src = 'CreatePartForm.jsp';
-    }); 
+        loadFormInModal('CreatePartForm.jsp');
+    });
     
     document.getElementById('createPartControlLink').addEventListener('click', function (e) {
-  	  e.preventDefault();
-  	document.getElementById('homepageWelcome').style.display = 'none';
+        e.preventDefault();
+        loadFormInModal('CreatePartControl.jsp');
+    });
 
-  	const iframe = document.getElementById('contentFrame');
-  	iframe.src = 'CreatePartControl.jsp';
-  	});  
+    document.getElementById('createPartSpecificationLink').addEventListener('click', function(e){
+        e.preventDefault();
+        loadFormInModal('CreatePartSpecification.jsp');
+    });
+
+    document.getElementById('createMPNLink').addEventListener('click', function (e) {
+        e.preventDefault();
+        loadFormInModal('CreateMPNForm.jsp');
+    });  
+ 
+    function loadFormInModal(url) {
+        const modal = document.getElementById('myModal');
+        // Hide native form, show iframe container
+        document.getElementById('nativeFormContainer').style.display = 'none';
+        const iframeContainer = document.getElementById('iframeContainer');
+        iframeContainer.style.display = 'block';
+        
+        // Inject iframe. Adjusted height to fit nicely within padded modal.
+        iframeContainer.innerHTML = '<iframe src="' + url + '" style="width:100%; height:75vh; max-height: 600px; border:none; border-radius:8px;"></iframe>';
+        modal.style.display = 'flex';
+    }
     
-  document.getElementById('createPartSpecificationLink').addEventListener('click',function(e){
-	  e.preventDefault();
-	  document.getElementById('homepageWelcome').style.display = 'none';
-
-	  const iframe = document.getElementById('contentFrame');
-	  iframe.src = 'CreatePartSpecification.jsp';    
-  });
-  document.getElementById('createMPNLink').addEventListener('click', function (e) {
-	  e.preventDefault();
-	  document.getElementById('homepageWelcome').style.display = 'none';
-
-	  const iframe = document.getElementById('contentFrame');
-	  iframe.src = 'CreateMPNForm.jsp';
-	});  
- 
- 
-    //search
   function showLoadingSpinner(show) {
-  const spinner = document.getElementById('loadingSpinner');
-  spinner.style.display = show ? 'block' : 'none';
-}
+      const spinner = document.getElementById('loadingSpinner');
+      spinner.style.display = show ? 'block' : 'none';
+  }
 
   document.getElementById('searchForm').addEventListener('submit', function(event) {
 	    event.preventDefault();
@@ -583,6 +618,44 @@
 	        showLoadingSpinner(false);
 	    };
 	});
+
+  window.addEventListener('message', function(event) {
+    if (!event.data) return;
+
+    if (event.data.action === 'closeOnly') {
+      const modal = document.getElementById('myModal');
+      if (modal) modal.style.display = 'none';
+      
+      const iframeContainer = document.getElementById('iframeContainer');
+      if (iframeContainer) iframeContainer.innerHTML = '';
+    }
+
+    if (event.data.action === 'loadProperties') {
+
+      const modal = document.getElementById('myModal');
+      if (modal) modal.style.display = 'none';
+
+      const iframeContainer = document.getElementById('iframeContainer');
+      if (iframeContainer) iframeContainer.innerHTML = '';
+
+      const homepage = document.getElementById('homepageWelcome');
+      if (homepage) homepage.style.display = 'none';
+
+      const contentFrame = document.getElementById('contentFrame');
+      if (contentFrame && event.data.id) {
+        const id = encodeURIComponent(event.data.id);
+        
+        if (event.data.type === 'part') {
+          contentFrame.src = 'Properties.jsp?name=' + id;
+        } else if (event.data.type === 'partcontrol') {
+          contentFrame.src = 'Partcontroldetails.jsp?name=' + id;
+        } else if (event.data.type === 'mpn') {
+          contentFrame.src = 'MPNProperties.jsp?name=' + id;
+        }
+      }
+    }
+  });
+  
   </script>
 </body>
 </html>

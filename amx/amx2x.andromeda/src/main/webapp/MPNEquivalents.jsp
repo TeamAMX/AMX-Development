@@ -10,38 +10,151 @@
 <head>
 <meta charset="UTF-8" />
 <title>MPN Equivalents</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fff; color: #333; }
-  .topbar { display: flex; background: #f5f7fa; border-bottom: 1px solid #cfd3db; padding: 6px 12px; font-size: 13px; color: #333; }
-  .topbar > div { display: flex; align-items: center; padding: 6px 12px; background: #f9fbfd; border: 1px solid #cfd3db; border-right: none; white-space: nowrap; }
-  .topbar > div:last-child { border-right: 1px solid #cfd3db; }
-  .part-number { font-weight: 700; font-size: 14px; padding-right: 12px; border-right: 1px solid #cfd3db; margin-right: 12px; }
-  .state-box { font-weight: 600; font-size: 13px; color: #333; display: flex; align-items: center; gap: 8px; padding-right: 12px; border-right: 1px solid #cfd3db; }
-  .container { display: flex; height: calc(100vh - 56px); font-size: 13px; }
-  .sidebar { width: 20%; background-color: #f8f9fa; border-right: 1px solid #ddd; padding: 20px; font-size: 14px; box-sizing: border-box; overflow-y: auto; }
-  .sidebar a { display: block; padding: 8px; color: #333; text-decoration: none; margin-bottom: 10px; border-radius: 4px; }
-  .sidebar a:hover { background-color: #e3e7ea; }
-  .sidebar a.active { background-color: #808080; color: white; font-weight: bold; }
-  .main-panel { flex-grow: 1; padding: 20px; overflow-y: auto; font-size: 13px; box-sizing: border-box; }
-  .toolbar { background-color: #f8f9fa; padding: 6px 10px; border: 1px solid #dee2e6; border-bottom: none; display: flex; gap: 10px; border-radius: 4px; margin-top: 10px; margin-bottom: 5px; }
-  .toolbar button { background: none; border: none; cursor: pointer; padding: 2px 4px; }
-  .toolbar button img { width: 20px; height: 20px; vertical-align: middle; }
-  .toolbar button:hover { background-color: #e3f2fd; border-radius: 2px; }
-  .toolbar button:disabled { opacity: 0.4; cursor: not-allowed; }
-  .section-label { font-weight: bold; font-size: 14px; margin: 10px 0 5px 0; color: #333; }
-  #errorMessage { color: red; margin: 10px 0; font-weight: bold; }
-  #linkedTable { white-space: nowrap; }
-  .state-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 13px; color: white; margin-left: 8px; user-select: none; text-transform: uppercase; min-width: 80px; text-align: center; }
-  .state-badge.InWork  { background-color: #5bc0de; }
-  .state-badge.Frozen  { background-color: #6c757d; }
-  .state-badge.Released { background-color: #28a745; }
-  .state-badge.Obsolete { background-color: #ffc107; color: #000; }
-  #linkedTable thead th { background-color: #e9ecef; color: #333; font-weight: bold; border-bottom: 2px solid #ccc; white-space: nowrap; }
-  #linkedTable_wrapper { overflow-x: auto; width: 100%; }
-  #linkedTable { min-width: 800px; }
-  
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f7f9fa;
+    color: #333;
+  }
+
+  /* ===== TOPBAR ===== */
+  .topbar {
+    display: flex;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e5e9;
+    padding: 12px 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #4b5563; flex-shrink: 0;
+  }
+  .topbar-name { font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 2px 0; }
+  .topbar-type { font-size: 12px; color: #6b7280; margin: 0; }
+  .topbar-right {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500; color: #374151;
+  }
+
+  /* ===== STATE BADGE ===== */
+  .state-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 4px 12px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .state-badge.InWork   { background: #dbeafe; color: #1d4ed8; }
+  .state-badge.Frozen   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  .state-badge.Released { background: #dcfce7; color: #166534; }
+  .state-badge.Obsolete { background: #fef9c3; color: #854d0e; }
+
+  /* ===== LAYOUT ===== */
+  .page-container {
+    display: flex;
+    height: calc(100vh - 65px);
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 19%;
+    min-width: 180px;  
+    flex-shrink: 0;      
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; overflow-x: hidden;
+}
+  .sidebar a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; color: #4b5563;
+    text-decoration: none; margin-bottom: 6px;
+    border-radius: 8px; font-size: 13px; font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
+  .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
+  .sidebar a i { width: 16px; font-size: 13px; color: #6b7280; }
+  .sidebar a.active i { color: #ffffff; }
+
+  /* ===== MAIN PANEL ===== */
+  .main-panel {
+    flex-grow: 1;
+    padding: 0;
+    overflow-y: auto; min-width: 0;
+    box-sizing: border-box;
+    display: flex; flex-direction: column;
+  }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+    background-color: #000000;
+    padding: 8px 14px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #334155;
+    margin: 0;
+  }
+  .toolbar button {
+    background: none; border: none; cursor: pointer;
+    padding: 4px 6px; border-radius: 4px;
+    display: flex; align-items: center;
+  }
+  .toolbar button img { width: 18px; height: 18px; filter: invert(1); }
+  .toolbar button:hover { background-color: #334155; }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label {
+    font-weight: 700; font-size: 13px;
+    margin: 10px 16px 6px 16px;
+    color: #333; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  /* ===== TABLE ===== */
+  #linkedTable { width: 100% !important; white-space: nowrap; border-collapse: collapse; }
+  #linkedTable thead th {
+    background: #393a3c !important; color: #e2e8f0 !important;
+    font-size: 11px !important; font-weight: 700 !important;
+    text-transform: uppercase !important; letter-spacing: 0.5px !important;
+    padding: 10px 26px 10px 12px !important;
+    border-bottom: 2px solid #334155 !important;
+    border-right: 1px solid #334155 !important;
+    white-space: nowrap !important;
+  }
+  #linkedTable thead .sorting:before, #linkedTable thead .sorting:after,
+  #linkedTable thead .sorting_asc:before, #linkedTable thead .sorting_asc:after,
+  #linkedTable thead .sorting_desc:before, #linkedTable thead .sorting_desc:after {
+    color: rgba(255,255,255,0.75) !important; opacity: 1 !important;
+  }
+  #linkedTable tbody td {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+    color: #111111 !important; background: #ffffff !important;
+    font-size: 13px !important;
+  }
+  #linkedTable tbody tr:hover td { background: #f8fafc !important; }
+
+  .dataTables_info, .dataTables_paginate,
+  .dataTables_length, .dataTables_filter { display: none !important; }
+
+  #errorMessage { color: #c0392b; margin: 10px 16px; font-size: 13px; }
 </style>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -52,24 +165,33 @@
 <body>
 
 <div class="topbar">
-  <div class="left-section">
-    <div class="image-box"><img id="typeIcon" src="" alt="Type Icon" /></div>
-    <div class="part-info">
-      <div class="part-number" style="font-weight:700; font-size:14px;"></div>
-      <div class="part-type" style="font-size:12px; color:#666; margin-top:2px;"></div>
+  <div class="topbar-left">
+    <div class="topbar-icon"><i class="fa-solid fa-microchip"></i></div>
+    <div>
+      <div class="topbar-name" id="mpnName">MPN Equivalents</div>
+      <div class="topbar-type" id="mpnType">ManufacturerPartAssembly</div>
     </div>
   </div>
-  <div class="right-section">
-    <div class="state-box"><span class="state-label">State:</span></div>
+  <div class="topbar-right">
+    <span>State:</span>
+    <div id="stateBadgeWrapper"></div>
   </div>
 </div>
 
-<div class="container">
+<div class="page-container">
   <div class="sidebar">
-    <a class="nav-link" href="MPNProperties.jsp?name=<%= request.getParameter("name") %>">MPN Properties</a>
-    <a class="nav-link active" href="MPNEquivalents.jsp?name=<%= request.getParameter("name") %>">Equivalents</a>
-    <a class="nav-link" href="MPNHistory.jsp?name=<%= request.getParameter("name") %>">History</a>
-     <a class="nav-link" href="MPNLifecycle.jsp?name=<%= request.getParameter("name") %>">LifeCycle</a>
+    <a class="nav-link" href="MPNProperties.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-microchip"></i> MPN Properties
+    </a>
+    <a class="nav-link active" href="MPNEquivalents.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-code-compare"></i> Equivalents
+    </a>
+    <a class="nav-link" href="MPNHistory.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-regular fa-clock"></i> History
+    </a>
+    <a class="nav-link" href="MPNLifecycle.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-arrows-rotate"></i> LifeCycle
+    </a>
   </div>
 
   <div class="main-panel">
@@ -84,14 +206,18 @@
 
     <div id="errorMessage"></div>
     <div class="section-label" id="linkedTableLabel" style="display:none;">Linked Part / APN</div>
-    <table class="table table-bordered mt-2" id="linkedTable" style="display:none;">
+	<div style="overflow-x: auto; padding: 0 16px; width: 100%;">
+  	<table class="table table-bordered mt-2" id="linkedTable" style="display:none; min-width: 900px;">
       <thead><tr></tr></thead>
       <tbody></tbody>
     </table>
   </div>
 </div>
+</div>
 
 <script>
+
+const BASIC_URL = '<%= request.getContextPath() %>';
 function loadLinkedTable() {
     const objectid = new URLSearchParams(window.location.search).get('name');
     if (!objectid) {
@@ -100,7 +226,7 @@ function loadLinkedTable() {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/getLinkedAPNs',
+        url: BASIC_URL+'/api/navigatorutilites/getLinkedAPNs',
         data: { objectid: objectid },
         dataType: 'json',
         cache: false,
@@ -134,7 +260,7 @@ function loadLinkedTable() {
             const thead = $('#linkedTable thead');
             thead.empty();
             const headerRow = $('<tr></tr>');
-            columns.forEach(col => headerRow.append(`<th>${col.title}</th>`));
+            columns.forEach(col => headerRow.append('<th>' + col.title + '</th>'));
             thead.append(headerRow);
 
             $('#linkedTable').DataTable({
@@ -161,17 +287,12 @@ $(document).ready(function () {
 
     const partInfo = JSON.parse(sessionStorage.getItem('mpnInfo'));
     if (partInfo) {
-        $('.part-number').text(partInfo.name || '');
-        $('.part-type').text(partInfo.type || '');
-        $('#typeIcon').attr('src', 'https://img.icons8.com/?size=50&id=OCre7GSjDUBi&format=png&color=000000');
-
+        $('#mpnName').text(partInfo.name || '');
+        $('#mpnType').text((partInfo.type || '') + (partInfo.supertype ? ' · ' + partInfo.supertype : ''));
         if (partInfo.currentstate) {
             const state = partInfo.currentstate;
-            const badge = $('<span>').addClass('state-badge ' + state.replace(/\s/g, '')).text(state);
-            $('.state-box').empty().append(
-                $('<span>').addClass('state-label').text('State: '),
-                badge
-            );
+            const cls = state.replace(/\s/g, '');
+            $('#stateBadgeWrapper').html('<span class="state-badge ' + cls + '">' + state + '</span>');
         }
     }
 
@@ -210,7 +331,7 @@ function receiveSelectedPart(selectedParts) {
     const objectid = new URLSearchParams(window.location.search).get('name');
 
     $.ajax({
-        url: 'http://localhost:8080/andromeda/api/navigatorutilites/linkAPN/' + encodeURIComponent(objectid),
+        url: BASIC_URL+'/api/navigatorutilites/linkAPN/' + encodeURIComponent(objectid),
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(selectedParts),
