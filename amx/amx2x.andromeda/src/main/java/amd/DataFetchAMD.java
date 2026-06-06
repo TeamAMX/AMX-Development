@@ -4,6 +4,8 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import org.navigator.DBConfig;
+
 /*
  *@usage For APN part object
  */
@@ -19,7 +21,7 @@ public class DataFetchAMD {
     public String email;
 
     // Database connection 
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+    public static final String url = DBConfig.getUrl();
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
 	

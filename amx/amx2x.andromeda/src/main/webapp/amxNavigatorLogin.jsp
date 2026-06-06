@@ -58,6 +58,7 @@
     }
 
     .brand-title {
+      margin-bottom:65px;
       position: relative;
       color: #ffffff;
       font-size: 3rem;

@@ -1,10 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="true" %>
-<%
-    String userAccess = (String) session.getAttribute("userAccess");
-    if (userAccess == null) {
-        userAccess = "Admin";
-    }
-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -403,7 +397,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const loggedInUserAccess = "<%= userAccess %>";
+const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+const loggedInUserAccess = user?.access || '';
+if(loggedInUserAccess.trim().toLowerCase() === 'reader') $('#editBtn').hide();
+
   const BASIC_URL = '<%= request.getContextPath() %>';
 
   let currentMPNData = {};

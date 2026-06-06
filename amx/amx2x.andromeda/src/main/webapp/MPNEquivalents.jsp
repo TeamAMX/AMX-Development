@@ -103,7 +103,7 @@
 
   /* ===== TOOLBAR ===== */
   .toolbar {
-    background-color: #000000;
+    background-color: #393a3c;
     padding: 8px 14px;
     display: flex; align-items: center; gap: 8px;
     border-bottom: 1px solid #334155;
@@ -138,7 +138,7 @@
   #linkedTable thead .sorting:before, #linkedTable thead .sorting:after,
   #linkedTable thead .sorting_asc:before, #linkedTable thead .sorting_asc:after,
   #linkedTable thead .sorting_desc:before, #linkedTable thead .sorting_desc:after {
-    color: rgba(255,255,255,0.75) !important; opacity: 1 !important;
+    color: rgba(255,255,255,0.75) !important; opacity: 1 !important; display: none !important;
   }
   #linkedTable tbody td {
     padding: 10px 12px !important;

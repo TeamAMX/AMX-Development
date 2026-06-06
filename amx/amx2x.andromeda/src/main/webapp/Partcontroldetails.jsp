@@ -1,10 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    String userAccess = (String) session.getAttribute("userAccess");
-    if (userAccess == null) {
-        userAccess = "Admin";
-    }
-%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -155,7 +150,6 @@
   }
   .toolbar button:hover { background: #e5e7eb; color: #111827; }
 
-  /* ===== DETAILS CARD — 2 column grid ===== */
   .details-card {
     background: #ffffff;
     border-radius: 12px;
@@ -402,7 +396,10 @@
  
  const BASIC_URL = '<%= request.getContextPath() %>';
 let currentPartData = {};
-let loggedInUserAccess = 'admin';  
+
+const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+const loggedInUserAccess = user?.access || '';
+if(loggedInUserAccess.trim().toLowerCase() === 'reader') $('#editBtn').hide();
 
 $(document).ready(function () {
   const objectId = getQueryParam('name') || '';
@@ -496,7 +493,7 @@ $(document).ready(function () {
 
   function populateTopBar(data) {
 	    $('#pcName').text(data.name || 'Part Control Details');
-	    $('#pcType').text((data.type || '') + (data.supertype ? ' · ' + data.supertype : ''));
+	    $('#pcType').text(data.type || '');
 	    if (data.currentstate) {
 	        const state = data.currentstate;
 	        const cls = state.replace(/\s/g, '');

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>AndromedaHome</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -141,18 +142,31 @@
       </a> 
       
       <div class="search-wrapper">
-        <form id="searchForm">
-          <div class="input-group search-container">
-            <select id="searchFilter" class="form-select search-filter">
-              <option value="">All</option>
-              <option value="byParts">byParts</option>
-              <option value="byPersons">byPersons</option>
-            </select>
-            <input type="text" id="searchInput" class="form-control search-input" placeholder="Search parts, persons...">
-          </div>
-          <button type="submit" id="searchButton" style="display: none;">Search</button>
-        </form>
-      </div>
+		<div class="input-group search-container" id="searchContainer">
+		    <div class="search-scope-trigger" id="searchScopeTrigger">
+    		  <span id="searchScopeLabel">All</span>
+    			  <i class="fa-solid fa-chevron-up" id="searchScopeChevron"></i>
+   			</div>
+   	 		<div class="search-scope-divider"></div>
+    		<input type="text" id="searchInput" class="form-control search-input" placeholder="Search by parts, persons...">
+    		<input type="hidden" id="searchFilter" value="">
+  		</div>
+  		<div class="search-scope-dropdown" id="searchScopeDropdown">
+    		<div class="scope-label">SEARCH SCOPE</div>
+    		<div class="scope-option active" data-value="" data-label="All">
+    			<i class="fa-solid fa-globe"></i>
+    			<span>All</span>
+    		</div>
+    		<div class="scope-option" data-value="byParts" data-label="Parts">
+      			<i class="fa-solid fa-cubes"></i>
+      			<span>Parts</span>
+    		</div>
+    		<div class="scope-option" data-value="byPersons" data-label="Persons">
+      			<i class="fa-solid fa-users"></i>
+      			<span>Persons</span>
+    		</div>
+  		</div>
+	  </div>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerComponents" aria-controls="headerComponents" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -280,22 +294,37 @@
 
   <div class="panels-container">
     <div class="left-panel">
+    <div class="sidebar-header">
+    	<button id="sidebarToggle" class="sidebar-toggle" data-tooltip="Close Sidebar">
+    <i class="fa-solid fa-bars"></i>
+</button>
+	</div>
       <ul class="nav flex-column core-navigation">
         <li class="nav-item">
-          <a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorParts.jsp', this)"><i class="fa-solid fa-cubes"></i> Parts</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorPersons.jsp', this)"><i class="fa-solid fa-users"></i> Persons</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorPartControl.jsp', this)"><i class="fa-solid fa-sliders"></i> PartControl</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorMPN.jsp', this)"><i class="fa-solid fa-barcode"></i> MPN</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="loadRightPanel('amxRunSql.jsp', this)"><i class="fa-solid fa-terminal"></i> RunSQL</a>
-        </li>
+        	<a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorParts.jsp', this)"><i class="fa-solid fa-cubes"></i>
+        		<span class="nav-text">Parts</span>
+    		</a>
+		</li>
+		<li class="nav-item">
+        	<a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorPersons.jsp', this)"><i class="fa-solid fa-users"></i>
+        		<span class="nav-text">Persons</span>
+    		</a>
+		</li>
+		<li class="nav-item">
+        	<a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorPartControl.jsp', this)"><i class="fa-solid fa-sliders"></i>
+        		<span class="nav-text">PartControl</span>
+    		</a>
+		</li>
+		<li class="nav-item">
+        	<a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorMPN.jsp', this)"><i class="fa-solid fa-barcode"></i>
+        		<span class="nav-text"> MPN</span>
+    		</a>
+		</li>
+		<li class="nav-item" >
+        	<a class="nav-link" id="sql-btn" style="display:none;" href="#" onclick="loadRightPanel('amxRunSql.jsp', this)"><i class="fa-solid fa-terminal" ></i>
+        		<span class="nav-text"> RunSQL</span>
+    		</a>
+		</li>
       </ul>
     </div>
     
@@ -317,39 +346,7 @@
       <span class="close-button" id="modalCloseBtn">&times;</span>
       
       <div id="nativeFormContainer">
-        <form id="createPartForm">
-          <h2 class="mb-4 form-heading">Create Part</h2>
-          <div class="mb-3">
-            <label for="supertype" class="form-label">SuperType</label>
-            <select id="supertype" name="supertype" class="form-select" required>
-              <option value="">Select</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="type" class="form-label">Type</label>
-            <select id="type" name="type" class="form-select" required>
-              <option value="">Select</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="APN" class="form-label">APN</label>
-            <select id="APN" name="APN" class="form-select" required>
-              <option value="">Select</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="inputDescription" class="form-label">Description</label>
-            <textarea id="inputDescription" class="form-control" rows="4" placeholder="Enter description"></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
-            <textarea id="inputResponsibleEngineer" class="form-control" rows="1" placeholder="username" readonly></textarea>
-          </div>
-          <div class="d-flex justify-content-end gap-2 mt-3">
-            <button type="button" class="btn btn-secondary-dx" id="cancelBtn">Cancel</button>
-            <button type="submit" class="btn btn-primary-dx">Submit</button>
-          </div>
-        </form>
+        
       </div>
 
       <div id="iframeContainer" style="display: none; width: 100%; height: 100%;"></div>
@@ -366,6 +363,10 @@
 	  const iframe = document.getElementById('contentFrame');
 	  iframe.src = 'Properties.jsp?name=' + encodeURIComponent(objectId);
 	}
+  
+  const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+  const loggedInUserAccess = user?.access || '';
+  if (loggedInUserAccess.trim().toLowerCase() === 'admin' || loggedInUserAccess.trim().toLowerCase() === 'leader') $('#sql-btn').show();
 
   function loadPartControlDetailsInIframe(partcontrolId) {
 	    const iframe = document.getElementById('contentFrame');
@@ -431,109 +432,6 @@
     window.addEventListener('DOMContentLoaded', async () => {
     	  updateProfileDropdown();
 
-    	  const supertypeSelect = document.getElementById('supertype');
-    	  const typeSelect = document.getElementById('type');
-    	  const apnSelect = document.getElementById('APN');
-    	  const descriptionInput = document.getElementById('inputDescription');
-    	  const engineerInput = document.getElementById('inputResponsibleEngineer');
-    	  const form = document.getElementById('createPartForm');
-    	  const modal = document.getElementById('myModal');
-
-    	  let dropdownData = {};
-
-    	  try {
-    	    const response = await fetch(BASIC_URL+'/api/db/dropdowns');
-    	    dropdownData = await response.json();
-
-    	    dropdownData.superTypes.forEach(supertype => {
-    	      const option = new Option(supertype, supertype);
-    	      supertypeSelect.add(option);
-    	    });
-
-    	    supertypeSelect.addEventListener('change', () => {
-    	      const selectedSuper = supertypeSelect.value;
-    	      typeSelect.innerHTML = '<option value="">Select</option>';
-    	      apnSelect.innerHTML = '<option value="">Select</option>';
-    	      descriptionInput.value = '';
-
-    	      if (selectedSuper && dropdownData.types[selectedSuper]) {
-    	        dropdownData.types[selectedSuper].forEach(type => {
-    	          const option = new Option(type, type);
-    	          typeSelect.add(option);
-    	        });
-    	      }
-    	    });
-
-    	    typeSelect.addEventListener('change', () => {
-    	    	  const selectedType = typeSelect.value;
-    	    	  apnSelect.innerHTML = '<option value="">Select</option>';
-    	    	  descriptionInput.value = '';
-
-    	    	  const normalizedKey = selectedType.replace(/\s+/g, '').toLowerCase();
-    	    	  const apnList = dropdownData.apn && dropdownData.apn[normalizedKey];
-
-    	    	  if (Array.isArray(apnList)) {
-    	    	    apnList.forEach(apnWithLabel => {
-    	    	      const label = apnWithLabel.trim();
-    	    	      const option = new Option(label, label); 
-    	    	      apnSelect.add(option);
-    	    	    });
-    	    	  }
-    	    	});
-
-    	  } catch (err) {
-    	    console.error('Error loading dropdown data:', err);
-    	    alert('Failed to load dropdown data.');
-    	  }
-
-    	  const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    	  if (user) {
-    	    engineerInput.value = user.username || '';
-    	  }
-
-          // Modal Close Logic
-    	  document.getElementById('modalCloseBtn').addEventListener('click', () => modal.style.display = 'none');
-    	  document.getElementById('cancelBtn').addEventListener('click', () => modal.style.display = 'none');
-    	  window.addEventListener('click', (event) => {
-    	    if (event.target === modal) modal.style.display = 'none';
-    	  });
-
-    	  form.addEventListener('submit', async (e) => {
-    	    e.preventDefault();
-    	    const formData = {
-    	      SuperType: supertypeSelect.value.trim(),
-    	      Type: typeSelect.value.trim(),
-    	      APN: apnSelect.value.trim(),
-    	      Description: descriptionInput.value.trim(),
-    	    };
-
-    	    if (!formData.SuperType || !formData.Type || !formData.APN || !formData.Description) {
-    	      alert('Please fill in all required fields.');
-    	      return;
-    	    }
-
-    	    try {
-    	      const res = await fetch(BASIC_URL+'/api/navigatorutilites/create', {
-    	        method: 'POST',
-    	        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    	        credentials: 'include',
-    	        body: new URLSearchParams(formData)
-    	      });
-    	      const result = await res.json();
-
-    	      if (!res.ok || result.Status !== 'Success') {
-    	        alert('Error: ' + (result.Message || 'Something went wrong'));
-    	        return;
-    	      }
-
-    	      alert('Part created successfully!');
-    	      modal.style.display = 'none';
-    	      form.reset();
-
-    	    } catch (error) {
-    	      alert('Submission failed: ' + error.message);
-    	    }
-    	  });
     	});
 
     function loadRightPanel(url, element) {
@@ -570,54 +468,77 @@
  
     function loadFormInModal(url) {
         const modal = document.getElementById('myModal');
-        // Hide native form, show iframe container
         document.getElementById('nativeFormContainer').style.display = 'none';
         const iframeContainer = document.getElementById('iframeContainer');
         iframeContainer.style.display = 'block';
         
-        // Inject iframe. Adjusted height to fit nicely within padded modal.
         iframeContainer.innerHTML = '<iframe src="' + url + '" style="width:100%; height:75vh; max-height: 600px; border:none; border-radius:8px;"></iframe>';
         modal.style.display = 'flex';
     }
+    
+    document.getElementById('modalCloseBtn').addEventListener('click', function() {
+        document.getElementById('myModal').style.display = 'none';
+        document.getElementById('iframeContainer').innerHTML = '';
+    });
     
   function showLoadingSpinner(show) {
       const spinner = document.getElementById('loadingSpinner');
       spinner.style.display = show ? 'block' : 'none';
   }
 
-  document.getElementById('searchForm').addEventListener('submit', function(event) {
-	    event.preventDefault();
+  const scopeTrigger = document.getElementById('searchScopeTrigger');
+  const scopeDropdown = document.getElementById('searchScopeDropdown');
+  const scopeLabel = document.getElementById('searchScopeLabel');
+  const searchFilterInput = document.getElementById('searchFilter');
 
-	    const searchInput = document.getElementById('searchInput');
-	    const filterSelect = document.getElementById('searchFilter');
-	    const searchQuery = searchInput.value.trim();
-	    const filterValue = filterSelect.value.trim();
+  scopeTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = scopeDropdown.classList.toggle('open');
+    scopeTrigger.classList.toggle('open', isOpen);
+  });
 
-	    if (searchQuery.length < 2) {
-	        alert('Please enter at least 2 characters');
-	        return;
-	    }
-	    if (filterValue === null || filterValue === undefined) {
-	    	  alert('Please select a filter');
-	    	  return;
-	    	}
-	    showLoadingSpinner(true);
+  document.querySelectorAll('.scope-option').forEach(option => {
+    option.addEventListener('click', () => {
 
-	    const loadingTimeout = setTimeout(() => {
-	        showLoadingSpinner(false);
-	    }, 10000);
+      document.querySelectorAll('.scope-option').forEach(o => o.classList.remove('active'));
+      option.classList.add('active');
 
-	    const iframe = document.getElementById('contentFrame');
-	    iframe.src = 'searchResults.jsp?query=' + encodeURIComponent(searchQuery) + '&filter=' + encodeURIComponent(filterValue);
+      scopeLabel.textContent = option.getAttribute('data-label');
+      searchFilterInput.value = option.getAttribute('data-value');
 
-	    searchInput.value = '';
-	    iframe.style.backgroundImage = 'none';
+      scopeDropdown.classList.remove('open');
+      scopeTrigger.classList.remove('open');
+    });
+  });
 
-	    iframe.onload = function() {
-	        clearTimeout(loadingTimeout);
-	        showLoadingSpinner(false);
-	    };
-	});
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) {
+      scopeDropdown.classList.remove('open');
+      scopeTrigger.classList.remove('open');
+    }
+  });
+
+  document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const query = this.value.trim();
+      const filter = searchFilterInput.value;
+
+      if (query.length < 2) { alert('Please enter at least 2 characters'); return; }
+
+      showLoadingSpinner(true);
+      const loadingTimeout = setTimeout(() => showLoadingSpinner(false), 10000);
+
+      const iframe = document.getElementById('contentFrame');
+      iframe.src = 'searchResults.jsp?query=' + encodeURIComponent(query) + '&filter=' + encodeURIComponent(filter);
+      this.value = '';
+
+      iframe.onload = function() {
+        clearTimeout(loadingTimeout);
+        showLoadingSpinner(false);
+      };
+    }
+  });
 
   window.addEventListener('message', function(event) {
     if (!event.data) return;
@@ -654,6 +575,36 @@
         }
       }
     }
+  });
+  
+  const tooltip = document.createElement('div');
+  tooltip.className = 'sidebar-tooltip';
+  document.body.appendChild(tooltip);
+
+  const toggleBtn = document.getElementById('sidebarToggle');
+
+  toggleBtn.addEventListener('mouseenter', () => {
+      const rect = toggleBtn.getBoundingClientRect();
+      tooltip.textContent = toggleBtn.getAttribute('data-tooltip');
+      tooltip.style.left = (rect.right + 10) + 'px';
+      tooltip.style.top = (rect.top + rect.height / 2 - 13) + 'px';
+      tooltip.classList.add('visible');
+  });
+
+  toggleBtn.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+  });
+
+  toggleBtn.addEventListener('click', () => {
+      const sidebar = document.querySelector('.left-panel');
+      sidebar.classList.toggle('collapsed');
+      tooltip.classList.remove('visible');
+
+      if (sidebar.classList.contains('collapsed')) {
+          toggleBtn.setAttribute('data-tooltip', 'Open Sidebar');
+      } else {
+          toggleBtn.setAttribute('data-tooltip', 'Close Sidebar');
+      }
   });
   
   </script>

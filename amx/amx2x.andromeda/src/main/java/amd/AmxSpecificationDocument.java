@@ -4,12 +4,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.navigator.DBConfig;
+
 	/**
 	 *@usage This class will perform document activity
 	 */
 public class AmxSpecificationDocument {
 
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+    public static final String url = DBConfig.getUrl();
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
 

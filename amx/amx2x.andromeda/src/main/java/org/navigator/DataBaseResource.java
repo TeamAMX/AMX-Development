@@ -1,6 +1,8 @@
 package org.navigator;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -17,7 +19,6 @@ import java.util.*;
 @Path("/db")
 public class DataBaseResource {
 
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
 
@@ -27,30 +28,30 @@ public class DataBaseResource {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        String createSupertypeTable = """
-            CREATE TABLE IF NOT EXISTS supertype (id SERIAL PRIMARY KEY,name VARCHAR(100) NOT NULL UNIQUE);
-            """;
-        String createTypeTable = """
-            CREATE TABLE IF NOT EXISTS type (id SERIAL PRIMARY KEY,partname VARCHAR(100),amxcontrol VARCHAR(100),
-                supertype_id INTEGER REFERENCES supertype(id) ON DELETE CASCADE);
-            """;
-        String createSubtypeTable = """
-            CREATE TABLE IF NOT EXISTS subtype (id SERIAL PRIMARY KEY,partname VARCHAR(100),subpart VARCHAR(255),
-                apn VARCHAR(50),type_id INTEGER REFERENCES type(id) ON DELETE CASCADE);
-            """;
-        String createFastenerSubtypeTable="""
-        		CREATE TABLE IF NOT EXISTS fastenersubtypes(id SERIAL PRIMARY KEY,partname VARCHAR(100),subpart VARCHAR(10000),
-        		apn VARCHAR(1000),variant VARCHAR(100), type_id INTEGER REFERENCES type(id) ON DELETE CASCADE);        		
-        		""";
-        try (Connection conn = DriverManager.getConnection(url, user, db_password);
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(createSupertypeTable);
-            stmt.executeUpdate(createTypeTable);
-            stmt.executeUpdate(createSubtypeTable);
-            stmt.executeUpdate(createFastenerSubtypeTable);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        String createSupertypeTable = """
+//            CREATE TABLE IF NOT EXISTS supertype (id SERIAL PRIMARY KEY,name VARCHAR(100) NOT NULL UNIQUE);
+//            """;
+//        String createTypeTable = """
+//            CREATE TABLE IF NOT EXISTS type (id SERIAL PRIMARY KEY,partname VARCHAR(100),amxcontrol VARCHAR(100),
+//                supertype_id INTEGER REFERENCES supertype(id) ON DELETE CASCADE);
+//            """;
+//        String createSubtypeTable = """
+//            CREATE TABLE IF NOT EXISTS subtype (id SERIAL PRIMARY KEY,partname VARCHAR(100),subpart VARCHAR(255),
+//                apn VARCHAR(50),type_id INTEGER REFERENCES type(id) ON DELETE CASCADE);
+//            """;
+//        String createFastenerSubtypeTable="""
+//        		CREATE TABLE IF NOT EXISTS fastenersubtypes(id SERIAL PRIMARY KEY,partname VARCHAR(100),subpart VARCHAR(10000),
+//        		apn VARCHAR(1000),variant VARCHAR(100), type_id INTEGER REFERENCES type(id) ON DELETE CASCADE);        		
+//        		""";
+//        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
+//             Statement stmt = conn.createStatement()) {
+//            stmt.executeUpdate(createSupertypeTable);
+//            stmt.executeUpdate(createTypeTable);
+//            stmt.executeUpdate(createSubtypeTable);
+//            stmt.executeUpdate(createFastenerSubtypeTable);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 	/**
 	@Usage 
@@ -61,7 +62,11 @@ public class DataBaseResource {
     @GET
     @Path("/dropdowns")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllDropdowns() {
+    public Response getAllDropdowns(@Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         Map<String, Object> responseMap = new HashMap<>();
 
         try (Connection conn = getConnection()) {
@@ -256,7 +261,7 @@ public class DataBaseResource {
 	* This is used for to get the connection of the database 
 	*/
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, user, db_password);
+        return DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
     }
     
     
@@ -271,7 +276,7 @@ public class DataBaseResource {
         try {
 
             Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(url, user, db_password);
+            Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
             String sql = "SELECT name " +
                     "FROM amxsuppliercompanies " +
                     "WHERE LOWER(name) LIKE LOWER(?) " +

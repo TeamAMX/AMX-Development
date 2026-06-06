@@ -13,20 +13,6 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <style>
-table.dataTable thead th, table.table thead th {
-    background-color: #1f2937 !important;
-    color: #e2e8f0 !important;
-    font-weight: 700 !important;
-    font-size: 11px !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px;
-    padding: 10px 40px !important;
-    border-bottom: 2px solid #334155 !important;
-    border-right: 1px solid #334155 !important;
-    border-top: none !important;
-    border-left: none !important;
-    text-align: left !important;
-}
 </style>
 </head>
 <body>

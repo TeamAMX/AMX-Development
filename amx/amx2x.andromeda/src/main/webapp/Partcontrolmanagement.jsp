@@ -224,26 +224,99 @@
   .dataTables_length,
   .dataTables_filter { display: none !important; }
 
-  /* ===== CREATE PANEL ===== */
-  #createPanel {
+ .modal {
+    display: none;
     position: fixed;
+    z-index: 2000;
+    left: 0;
     top: 0;
-    right: -400px;
-    width: 400px;
-    height: 100%;
-    background: #fff;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-    overflow-y: auto;
-    transition: right 0.3s ease;
-    z-index: 1051;
-    padding: 0;
-  }
-  #createPanel.active { right: 0; }
-  #createPanel iframe {
-    border: none;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    align-items: center;
+    justify-content: center;
+    padding: 0px 57px 40px 0px;
+}
+
+.modal-content {
+        background-color: white;
+        padding: 24px; 
+        border-radius: 18px;
+        width: 100%;
+        max-width: 500px; 
+        box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+        overflow: hidden;
+        border: none;
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #64748b;
+        z-index: 50;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+
+    .close-button:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+
+.modal-content iframe {
     width: 100%;
-    height: calc(100% - 56px);
-  }
+    height: 100%;
+    border: none;
+}
+.form-heading {
+    font-size: 20px;
+    font-weight: 700;
+}
+form label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--3dx-text-secondary);
+}
+form textarea, form select, form input {
+    font-size: 13px !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--3dx-border) !important;
+    margin-bottom: 15px;
+}
+form textarea:focus, form select:focus, form input:focus {
+    border-color: #6b7280 !important; 
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-primary-dx {
+    background-color: var(--3dx-accent-blue);
+    border: none;
+    color: white;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+.btn-secondary-dx {
+    background-color: #e2e5e9;
+    border: none;
+    color: var(--3dx-text-main);
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+}
 
   #loadingSpinner {
     display: none;
@@ -293,7 +366,7 @@
 </div>
     <div class="main-panel">
         <div class="toolbar">
-  <button data-bs-toggle="tooltip" title="Create Part" id="openCreatePanelBtn">
+  <button data-bs-toggle="tooltip" title="Create Part" id="createPartLink">
     <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add">
   </button>
   <button data-bs-toggle="tooltip" title="Add Existing Part" id="addExistingpart">
@@ -313,9 +386,20 @@
   </table>
 </div>
 </div>
- <div id="createPanel">
-        <iframe id="createIframe" src=""></iframe>
+
+	<div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="modalCloseBtn">&times;</span>
+      
+      <div id="nativeFormContainer">
+        
+      </div>
+
+      <div id="iframeContainer" style="display: none; width: 100%; height: 100%;"></div>
+
     </div>
+  </div>
+
     </div>
 <script>
 
@@ -427,6 +511,12 @@ function loadPartTable() {
     $(document).ready(function() {
         loadPartTable();
 
+        
+        document.getElementById('modalCloseBtn').addEventListener('click', function () {
+            document.getElementById('myModal').style.display = 'none';
+            document.getElementById('iframeContainer').innerHTML = '';
+        });
+
 	const partInfo = JSON.parse(sessionStorage.getItem('partInfo'));
         
 	if (partInfo) {
@@ -438,20 +528,28 @@ function loadPartTable() {
 	        $('.state-box').html('<span class="state-badge ' + cls + '">' + state + '</span>');
 	    }
 	}
-        document.getElementById('openCreatePanelBtn').addEventListener('click', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const objectid = urlParams.get('name');
-
-            if (objectid) {
-                const panel = document.getElementById('createPanel');
-                panel.classList.add('active');
-                document.getElementById('createIframe').src = 'CreatePartForControl.jsp?name=' + encodeURIComponent(objectid);
-            } else {
-                alert('No object ID found!');
-            }
-        });
+	 const objectid = new URLSearchParams(window.location.search).get('name');
+     if (!objectid) {
+         alert('No object ID found.');
+         return;
+     }
+     
+     document.getElementById('createPartLink').addEventListener('click', function (e) {
+         e.preventDefault();
+         loadFormInModal('CreatePartForControl.jsp?name=' + encodeURIComponent(objectid));
+     });
 
     });
+    
+    function loadFormInModal(url) {
+        const modal = document.getElementById('myModal');
+        document.getElementById('nativeFormContainer').style.display = 'none';
+        const iframeContainer = document.getElementById('iframeContainer');
+        iframeContainer.style.display = 'block';
+        
+        iframeContainer.innerHTML = '<iframe src="' + url + '" style="width:100%; height:75vh; max-height: 600px; border:none; border-radius:8px;"></iframe>';
+        modal.style.display = 'flex';
+    }
     
     $('#addExistingpart').on('click', function () {
         const objectid = new URLSearchParams(window.location.search).get('name');
@@ -468,19 +566,18 @@ function loadPartTable() {
     window.addEventListener('message', function(event) {
         if (!event.data) return;
 
-        if (event.data.action === 'closeOnly') {
-            document.getElementById('createPanel').classList.remove('active');
-        } else if (event.data.action === 'closeAndRefresh') {
-            document.getElementById('createPanel').classList.remove('active');
-            loadPartTable(); 
-        } else if (event.data && event.data.selectedParts) {
+        if (event.data.action === 'closeOnly' || event.data.action === 'closeAndRefresh') {
+            document.getElementById('myModal').style.display = 'none';
+            document.getElementById('iframeContainer').innerHTML = '';
+            loadPartTable();
+        } else if (event.data.selectedParts) {
             receiveSelectedParts(event.data.selectedParts);
         }
     });
     function closeCreatePanel() {
-        const panel = document.getElementById('createPanel');
+        const panel = document.getElementById('myModal');
         panel.classList.remove('active');
-        document.getElementById('createIframe').src = '';
+        document.getElementById('iframeContainer').src = '';
     }
     
     $('#excelexport').on('click', function () {

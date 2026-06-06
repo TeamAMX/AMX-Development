@@ -20,51 +20,110 @@
     color: #333;
   }
 
-  /* ===== TOPBAR ===== */
-  .topbar {
+ :root {
+	--border-color: #e5e7eb;
+	}
+.topbar-main {
     display: flex;
-    background: #f5f7fa;
-    border-bottom: 1px solid #cfd3db;
-    padding: 6px 12px;
-    font-size: 13px;
-    color: #333;
-  }
-  .topbar > div {
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    margin: 16px 24px 0 24px;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+}
+  .left-section {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    background: #f9fbfd;
-    border: 1px solid #cfd3db;
-    border-right: none;
-    white-space: nowrap;
+    gap: 16px;
   }
-  .topbar > div:last-child { border-right: 1px solid #cfd3db; }
-  .topbar > div:not(:last-child) { margin-right: -1px; }
+
+  .image-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: var(--bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #typeIcon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+  }
+
+  .part-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
   .part-number {
+    font-size: 1.25rem;
     font-weight: 700;
-    font-size: 14px;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
-    margin-right: 12px;
+    color: var(--text-main);
   }
-  .state-box {
-    font-weight: 600;
-    font-size: 13px;
-    color: #333;
+
+  .part-type {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+     margin-top: 4px;
+  }
+
+  .right-section {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding-right: 12px;
-    border-right: 1px solid #cfd3db;
+    gap: 12px;
   }
-  .state-label { margin-right: 4px; }
-  .info-box {
-    font-size: 11px;
-    color: #666;
-    padding-left: 4px;
-    line-height: 1.3;
+
+  .state-box {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
   }
-  .vertical-line img { height: 20px; width: 1px; margin: 0 10px; }
+
+  /* Pill State Badges Layout */
+  .state-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  .state-badge.InWork {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+  }
+
+  .state-badge.Frozen {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+  }
+
+  .state-badge.Released {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+
+  .state-badge.Obsolete {
+    background-color: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fef3c7;
+  }
+ 
 
   /* ===== LAYOUT ===== */
   .container {
@@ -150,10 +209,6 @@
     letter-spacing: 0.3px;
     text-align: center;
   }
-  .state-badge.InWork   { background: #dbeafe; color: #1d4ed8; }
-  .state-badge.Frozen   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
-  .state-badge.Released { background: #dcfce7; color: #166534; }
-  .state-badge.Obsolete { background: #fef9c3; color: #854d0e; }
 
   /* ===== TIMELINE ===== */
   .timeline-wrapper {
@@ -285,30 +340,27 @@
 
 </head>
 <body>
-<div class="topbar">
-    <div class="left-section">
-    <div class="image-box">
-            <img id="typeIcon" src="" alt="Type Icon" />
-      </div>
 
-    <div class="part-info">
-      <div class="part-number" style="font-weight: 700; font-size: 14px;"></div>
-      <div class="part-type" style="font-size: 12px; color: #666; margin-top: 2px;"></div>
+<div class="topbar">
+    <div class="topbar-main">
+        <div class="left-section">
+            <div class="image-box">
+                <img id="typeIcon" src="" alt="Type Icon" />
+            </div>
+            <div class="part-info">
+                <div class="part-number"></div>
+                <div class="part-type"></div>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="state-box">
+                <span class="state-label">State:</span>
+            </div>
+        </div>
     </div>
-    <div class="vertical-line"></div>
-  </div>
-  <div class="right-section">
-    <div class="state-box">
-      <span class="state-label">State:</span>
-   
-    </div>
-    <div class="vertical-line"></div>
-    <div class="info-box">
-      
-    </div>
-    <div class="vertical-line"></div>
-  </div>
 </div>
+
+
 <div class="container">
    <div class="sidebar">
   <a class="nav-link" href="Properties.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-tag"></i> Part Properties</a>

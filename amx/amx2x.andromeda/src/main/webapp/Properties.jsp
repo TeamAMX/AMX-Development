@@ -1,7 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    String userAccess = (String) session.getAttribute("userAccess");
-    if (userAccess == null) userAccess = "Admin";
     String partName = request.getParameter("name");
     if (partName == null) partName = "";
 %>
@@ -60,8 +58,7 @@
     <div id="detailsTable" class="property-card"></div>
   </div>
 </div>
-    <!-- Edit Side Panel -->
-    <!-- Edit Side Panel -->
+    
 <div id="modalOverlay"></div>
 <div id="editPanel">
     <h5>Edit Part Details</h5>
@@ -74,13 +71,15 @@
     <!-- JS Libraries -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const loggedInUserAccess = "<%= userAccess %>";
-</script>
+
 <script>
 
 const BASIC_URL = '<%= request.getContextPath() %>';
 let currentPartData = {};
+
+const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+const loggedInUserAccess = user?.access || '';
+if(loggedInUserAccess.trim().toLowerCase() === 'reader') $('#editBtn').hide();
 
 $(document).ready(function () {
     const objectId = getQueryParam('name');

@@ -46,6 +46,7 @@
     text-transform: uppercase !important;
     padding: 14px 18px !important;
     border-bottom: none !important;
+    border-right: 1px solid #334155 !important;
     background-color: #1f2937 !important;
   }
   /* Sort arrows white */
@@ -57,6 +58,7 @@
   table.dataTable thead .sorting_desc:after {
     color: rgba(255,255,255,0.75) !important;
     opacity: 1 !important;
+    display: none!important;
   }
 
   /* Body rows */

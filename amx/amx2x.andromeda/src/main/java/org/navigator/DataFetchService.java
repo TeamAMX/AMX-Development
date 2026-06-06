@@ -1304,27 +1304,28 @@ public class DataFetchService {
                         return Response.status(Response.Status.NOT_FOUND).entity(resp.toString()).build();
                     }
                     // History handling
-                    String historyMsg = "Updated description at " + updatedDate;
-                    try (PreparedStatement psSel = conn.prepareStatement("SELECT history FROM partcontrolhistory WHERE objectid = ?")) {
-                        psSel.setString(1, objectId);
-                        try (ResultSet rs = psSel.executeQuery()) {
-                            if (rs.next()) {
-                                String existing = rs.getString("history");
-                                String updated = existing + " | " + historyMsg;
-                                try (PreparedStatement psUpd = conn.prepareStatement("UPDATE partcontrolhistory SET history = ? WHERE objectid = ?")) {
-                                    psUpd.setString(1, updated);
-                                    psUpd.setString(2, objectId);
-                                    psUpd.executeUpdate();
-                                }
-                            } else {
-                                try (PreparedStatement psIns = conn.prepareStatement("INSERT INTO partcontrolhistory (objectid, history) VALUES (?, ?)")) {
-                                    psIns.setString(1, objectId);
-                                    psIns.setString(2, historyMsg);
-                                    psIns.executeUpdate();
-                                }
-                            }
-                        }
-                    }
+//                    String historyMsg = "Updated description at " + updatedDate;
+//                    try (PreparedStatement psSel = conn.prepareStatement("SELECT history FROM partcontrolhistory WHERE objectid = ?")) {
+//                        psSel.setString(1, objectId);
+//                        try (ResultSet rs = psSel.executeQuery()) {
+//                            if (rs.next()) {
+//                                String existing = rs.getString("history");
+//                                String updated = existing + " | " + historyMsg;
+//                                try (PreparedStatement psUpd = conn.prepareStatement("UPDATE partcontrolhistory SET history = ? WHERE objectid = ?")) {
+//                                    psUpd.setString(1, updated);
+//                                    psUpd.setString(2, objectId);
+//                                    psUpd.executeUpdate();
+//                                }
+//                            } 
+////                            else {
+////                                try (PreparedStatement psIns = conn.prepareStatement("INSERT INTO partcontrolhistory (objectid, history) VALUES (?, ?)")) {
+////                                    psIns.setString(1, objectId);
+////                                    psIns.setString(2, historyMsg);
+////                                    psIns.executeUpdate();
+////                                }
+////                            }
+//                        }
+//                    }
 
                     resp.put("Status", "Success").put("Message", "Part Control updated.");
                     return Response.ok(resp.toString(), MediaType.APPLICATION_JSON).build();
@@ -2499,7 +2500,7 @@ public class DataFetchService {
 
         try (Connection conn = getConn()) {
             conn.setAutoCommit(false);
-
+            
             int rowsAffected;
             try (PreparedStatement pstmt = conn.prepareStatement(updatePartControlSql)) {
                 pstmt.setString(1, state);
@@ -2513,8 +2514,10 @@ public class DataFetchService {
                 responseMap.put("error", "No matching record found to update.");
                 return Response.status(Response.Status.NOT_FOUND).entity(responseMap).build();
             }
+            String linkedObjectId = null;
+            String objectId = null;
             if ("Completed".equalsIgnoreCase(state)) {
-                String linkedObjectId = null;
+                
 
                 try (PreparedStatement pstmt = conn.prepareStatement(selectControlDataSql)) {
                     pstmt.setString(1, name);
@@ -2523,9 +2526,16 @@ public class DataFetchService {
                     try (ResultSet rs = pstmt.executeQuery()) {
                         if (rs.next()) {
                             linkedObjectId = rs.getString("linkedobjectid");
+                            objectId= rs.getString("objectid");
                         }
                     }
                 }
+
+                String timestamp = java.time.LocalDateTime.now().toString();
+                String historyTable = "partcontrolhistory";
+                String historyMessage = "Promoted to " + "newState" + " at " + timestamp;
+                insertHistory(conn, historyTable, objectId, historyMessage);
+                
 
                 if (linkedObjectId != null && !linkedObjectId.isEmpty()) {
                     try (PreparedStatement pstmt = conn.prepareStatement(updateLinkedPartStateSql)) {
@@ -3425,11 +3435,10 @@ public class DataFetchService {
                            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
                        }
                        if (isPartControlLinkedToSource(objectid)) {
-                           return Response.status(Response.Status.CONFLICT)
-                               .entity(Map.of(
-                                   "error", "A PartControl linked to the this Part '" + "' already exists."
-                               ))
-                               .build();
+                    	   Map<String, String> error = new HashMap<>();
+                           error.put("Status", "Error");
+                           error.put("Message", "A PartControl linked to the this Part already exists.");
+                           return Response.status(Response.Status.CONFLICT).entity(error).build();
                        }
 
                        if (isPartControlAlreadyLinked(conn, objectid, partId)) {
@@ -3701,8 +3710,8 @@ public class DataFetchService {
 
            private boolean isPartAlreadyLinkedToControl(Connection conn, String objectid) throws SQLException {
                String sql = "SELECT COUNT(*) FROM amxcoreconnectiondata " +
-      	             "WHERE (fromid = ? AND toname = 'Part') " +
-      	             "OR (toid = ? AND fromname = 'Part')";
+      	             "WHERE (fromid = ? AND toname = 'part') " +
+      	             "OR (toid = ? AND fromname = 'part')";
                try (PreparedStatement ps = conn.prepareStatement(sql)) {
                    ps.setString(1, objectid);
                    ps.setString(2, objectid);
@@ -3713,9 +3722,10 @@ public class DataFetchService {
            }
 
            private boolean isPartAlreadyLinkedElsewhere(Connection conn, String partId) throws SQLException {
-        	   String sql = "SELECT COUNT(*) FROM amxcoreconnectiondata " +
-        	             "WHERE (fromid = ? AND toname = 'PartControl') " +
-        	             "OR (toid = ? AND fromname = 'PartControl')";
+        	   String sql = "SELECT COUNT(*)\r\n"
+        	   		+ "FROM amxcoreconnectiondata\r\n"
+        	   		+ "WHERE (fromid = ? AND (toname = 'PartControl' OR toname = 'partcontrol'))\r\n"
+        	   		+ "   OR (toid = ? AND (fromname = 'PartControl' OR fromname = 'partcontrol'))";
                try (PreparedStatement ps = conn.prepareStatement(sql)) {
                    ps.setString(1, partId);
                    ps.setString(2, partId);                  

@@ -29,7 +29,7 @@ String username = (String) session.getAttribute("username");
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 24px;
+  padding: 12px 20px;
   background: #ffffff;
   border-bottom: 1px solid #eef2f7;
   box-shadow: 0 1px 2px rgba(15,23,42,0.04);
@@ -86,7 +86,7 @@ String username = (String) session.getAttribute("username");
   .state-badge.InWork      { background: #dbeafe; color: #1d4ed8; }
   .state-badge.InApproval  { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
   .state-badge.Completed   { background: #dcfce7; color: #166534; }
-  .state-badge.Cancelled   { background: #1f2937; color: #ffffff; }
+  .state-badge.Cancelled   { background: rgb(254, 235, 19rgb(255, 0, 0), 0, 0)or: #ffffff; }
 
   /* ===== LAYOUT ===== */
   .container {
@@ -209,7 +209,7 @@ String username = (String) session.getAttribute("username");
   #stateInWork      { background: #5bc0de; }
   #stateInApproval  { background: #6c757d; }
   #stateCompleted   { background: #28a745; }
-  #stateCancelled   { background: #1f2937; color: #ffffff; }
+  #stateCancelled   { background: #f23535; color: #ffffff; }
 
   .arrow {
     margin: 0 12px;

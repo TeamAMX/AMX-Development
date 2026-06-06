@@ -4,12 +4,14 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import org.navigator.DBConfig;
+
 /**
 *@usage This class will perform the Part Control Object related process
 */
 public class AMXPartControl {
 
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+    public static final String url = DBConfig.getUrl();
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
     public static String table="amxpartcontroldata";

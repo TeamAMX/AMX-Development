@@ -9,7 +9,7 @@ import java.sql.DriverManager;
  *        It provides a static method to get a database connection using JDBC.
  */
 public class DataBaseConnection {
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+    public static final String url = DBConfig.getUrl();
     public static final String user = "postgres";
     public static final String db_password= "admin@1234";
 

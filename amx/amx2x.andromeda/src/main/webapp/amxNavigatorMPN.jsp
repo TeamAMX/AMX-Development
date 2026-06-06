@@ -194,13 +194,11 @@ table.dataTable thead th:last-child {
 }
 
 table.dataTable tbody td {
+  font-family: 'Inter', sans-serif !important;
   padding: 14px 16px !important;
-
   border-bottom: 1px solid #eef2f7 !important;
-
   font-size: 13px !important;
-  color: #1f2937 !important;
-
+  color: rgb(0, 0, 0) !important;
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -216,7 +214,7 @@ table.dataTable tbody tr:hover {
 /* Links */
 
 table.dataTable a.mpn-link {
-  color: #2563eb !important;
+  color:black !important;
   font-weight: 600;
   text-decoration: none;
 }
@@ -235,6 +233,7 @@ table.dataTable thead .sorting_desc:before,
 table.dataTable thead .sorting_desc:after {
   color: rgba(255,255,255,0.75) !important;
   opacity: 1 !important;
+  display:none !important;
 }
 
 /* Remove default DataTables spacing */

@@ -4,6 +4,8 @@ import java.sql.*;
 import java.time.Instant;
 import java.util.Map;
 
+import org.navigator.DBConfig;
+
 /*
  *@usage This class will create connection between two objects
  *
@@ -11,7 +13,7 @@ import java.util.Map;
 */
 public class AmxConnectionManagement {
 
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+    public static final String url = DBConfig.getUrl();
     public static final String user = "postgres";
     public static final String db_password= "admin@1234";
     public static final String connectionid = "connetionid";

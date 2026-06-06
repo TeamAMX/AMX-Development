@@ -2,11 +2,13 @@ package amd;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import org.navigator.DBConfig;
 /**
 *@usage This class will perform the Part spec object process
 */
 public class AmxPartSpecification {
-	  public static final String URL = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+	  public static final String URL = DBConfig.getUrl();
 	    public static final String USERNAME = "postgres";
 	    public static final String PASSWORD = "admin@1234";
 		public  String objectId; 

@@ -19,8 +19,6 @@ import java.sql.*;
 @Path("/myresource")
 public class MyResource {
 
-    // DB connection 
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
     
@@ -48,7 +46,11 @@ public class MyResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUser(@FormParam("Email") String email,@FormParam("Username") String username,
             @FormParam("Firstname") String firstname,@FormParam("Lastname") String lastname,@FormParam("Password") String password,
-            @FormParam("ConfirmPassword") String confirmPassword,@FormParam("Country") String country,@FormParam("Access") String access) {
+            @FormParam("ConfirmPassword") String confirmPassword,@FormParam("Country") String country,@FormParam("Access") String access,@Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         JSONObject response = new JSONObject();
         SecureRandom secureRandom = new SecureRandom();
         try {
@@ -58,7 +60,7 @@ public class MyResource {
                 return Response.status(Response.Status.BAD_REQUEST).entity(response.toString()).build();
             }
             String checkQuery = "SELECT COUNT(*) FROM amxcorepersondata WHERE username = ? OR email = ?";
-            try (Connection conn = DriverManager.getConnection(url, user, db_password);
+            try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
                  PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
                 checkStmt.setString(1, username);
                 checkStmt.setString(2, email);
@@ -73,7 +75,7 @@ public class MyResource {
             String objectId = "";
             boolean isUnique = false;
 
-            try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+            try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
                 while (!isUnique) {
                     int part1 = 100 + secureRandom.nextInt(900);
                     int part2 = 100 + secureRandom.nextInt(900);
@@ -154,10 +156,14 @@ public class MyResource {
                               @FormParam("Password") String password, 
                               @Context HttpServletRequest request) {
 
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+//    	System.out.println(appName);
+    	
         JSONObject response = new JSONObject();
         String query = "SELECT * FROM amxcorepersondata WHERE username = ? AND password = ?";
 
-        try (Connection conn = DriverManager.getConnection(url, user, db_password);
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);

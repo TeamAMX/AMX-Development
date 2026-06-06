@@ -20,23 +20,21 @@ href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
 
 <body>
 <div class="topbar">
-     <div class="left-section">
-    <div class="image-box">
-            <img id="typeIcon" src="" alt="Type Icon" />
-      </div>
-    <div class="part-info">
-      <div class="part-number" style="font-weight: 700; font-size: 14px;"></div>
-      <div class="part-type" style="font-size: 12px; color: #666; margin-top: 2px;"></div>
-    </div>
-    <div class="vertical-line"></div>
-  </div>
-    <div class="right-section">
-        <div class="state-box">
-            <span class="state-label">State:</span>
+    <div class="topbar-main">
+        <div class="left-section">
+            <div class="image-box">
+                <img id="typeIcon" src="" alt="Type Icon" />
+            </div>
+            <div class="part-info">
+                <div class="part-number"></div>
+                <div class="part-type"></div>
+            </div>
         </div>
-        <div class="vertical-line"></div>
-        <div class="info-box"></div>
-        <div class="vertical-line"></div>
+        <div class="right-section">
+            <div class="state-box">
+                <span class="state-label">State:</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -73,8 +71,12 @@ href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
 </table>
 </div>
 </div>
-    <div id="createPanel">
-        <iframe id="createIframe" src=""></iframe>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="modalCloseBtn">&times;</span>
+            <div id="nativeFormContainer"></div>
+            <div id="iframeContainer" style="display: none; width: 100%; height: 100%;"></div>
+        </div>
     </div>
 </div>
 <script>
@@ -333,8 +335,22 @@ function receiveSelectedParts(selectedParts) {
     });
 }
 
+function loadFormInModal(url) {
+    const modal = document.getElementById('myModal');
+    document.getElementById('nativeFormContainer').style.display = 'none';
+    const iframeContainer = document.getElementById('iframeContainer');
+    iframeContainer.style.display = 'block';
+    iframeContainer.innerHTML = '<iframe src="' + url + '" style="width:100%; height:75vh; max-height: 600px; border:none; border-radius:8px;"></iframe>';
+    modal.style.display = 'flex';
+}
+
 $(document).ready(function() {
     loadEBOMTable();
+    
+    document.getElementById('modalCloseBtn').addEventListener('click', function () {
+        document.getElementById('myModal').style.display = 'none';
+        document.getElementById('iframeContainer').innerHTML = '';
+    });
     
     // Only one checkbox at a time
     $(document).on('change', '.row-checkbox', function () {
@@ -404,11 +420,8 @@ $(document).ready(function() {
             return;
         }
 
-        const panel = document.getElementById('createPanel');
-        panel.classList.add('active');
-        document.getElementById('createIframe').src = 'CreatePartWithConnection.jsp?name=' + encodeURIComponent(objectid);
+        loadFormInModal('CreatePartWithConnection.jsp?name=' + encodeURIComponent(objectid));
     });
-
  // Add Existing Part: open search.jsp popup (Part mode)
     $('#addExistingpart').on('click', function () {
         const checkedParent = document.querySelector('.row-checkbox:checked');
@@ -442,25 +455,20 @@ $(document).ready(function() {
     });
     
     // Listen for messages from search.jsp popup and slide-in panel
-    window.addEventListener('message', function(event) {
-        if (!event.data) return;
-
-        if (event.data.action === 'closeOnly') {
-            document.getElementById('createPanel').classList.remove('active');
-        } else if (event.data.action === 'closeAndRefresh') {
-            document.getElementById('createPanel').classList.remove('active');
-            loadEBOMTable();
-        } else if (event.data.selectedParts) {
-            receiveSelectedParts(event.data.selectedParts);
-        }
-    });
 });
 
-function closeCreatePanel() {
-    const panel = document.getElementById('createPanel');
-    panel.classList.remove('active');
-    document.getElementById('createIframe').src = '';
-}
+window.addEventListener('message', function(event) {
+    if (!event.data) return;
+
+    if (event.data.action === 'closeOnly' || event.data.action === 'closeAndRefresh') {
+        document.getElementById('myModal').style.display = 'none';
+        document.getElementById('iframeContainer').innerHTML = '';
+        loadEBOMTable();
+    } else if (event.data.selectedParts) {
+        receiveSelectedParts(event.data.selectedParts);
+    }
+});
+
 
 $('#excelexport').on('click', function () {
     const exportData = [];

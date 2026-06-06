@@ -50,7 +50,7 @@ import jakarta.ws.rs.core.Response.Status;
 @Path("/navigatorutilites")
 public class NavigatorUtilites {
 
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+    public static final String url = DBConfig.getUrl();
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
 
@@ -78,7 +78,7 @@ public class NavigatorUtilites {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login( @FormParam("username") String username, @Context HttpServletRequest request) {
-
+    	
         JSONObject resp = new JSONObject();
         if (username == null || username.trim().isEmpty()) {
             resp.put("Status", "Failed").put("Message", "Username is required.");
@@ -103,6 +103,10 @@ public class NavigatorUtilites {
     public Response createPart(@FormParam("SuperType") String supertype,@FormParam("Type") String type,@FormParam("APN") String apn,
                  @FormParam("Description") String description,@FormParam("FastenerSubPart") String fastenerSubPart,
               @FormParam("Variant") String variant,@Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         JSONObject resp = new JSONObject();
         HttpSession session = request.getSession(false);
         String username = (session != null) ? (String) session.getAttribute("username") : null;
@@ -129,7 +133,7 @@ public class NavigatorUtilites {
             if (variant == null) variant = "";
         }
 
-        try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
             String firstState = "InWork"; 
             try (PreparedStatement psState = conn.prepareStatement("SELECT rulevalue FROM amxschemarules WHERE rulename = 'PartStates'")) {
                 ResultSet rsState = psState.executeQuery();
@@ -290,13 +294,17 @@ public class NavigatorUtilites {
     @GET
     @Path("/amxfullsearch")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response search(@QueryParam("name") String name, @QueryParam("filter") String filter) {
+    public Response search(@QueryParam("name") String name, @QueryParam("filter") String filter,@Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         JSONObject resp = new JSONObject();
 
         if (filter == null || filter.trim().isEmpty()) {
             filter = "all";
         }
-        try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
             JSONArray results = new JSONArray();
             if ("byparts".equalsIgnoreCase(filter)) {
                 if (name == null || name.trim().isEmpty()) {
@@ -778,9 +786,13 @@ public class NavigatorUtilites {
     @GET 
     @Path("/getMPN") 
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllInfo(@QueryParam("objectId") String id) {
+    public Response getAllInfo(@QueryParam("objectId") String id, @Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         String sql = "SELECT * FROM amxcorempndetails WHERE objectid = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, db_password);
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -803,7 +815,11 @@ public class NavigatorUtilites {
     @GET
     @Path("/getLinkedMPNs")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLinkedMPNs(@QueryParam("objectid") String objectid) {
+    public Response getLinkedMPNs(@QueryParam("objectid") String objectid, @Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         if (objectid == null || objectid.trim().isEmpty()) {
             return Response.ok("{\"error\":\"objectid query parameter is required\"}").build();
         }
@@ -812,7 +828,7 @@ public class NavigatorUtilites {
 
         List<Map<String, String>> results = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection(url, user, db_password);
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, objectid.trim());

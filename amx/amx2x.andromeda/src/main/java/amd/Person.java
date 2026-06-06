@@ -3,6 +3,8 @@ package amd;
 import java.sql.*;
 import java.util.*;
 
+import org.navigator.DBConfig;
+
   /**
 	 *@usage This class will perform person management
 	 */
@@ -19,7 +21,7 @@ public class Person {
     public String access;
 
     // Database connection info
-    public static final String url = "jdbc:postgresql://localhost:5432/amx2xdev.Andromeda";
+    public static final String url = DBConfig.getUrl();
     public static final String user = "postgres";
     public static final String db_password = "admin@1234";
     public static final String table = "amxcorepersondata";

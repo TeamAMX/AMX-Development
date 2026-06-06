@@ -67,11 +67,7 @@ table.dataTable thead .sorting_asc:before,
 table.dataTable thead .sorting_asc:after,
 table.dataTable thead .sorting_desc:before,
 table.dataTable thead .sorting_desc:after {
-    position: absolute !important;
-    top: 50% !important;
-    right: 10px !important;
-    transform: translateY(-50%) !important;
-    opacity: 0.5 !important;
+display:none!important;
 }
 
 table.dataTable tbody td, 
@@ -85,19 +81,26 @@ table.table tbody td {
   color: var(--dx-text-main) !important;
   font-size: 13px !important;
   white-space: nowrap !important;
+  max-width:200px;
+  overflow:hidden;
 }
 
 table.dataTable a.part-link,
 table.table a.part-link {
-  color: #111827 !important;
-  font-weight: 500;
+  color: black !important;
+  font-weight: 550;
   text-decoration: none;
+}
+table.dataTable a.part-link:hover,
+table.table a.part-link:hover{
+	text-decoration:underline;
 }
 
 table.dataTable tbody tr:hover,
 table.table tbody tr:hover {
   background-color: #f8fafc !important;
   cursor: pointer;
+  
 }
 
 .state-badge {

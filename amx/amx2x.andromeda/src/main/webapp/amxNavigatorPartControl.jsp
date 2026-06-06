@@ -119,6 +119,7 @@
     table.dataTable thead .sorting_desc:after {
       color: rgba(255,255,255,0.75) !important;
       opacity: 1 !important;
+      display:none !important;
     }
 
     /* Body rows */
