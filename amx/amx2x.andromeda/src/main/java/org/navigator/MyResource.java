@@ -158,7 +158,7 @@ public class MyResource {
 
     	String appName =request.getContextPath().replace("/", "");
     	DBConfig.setAppName(appName);
-//    	System.out.println(appName);
+//   	System.out.println(appName);
     	
         JSONObject response = new JSONObject();
         String query = "SELECT * FROM amxcorepersondata WHERE username = ? AND password = ?";
