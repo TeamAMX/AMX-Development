@@ -761,3 +761,64 @@ div.dataTables_scrollHead table,
 div.dataTables_scrollBody table {
     width: 100% !important;
 }
+
+#searchOverlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #fff;
+  z-index: 100;
+  flex-direction: column;
+}
+#searchOverlay.active {
+  display: flex;
+}
+#searchOverlayBar {
+  height: 40px;
+  background-color: #393a3c;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+  flex-shrink: 0;
+}
+#searchOverlayBar .overlay-title {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+#closeSearchOverlay {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#closeSearchOverlay:hover { background-color: #334155; }
+#searchOverlay iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+}
+
+.sidebar {
+    min-width: 120px;
+    max-width: 400px;
+    flex-shrink: 0;
+}
+.splitter {
+    width: 1px;
+    background: #ddd;
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.splitter:hover, .splitter.active { background: #4b5563; }

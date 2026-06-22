@@ -384,6 +384,54 @@ form textarea:focus, form select:focus, form input:focus {
     margin: 10px 16px;
     font-weight: bold;
   }
+  /* ===== SEARCH OVERLAY PANEL ===== */
+#searchOverlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #fff;
+  z-index: 100;
+  flex-direction: column;
+}
+#searchOverlay.active {
+  display: flex;
+}
+#searchOverlayBar {
+  height: 40px;
+  background-color: #393a3c;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+  flex-shrink: 0;
+}
+#searchOverlayBar .overlay-title {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+#closeSearchOverlay {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#closeSearchOverlay:hover { background-color: #334155; }
+#searchOverlay iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+}
+  
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -425,6 +473,15 @@ form textarea:focus, form select:focus, form input:focus {
   <a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-file"></i> SpecificationDocument</a>
 </div>
    <div class="main-panel">
+    <div id="searchOverlay">
+  <div id="searchOverlayBar">
+    <span class="overlay-title">Add Existing Part Control</span>
+    <button id="closeSearchOverlay">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+  </div>
+  <iframe id="searchOverlayFrame" src=""></iframe>
+</div>
     <div class="toolbar mt-2">
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part Control" id="createPartControlLink">
             <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add" style="width:20px height:20px;">
@@ -438,7 +495,7 @@ form textarea:focus, form select:focus, form input:focus {
     </div>
     <div id="loadingSpinner"></div>
     <div id="errorMessage" class="error"></div>
-        <div class="section-label">Part Control Table</div>
+        <div class="section-label" id="sectionlabel" style="display:none">Part Control Table</div>
 	<div style="overflow-x: auto; padding: 0 16px; width: 100%;">
   <table id="partControlTable">
     <thead><tr></tr></thead>
@@ -459,6 +516,7 @@ form textarea:focus, form select:focus, form input:focus {
 
     </div>
   </div>
+  
     
 </div>
 <script>
@@ -534,7 +592,7 @@ function loadPartControlTable() {
                 $('#partControlTable').hide();
                 return;
             }
-
+			document.getElementById("sectionlabel").style.display="block";
             $('.section-label:contains("PartControlTable")').show();
             $('#partControlTable').show();
             
@@ -636,14 +694,17 @@ function loadPartControlTable() {
     $('#addExistingpart').on('click', function () {
         const objectid = new URLSearchParams(window.location.search).get('name');
         if (objectid) {
-            window.open(
-                'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=part',
-                'AddExistingPartPopup',
-                'width=900,height=800,left=100,top=100,resizable=yes'
-            );
+            document.getElementById('searchOverlayFrame').src =
+                'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=part';
+            document.getElementById('searchOverlay').classList.add('active');
         } else {
             alert('No object ID found!');
         }
+    });
+
+    document.getElementById('closeSearchOverlay').addEventListener('click', function () {
+        document.getElementById('searchOverlay').classList.remove('active');
+        document.getElementById('searchOverlayFrame').src = '';
     });
 
     window.addEventListener('message', function(event) {
@@ -655,6 +716,9 @@ function loadPartControlTable() {
             loadPartControlTable();
         } else if (event.data.selectedParts) {
             receiveSelectedParts(event.data.selectedParts);
+            // Close the search overlay after selection
+            document.getElementById('searchOverlay').classList.remove('active');
+            document.getElementById('searchOverlayFrame').src = '';
         }
     });
     

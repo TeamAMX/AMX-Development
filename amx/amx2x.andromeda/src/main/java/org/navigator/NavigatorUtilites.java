@@ -985,7 +985,12 @@ public class NavigatorUtilites {
     @GET
     @Path("/getLinkedAPNs")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLinkedAPNs(@QueryParam("objectid") String objectid) {
+    public Response getLinkedAPNs(@QueryParam("objectid") String objectid, @Context HttpServletRequest request) {
+    	
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         if (objectid == null || objectid.trim().isEmpty()) {
             return Response.ok("{\"error\":\"objectid query parameter is required\"}").build();
         }
@@ -994,7 +999,7 @@ public class NavigatorUtilites {
 
         List<Map<String, String>> results = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection(url, user, db_password);
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, objectid.trim());
@@ -1103,7 +1108,11 @@ public class NavigatorUtilites {
     @Path("/updatempnstate/{objectId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateMPNToSpecificState(@PathParam("objectId") String objectId, String jsonBody) {
+    public Response updateMPNToSpecificState(@PathParam("objectId") String objectId, String jsonBody, @Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
         if (objectId == null || objectId.trim().isEmpty()) {
             return Response.ok("{\"error\": \"objectId must be provided\"}").build();
         }
@@ -1116,7 +1125,7 @@ public class NavigatorUtilites {
         String ruleName     = "MPNStates";
         String historyTable = "mpnhistory";
 
-        try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
             JSONObject input = new JSONObject(jsonBody);
             String newState = input.optString("state", "").trim();
 
@@ -1173,7 +1182,10 @@ public class NavigatorUtilites {
     @GET
     @Path("/updatempnstate/{objectId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMPNCurrentStateAPI(@PathParam("objectId") String objectId) {
+    public Response getMPNCurrentStateAPI(@PathParam("objectId") String objectId, @Context HttpServletRequest request) {
+    	
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
         if (objectId == null || objectId.trim().isEmpty()) {
             return Response.ok("{\"error\": \"objectId must be provided\"}").build();
         }
@@ -1184,7 +1196,7 @@ public class NavigatorUtilites {
 
         String dataTable = "amxcorempndetails";
 
-        try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
             String currentState = getCurrentState(conn, dataTable, objectId);
             if (currentState == null) {
                 return Response.ok("{\"error\": \"MPN not found " + "\"}").build();
@@ -1255,9 +1267,12 @@ public class NavigatorUtilites {
         @GET
            @Path("/getMPNHistory")
            @Produces(MediaType.APPLICATION_JSON)
-           public Response getMPNHistory(@QueryParam("objectId") String objectId) {
+           public Response getMPNHistory(@QueryParam("objectId") String objectId, @Context HttpServletRequest request) {
+        	
+        	String appName =request.getContextPath().replace("/", "");
+        	DBConfig.setAppName(appName);
                String sql = "SELECT history FROM mpnhistory WHERE objectid = ?";
-               try (Connection conn = DriverManager.getConnection(url, user, db_password);
+               try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
             		   PreparedStatement ps = conn.prepareStatement(sql)) {
                    ps.setString(1, objectId);
                    try (ResultSet rs = ps.executeQuery()) {

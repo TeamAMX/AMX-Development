@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
   <style>
     .blue-toolbar {
-      background-color: #0072CE;
+      background-color: #6c757d;
       color: white;
       padding: 0.25rem 1rem;
       min-height: 50px;
@@ -110,8 +110,23 @@
   right: 20px;
   z-index: 1000;
 }
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #393a3c;
+    /* --bs-btn-border-color: #0d6efd; */
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #525559;
+    /* --bs-btn-hover-border-color: #0a58ca; */
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #0a58ca;
+   
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #0d6efd;
+}
 
-/* ✅ Sticky table header (optional but recommended) */
+
 #example thead th {
   position: sticky;
   top: 0;

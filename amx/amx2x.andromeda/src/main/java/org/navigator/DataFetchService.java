@@ -3126,7 +3126,7 @@ public class DataFetchService {
 
         	    final String from = "andromeda.lifecycle@gmail.com";
         	    final String password = "cmnl gfrx niti soiq";
-        	    String to = "xptharun@gmail.com";
+        	    String to = "teamamx248@gmail.com";
 
         	    Properties props = new Properties();
 

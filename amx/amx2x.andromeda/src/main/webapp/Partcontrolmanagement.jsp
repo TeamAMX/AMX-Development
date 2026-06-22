@@ -329,6 +329,53 @@ form textarea:focus, form select:focus, form input:focus {
     margin: 10px 16px;
     font-weight: bold;
   }
+  #searchOverlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #fff;
+  z-index: 100;
+  flex-direction: column;
+}
+#searchOverlay.active {
+  display: flex;
+}
+#searchOverlayBar {
+  height: 55px;
+  background-color: #393a3c;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+  flex-shrink: 0;
+}
+#searchOverlayBar .overlay-title {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+#closeSearchOverlay {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#closeSearchOverlay:hover { background-color: #334155; }
+#searchOverlay iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+}
+  
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -365,7 +412,16 @@ form textarea:focus, form select:focus, form input:focus {
   <a href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>" class="nav-link active"><i class="fa-solid fa-shield-halved"></i> Part Management</a>
 </div>
     <div class="main-panel">
-        <div class="toolbar">
+    <div id="searchOverlay">
+  <div id="searchOverlayBar">
+    <span class="overlay-title">Add Existing Part</span>
+    <button id="closeSearchOverlay">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+  </div>
+  <iframe id="searchOverlayFrame" src=""></iframe>
+</div>
+  <div class="toolbar">
   <button data-bs-toggle="tooltip" title="Create Part" id="createPartLink">
     <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add">
   </button>
@@ -554,15 +610,20 @@ function loadPartTable() {
     $('#addExistingpart').on('click', function () {
         const objectid = new URLSearchParams(window.location.search).get('name');
         if (objectid) {
-            window.open(
-                'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=part',
-                'LinkPartPopup',
-                'width=900,height=800,left=100,top=100,resizable=yes'
-            );
+            document.getElementById('searchOverlayFrame').src =
+                'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=part';
+            document.getElementById('searchOverlay').classList.add('active');
         } else {
             alert('No object ID found!');
         }
     });
+
+    document.getElementById('closeSearchOverlay').addEventListener('click', function () {
+        document.getElementById('searchOverlay').classList.remove('active');
+        document.getElementById('searchOverlayFrame').src = '';
+    });
+
+    
     window.addEventListener('message', function(event) {
         if (!event.data) return;
 
@@ -572,6 +633,8 @@ function loadPartTable() {
             loadPartTable();
         } else if (event.data.selectedParts) {
             receiveSelectedParts(event.data.selectedParts);
+            document.getElementById('searchOverlay').classList.remove('active');
+            document.getElementById('searchOverlayFrame').src = '';
         }
     });
     function closeCreatePanel() {

@@ -12,7 +12,7 @@
 <title>SpecificationDocumentUpload</title>
 <style>
   body {
-    font-family: 'Inter', Arial, sans-serif;
+    font-family: Arial, sans-serif;
     margin: 0; padding: 0;
     background: #fff;
     color: #333;
@@ -327,11 +327,6 @@
     font-size: 13px;
   }
 
-  #typeIcon {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-  }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

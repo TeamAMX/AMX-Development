@@ -139,7 +139,7 @@ input[readonly], textarea[readonly] {
 }
 
 #inputDescription { min-height: 80px; resize: vertical; }
-#inputResponsibleEngineer { height: 40px; resize: none; }
+#inputResponsibleEngineer { resize: none; }
   </style>
 </head>
 <body>

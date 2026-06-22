@@ -147,6 +147,7 @@
     overflow-x: hidden;
   }
   .sidebar a {
+  box-sizing: border-box;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -167,6 +168,7 @@
     background-color: #4b5563;
     color: white;
     font-weight: 600;
+    box-sizing: border-box;
   }
   .sidebar a i {
     width: 16px;
@@ -303,6 +305,67 @@
     margin: 10px 16px;
     font-weight: bold;
   }
+  #searchOverlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #fff;
+  z-index: 100;
+  flex-direction: column;
+}
+#searchOverlay.active {
+  display: flex;
+}
+#searchOverlayBar {
+  height: 40px;
+  background-color: #393a3c;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+  flex-shrink: 0;
+}
+#searchOverlayBar .overlay-title {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+#closeSearchOverlay {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#closeSearchOverlay:hover { background-color: #334155; }
+#searchOverlay iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+}
+.sidebar {
+box-sizing: border-box;
+    min-width: 120px;
+    max-width: 400px;
+    flex-shrink: 0;
+}
+.splitter {
+    width: 1px;
+    background: #ddd;
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.splitter:hover, .splitter.active { background: #4b5563; }
+  
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -345,8 +408,18 @@
   <a class="nav-link" href="PartSpecification.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clipboard"></i> PartSpecification</a>
   <a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-file"></i> SpecificationDocument</a>
 </div>
+<div class="splitter" id="splitter"></div>
 
   <div class="main-panel">
+    <div id="searchOverlay">
+  <div id="searchOverlayBar">
+    <span class="overlay-title">Add Existing MPN</span>
+    <button id="closeSearchOverlay">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+  </div>
+  <iframe id="searchOverlayFrame" src=""></iframe>
+</div>
     <div class="toolbar">
       <button class="btn btn-light" title="Add Existing MPN" id="addExistingMPN">
         <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add Existing MPN" />
@@ -463,20 +536,32 @@ $(document).ready(function () {
     $('#addExistingMPN').on('click', function () {
         const objectid = new URLSearchParams(window.location.search).get('name');
         if (objectid) {
-            window.open(
-                'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=mpn',
-                'AddExistingMPNPopup',
-                'width=900,height=800,left=100,top=100,resizable=yes'
-            );
+            document.getElementById('searchOverlayFrame').src =
+                'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=mpn';
+            document.getElementById('searchOverlay').classList.add('active');
         } else {
             alert('No object ID found!');
         }
     });
 
+    document.getElementById('closeSearchOverlay').addEventListener('click', function () {
+        document.getElementById('searchOverlay').classList.remove('active');
+        document.getElementById('searchOverlayFrame').src = '';
+    });
+
+
     // Listen for selected MPNs sent back from the search popup
     window.addEventListener('message', function (event) {
+    	
+    	if (!event.data) return;
+    	
         if (event.data && event.data.selectedMPNs) {
             receiveSelectedMPNs(event.data.selectedMPNs);
+        }else if (event.data.selectedParts) {
+            receiveSelectedParts(event.data.selectedParts);
+            // Close the search overlay after selection
+            document.getElementById('searchOverlay').classList.remove('active');
+            document.getElementById('searchOverlayFrame').src = '';
         }
     });
 });
@@ -568,6 +653,34 @@ $('#excelexport').on('click', function () {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Equivalents');
 
     XLSX.writeFile(workbook, 'APNEquivalents.xlsx');
+});
+
+//Resizable sidebar splitter
+const splitter = document.getElementById('splitter');
+const sidebar  = document.querySelector('.sidebar');
+let splitterActive = false;
+
+splitter.addEventListener('mousedown', function(e) {
+    splitterActive = true;
+    splitter.classList.add('active');
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'col-resize';
+});
+
+document.addEventListener('mousemove', function(e) {
+    if (!splitterActive) return;
+    const containerLeft = document.querySelector('.container').getBoundingClientRect().left;
+    let newWidth = e.clientX - containerLeft;
+    newWidth = Math.max(120, Math.min(400, newWidth));
+    sidebar.style.width = newWidth + 'px';
+});
+
+document.addEventListener('mouseup', function() {
+    if (!splitterActive) return;
+    splitterActive = false;
+    splitter.classList.remove('active');
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
 });
 
 </script>

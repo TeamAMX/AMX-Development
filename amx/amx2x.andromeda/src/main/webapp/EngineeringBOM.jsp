@@ -49,7 +49,17 @@ href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
     <a class="nav-link" href="PartSpecification.jsp?name=<%= partName %>"><i class="fa-regular fa-clipboard"></i> PartSpecification</a>
     <a class="nav-link" href="SpecificationDocumentUpload.jsp?name=<%= partName %>"><i class="fa-regular fa-file"></i> SpecificationDocument</a>
 </div>
+<div class="splitter" id="splitter"></div>
    <div class="main-panel">
+     <div id="searchOverlay">
+  <div id="searchOverlayBar">
+    <span class="overlay-title">Add Existing Part</span>
+    <button id="closeSearchOverlay">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+  </div>
+  <iframe id="searchOverlayFrame" src=""></iframe>
+</div>
     <div class="toolbar mt-2">
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part" id="openCreatePanelBtn">
         <i class="fa-solid fa-hammer" style="color:white; font-size:18px;"></i> 
@@ -446,15 +456,20 @@ $(document).ready(function() {
             alert('No object ID found for selected row.');
             return;
         }
+        if (parentObjectId) {
+            document.getElementById('searchOverlayFrame').src =
+                'search.jsp?name=' + encodeURIComponent(parentObjectId) + '&mode=part';
+            document.getElementById('searchOverlay').classList.add('active');
+        } else {
+            alert('No object ID found!');
+        }
 
-        window.open(
-            'search.jsp?name=' + encodeURIComponent(parentObjectId) + '&mode=part',
-            'AddExistingPartPopup',
-            'width=900,height=800,left=100,top=100,resizable=yes'
-        );
     });
     
-    // Listen for messages from search.jsp popup and slide-in panel
+    document.getElementById('closeSearchOverlay').addEventListener('click', function () {
+        document.getElementById('searchOverlay').classList.remove('active');
+        document.getElementById('searchOverlayFrame').src = '';
+    });
 });
 
 window.addEventListener('message', function(event) {
@@ -466,6 +481,8 @@ window.addEventListener('message', function(event) {
         loadEBOMTable();
     } else if (event.data.selectedParts) {
         receiveSelectedParts(event.data.selectedParts);
+        document.getElementById('searchOverlay').classList.remove('active');
+        document.getElementById('searchOverlayFrame').src = '';
     }
 });
 
@@ -497,6 +514,34 @@ $('#excelexport').on('click', function () {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'EBOM');
     XLSX.writeFile(workbook, 'EBOM.xlsx');
+});
+
+//Resizable sidebar splitter
+const splitter = document.getElementById('splitter');
+const sidebar  = document.querySelector('.sidebar');
+let splitterActive = false;
+
+splitter.addEventListener('mousedown', function(e) {
+    splitterActive = true;
+    splitter.classList.add('active');
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'col-resize';
+});
+
+document.addEventListener('mousemove', function(e) {
+    if (!splitterActive) return;
+    const containerLeft = document.querySelector('.container').getBoundingClientRect().left;
+    let newWidth = e.clientX - containerLeft;
+    newWidth = Math.max(120, Math.min(400, newWidth));
+    sidebar.style.width = newWidth + 'px';
+});
+
+document.addEventListener('mouseup', function() {
+    if (!splitterActive) return;
+    splitterActive = false;
+    splitter.classList.remove('active');
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
 });
 
 </script>

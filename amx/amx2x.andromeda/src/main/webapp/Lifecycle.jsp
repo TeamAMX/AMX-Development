@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: Arial, sans-serif;
     margin: 0; padding: 0;
     background: #fff;
     color: #333;
