@@ -142,7 +142,7 @@
 }
 .table-scroll {
   max-height: 520px;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: auto;
   position: relative;
 }
