@@ -352,11 +352,12 @@
         $resultsBody.empty();
         $tableHeaderRow.empty();
       }
-
-      $('#cancelBtn').on('click', function() {
-          window.close();  
-      });
-
+//////////////////////////////////////////////////
+     $('#cancelBtn').on('click', function() {
+    parent.document.getElementById('searchOverlay').classList.remove('active');
+    parent.document.getElementById('searchOverlayFrame').src = '';
+});
+//////////////////////////////////////////////////
       $('#okBtn').on('click', function () {
     	    if (!dataTableInstance) return;
 
