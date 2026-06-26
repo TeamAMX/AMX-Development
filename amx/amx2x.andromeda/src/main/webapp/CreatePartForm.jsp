@@ -405,6 +405,9 @@ input[readonly], textarea[readonly] {
                             type: 'part',
                             id: objectId
                         }, '*');
+                        window.parent.postMessage({
+                            action: 'closeOnly'
+                        }, '*');
                     } else {
                         if (window.opener && window.opener.loadPartPropertiesInIframe) {
                             window.opener.loadPartPropertiesInIframe(objectId); 
