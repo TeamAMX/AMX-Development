@@ -266,13 +266,53 @@ public class DataBaseResource {
     
     
     
+    
+    //BUG-1031 fixing is started here and did by koushik
+	@GET
+	@Path("/persons")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPersons(@QueryParam("search") String search) {
+    ArrayList<String> persons = new ArrayList<>();
+    try {
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
+        String sql;
+        PreparedStatement ps;
+        if (search == null || search.trim().isEmpty()) {
+            // Search icon clicked - show first 10 users
+            sql = "SELECT username FROM amxcorepersondata ORDER BY username LIMIT 10";
+            ps = conn.prepareStatement(sql);
+        } else if (search.trim().length() < 3) {
+            // Less than 3 characters - still show first 10 users
+            sql = "SELECT username FROM amxcorepersondata ORDER BY username LIMIT 10";
+            ps = conn.prepareStatement(sql);
+        } else {
+            // 3 or more characters - search matching users
+            sql = "SELECT username FROM amxcorepersondata WHERE LOWER(username) LIKE LOWER(?) ORDER BY username LIMIT 10";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + search.trim() + "%");
+        }
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            persons.add(rs.getString("username"));
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+        return Response.ok(persons).build();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return Response.serverError().build();
+    }
+}
+   //BUG fixing 1031 is ended here and did by koushik 
+    
     @GET
     @Path("manufacturers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getManufacturers(@QueryParam("search") String search) {
 
         ArrayList<String> manufacturers = new ArrayList<>();
-
         try {
 
             Class.forName("org.postgresql.Driver");
