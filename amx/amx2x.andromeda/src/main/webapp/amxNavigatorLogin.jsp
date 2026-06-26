@@ -469,7 +469,17 @@
           }
         });
       });
+      $('#firstname, #lastname').on('input', function () {
+    	  this.value = this.value.replace(/[^a-zA-Z\s\-]/g, '');
+    	});
 
+    	$('#regUsername').on('input', function () {
+    	  this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+    	});
+
+    	$('#regPassword, #confirmPassword').on('input', function () {
+    	  this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+    	});
       $('#registerForm').on('submit', function (e) {
         e.preventDefault();
         const email = $('#email').val().trim();
@@ -485,7 +495,29 @@
           showMessage('All fields are required.', 'error');
           return;
         }
+        const namePattern = /^[a-zA-Z\s\-]+$/;
+        if (!namePattern.test(firstname)) {
+          showMessage('First Name must contain letters only.', 'error');
+          return;
+        }
+        if (!namePattern.test(lastname)) {
+          showMessage('Last Name must contain letters only.', 'error');
+          return;
+        }
 
+        const usernameHasLetter = /[a-zA-Z]/.test(username);
+        const usernameHasNumber = /[0-9]/.test(username);
+        if (!usernameHasLetter || !usernameHasNumber) {
+          showMessage('Username must contain both letters and numbers.', 'error');
+          return;
+        }
+
+        const passwordHasLetter = /[a-zA-Z]/.test(password);
+        const passwordHasNumber = /[0-9]/.test(password);
+        if (!passwordHasLetter || !passwordHasNumber) {
+          showMessage('Password must contain both letters and numbers.', 'error');
+          return;
+        }
         if (password !== confirmPassword) {
           showMessage('Passwords do not match.', 'error');
           return;

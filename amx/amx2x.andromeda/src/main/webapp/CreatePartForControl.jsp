@@ -184,7 +184,7 @@ input[readonly], textarea[readonly] {
       </div>
       <div class="mb-3">
         <label for="inputResponsibleEngineer">Responsible Engineer</label>
-        <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
+        <input id="inputResponsibleEngineer" class="form-control" rows="1" readonly></input>
       </div>
     </div>
 

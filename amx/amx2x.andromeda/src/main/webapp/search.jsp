@@ -373,17 +373,23 @@
 
     	    const mode = new URLSearchParams(window.location.search).get('mode');
 
-    	    if (window.opener && !window.opener.closed) {
-    	        if (mode === 'part') {
-    	            window.opener.postMessage({ selectedParts: selectedRows }, '*');
+    	    if (mode === 'mpn') {
+    	        parent.postMessage({ selectedMPNs: selectedRows }, '*');
+    	    } else if (mode === 'part') {
+    	        parent.postMessage({ selectedParts: selectedRows }, '*');
+    	    } else {
+    	        const firstRow = selectedRows[0];
+    	        if (firstRow && firstRow.hasOwnProperty('mpn')) {
+    	            parent.postMessage({ selectedMPNs: selectedRows }, '*');
     	        } else {
-    	            window.opener.postMessage({ selectedMPNs: selectedRows }, '*');
+    	            parent.postMessage({ selectedParts: selectedRows }, '*');
     	        }
     	    }
 
-    	    setTimeout(function() {
-    	        window.close();
-    	    }, 100);
+    	    setTimeout(function () {
+    	        const overlay = parent.document.getElementById('searchOverlay');
+    	        if (overlay) overlay.classList.remove('active');
+    	    }, 150);
     	});
     });
   </script>
