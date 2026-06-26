@@ -62,13 +62,14 @@ href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
 </div>
     <div class="toolbar mt-2">
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part" id="openCreatePanelBtn">
-        <i class="fa-solid fa-hammer" style="color:white; font-size:18px;"></i> 
+        <i class="fa-solid fa-plus" style="color:white;font-size:18px;"></i>
         </button>
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Add Existing Part" id="addExistingpart">
-		<i class="fa-solid fa-puzzle-piece" style="color:white; font-size:18px;"></i> 
+		 <i class="fa-solid fa-link" style="color:white;font-size:18px;"></i>
         </button>
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
-		<i class="fa-solid fa-download" style="color:white; font-size:18px;"></i> 
+		<img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
+
         </button>
     </div>
     <div id="loadingSpinner"></div>
