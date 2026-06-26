@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /*
- *@usage This class will control the objects for some scenarios 
+ *@usage This class will control the objects for some scenarios.
  */
 public class AmxControlTriggers {
     public static final String url = "jdbc:postgresql://localhost:5432/Andromeda";
