@@ -422,7 +422,7 @@ box-sizing: border-box;
 </div>
     <div class="toolbar">
       <button class="btn btn-light" title="Add Existing MPN" id="addExistingMPN">
-        <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add Existing MPN" />
+        <i class="fa-solid fa-link" style="color:white;font-size:18px;"></i>
       </button>
       <button class="btn btn-light" data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
             <img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
