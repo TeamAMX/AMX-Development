@@ -19,7 +19,7 @@ public class AmxConnectionManagement {
 	/*
 	 *@args Nothing 
 	 *@return void
-	 *@usage This will create table 
+	 *@usage This will create table. 
 	 */
     public void createTable() {
         String createQuery = """
