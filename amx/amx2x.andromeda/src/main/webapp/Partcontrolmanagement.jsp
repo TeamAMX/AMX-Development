@@ -423,13 +423,19 @@ form textarea:focus, form select:focus, form input:focus {
 </div>
   <div class="toolbar">
   <button data-bs-toggle="tooltip" title="Create Part" id="createPartLink">
-    <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add">
+
+    <i class="fa-solid fa-plus" style="color:white;font-size:18px;"></i>
+
   </button>
   <button data-bs-toggle="tooltip" title="Add Existing Part" id="addExistingpart">
-    <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add">
+
+    <i class="fa-solid fa-link" style="color:white;font-size:18px;"></i>
+
   </button>
   <button data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
-    <img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Export">
+
+    <img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Export">
+
   </button>
 </div>
         <div id="loadingSpinner"></div>
