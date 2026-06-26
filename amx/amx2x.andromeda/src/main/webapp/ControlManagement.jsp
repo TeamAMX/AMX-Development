@@ -484,11 +484,9 @@ form textarea:focus, form select:focus, form input:focus {
 </div>
     <div class="toolbar mt-2">
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Create Part Control" id="createPartControlLink">
-            <img src="https://img.icons8.com/?size=100&id=KJRE9LhcSvaT&format=png&color=000000" alt="Add" style="width:20px height:20px;">
-        </button>
+            <i class="fa-solid fa-plus" style="color:white;font-size:18px;"></i>        </button>
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Add Existing Part Control" id="addExistingpart">
-            <img src="https://img.icons8.com/?size=100&id=K0l4dwcsMaJa&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
-        </button>
+           <i class="fa-solid fa-link" style="color:white;font-size:18px;"></i>        </button>
         <button class="btn btn-light" data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
             <img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
         </button>
