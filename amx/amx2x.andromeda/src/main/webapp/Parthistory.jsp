@@ -437,16 +437,19 @@ function parseEntry(raw) {
     let text = raw.replace(dateRegex, '').trim();
     text = text.replace(/\s+at\s*$/i, '').trim();
 
-    // Extract "by X" only for created entries
+ // Extract "by X" only for created entries
     let by = '';
     const byMatch = text.match(/\bby\s+(\S+)/i);
     const type = getEntryType(text);
-    if (type === 'created' && byMatch) {
-        by = byMatch[0];
+
+    if (byMatch) {
+        // Don't display "by System"
+        if (byMatch[1].toLowerCase() !== "system") {
+            by = byMatch[0];
+        }
+
+        // Remove "by ..." from the main text
         text = text.replace(byMatch[0], '').trim();
-    } else {
-        // Remove "by System" or any "by X" from non-created entries
-        text = text.replace(/\bby\s+\S+/gi, '').trim();
     }
 
     return { text, by, date, type };

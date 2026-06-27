@@ -1489,8 +1489,17 @@ public class DataFetchService {
         @Path("/updatestate/{objectId}")
         @Consumes(MediaType.APPLICATION_JSON)
         @Produces(MediaType.APPLICATION_JSON)
-        public Response updateToSpecificState(@PathParam("objectId") String objectId, String jsonBody) {
-            if (objectId == null || objectId.trim().isEmpty()) {
+        //Bug-1024 added By Nageswari Start 
+        public Response updateToSpecificState(@PathParam("objectId") String objectId, String jsonBody,@Context HttpServletRequest request) {
+        	HttpSession session = request.getSession(false);
+
+        	String username = "Unknown";
+
+        	if (session != null && session.getAttribute("username") != null) {
+        	    username = (String) session.getAttribute("username");
+        	}
+        	//Bug-1024 added By Nageswari End
+        	if (objectId == null || objectId.trim().isEmpty()) {
                 return Response.ok("{\"error\": \"objectId must be provided\"}").build();
             }
             String dataTable;
@@ -1559,7 +1568,8 @@ public class DataFetchService {
                     return Response.ok("{\"error\": \"Invalid state transition. Only one-step transitions are allowed.\"}").build();
                 }
                 String timestamp = java.time.LocalDateTime.now().toString();
-                String historyMessage = direction + " to state: " + newState + " at " + timestamp;
+//Bug-1024 added by Nageswari 
+                String historyMessage =direction + " to state: " + newState +" by " + username +" at " + timestamp;
                 updatePartState(conn, dataTable, objectId, newState);
                 insertHistory(conn, historyTable, objectId, historyMessage);
                 
@@ -3030,7 +3040,7 @@ public class DataFetchService {
                       insertPS.setString(13, firstState);
                       insertPS.executeUpdate();
                   }
-       
+       //Bug-1024 added by Nageswari 
                   String historyMsg = "Created by " + username + " at " + createdDate;
                   try (PreparedStatement hSel = conn.prepareStatement("SELECT history FROM parthistory WHERE objectid = ?")) {
                       hSel.setString(1, objectId);
