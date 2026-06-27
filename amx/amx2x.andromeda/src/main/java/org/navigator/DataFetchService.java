@@ -154,7 +154,19 @@ public class DataFetchService {
             return Response.status(Response.Status.BAD_REQUEST).entity(resp.toString()).build();
         }
         try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+//BUG-1024 Created By Nageswari Start
+        	String access = getUserAccess(conn, username);
 
+        	if ("Reader".equalsIgnoreCase(access)) {
+        	    resp.put("Status", "Failed");
+        	    resp.put("Message",
+        	        "The current user is not having access to process this functionality. Please check your access level.");
+
+        	    return Response.status(Response.Status.FORBIDDEN)
+        	            .entity(resp.toString())
+        	            .build();
+        	}
+        	//BUG-1024 Created By Nageswari Ended
             // Generate objectId
             SecureRandom random = new SecureRandom();
             byte[] bytes = new byte[8];
@@ -1489,8 +1501,17 @@ public class DataFetchService {
         @Path("/updatestate/{objectId}")
         @Consumes(MediaType.APPLICATION_JSON)
         @Produces(MediaType.APPLICATION_JSON)
-        public Response updateToSpecificState(@PathParam("objectId") String objectId, String jsonBody) {
-            if (objectId == null || objectId.trim().isEmpty()) {
+        //Bug-1024 added By Nageswari Start 
+        public Response updateToSpecificState(@PathParam("objectId") String objectId, String jsonBody,@Context HttpServletRequest request) {
+        	HttpSession session = request.getSession(false);
+
+        	String username = "Unknown";
+
+        	if (session != null && session.getAttribute("username") != null) {
+        	    username = (String) session.getAttribute("username");
+        	}
+        	//Bug-1024 added By Nageswari End
+        	if (objectId == null || objectId.trim().isEmpty()) {
                 return Response.ok("{\"error\": \"objectId must be provided\"}").build();
             }
             String dataTable;
@@ -1559,7 +1580,8 @@ public class DataFetchService {
                     return Response.ok("{\"error\": \"Invalid state transition. Only one-step transitions are allowed.\"}").build();
                 }
                 String timestamp = java.time.LocalDateTime.now().toString();
-                String historyMessage = direction + " to state: " + newState + " at " + timestamp;
+//Bug-1024 added by Nageswari 
+                String historyMessage =direction + " to state: " + newState +" by " + username +" at " + timestamp;
                 updatePartState(conn, dataTable, objectId, newState);
                 insertHistory(conn, historyTable, objectId, historyMessage);
                 
