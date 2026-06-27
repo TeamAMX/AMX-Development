@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -240,6 +241,82 @@
       color: white !important;
       border-radius: 4px;
     }
+    
+    /* ===== Responsible Engineer Search Dropdown ===== */
+    .re-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .re-search-box {
+        display: block;
+        position: relative;
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        box-shadow: none;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .re-search-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .re-search-input-wrap svg {
+        flex-shrink: 0;
+        color: #94a3b8;
+    }
+
+    .re-search-input-wrap input {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        font-size: 14px !important;
+        color: #0f172a !important;
+        width: 100%;
+        outline: none;
+    }
+
+    .re-list {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease;
+    }
+
+    .re-search-box.open .re-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .re-list-item {
+        padding: 6px 16px;
+        font-size: 14px;
+        color: #0f172a;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .re-list-item:hover {
+        background: #f1f5f9;
+    }
+
+    .re-list-item.no-results {
+        color: #94a3b8;
+        cursor: default;
+    }
+
+    .re-list::-webkit-scrollbar { width: 6px; }
+    .re-list::-webkit-scrollbar-track { background: transparent; }
+    .re-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    
+    
   </style>
 </head>
 <body>
@@ -293,8 +370,20 @@
       </div>
 
       <div class="mb-3">
-        <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
-        <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
+        <label for="reSearchInput" class="form-label">Responsible Engineer</label>
+        <div class="re-wrapper">
+          <div class="re-search-box" id="reSearchBox">
+            <div class="re-search-input-wrap">
+              <svg id="reSearchIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="cursor:pointer;">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input type="text" id="reSearchInput" placeholder="Search Responsible Engineer..." autocomplete="off"/>
+            </div>
+            <div class="re-list" id="reList"></div>
+          </div>
+          <input type="hidden" id="inputResponsibleEngineer" name="ResponsibleEngineer"/>
+        </div>
       </div>
     </div>
 
@@ -308,7 +397,7 @@
     const BASIC_URL = '<%= request.getContextPath() %>';
     const isInIframe = window.self !== window.top;
     
-    $(document).ready(function () {
+    $(document).ready(async function () {
 
       // Cancel button logic integrated for iframe handling
       $('#cancelBtn').on('click', function() {
@@ -318,8 +407,8 @@
           window.close();
         }
       });
-
-      const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+	
+     const user = JSON.parse(sessionStorage.getItem('loggedInUser'));// BUG_1035 Fix  by koushik
       if (user) {
         $('#inputResponsibleEngineer').val(user.username || '');
       } else {
@@ -332,6 +421,72 @@
         return;
       }
 
+      // BUG_1035 Fix started by koushik
+      let allEngineers = [];
+      try {
+        const personsRes = await fetch(BASIC_URL + '/api/datafetchservice/persons');
+        if (personsRes.ok) {
+          const persons = await personsRes.json();
+          allEngineers = persons.map(p => p.Username || p.username).filter(Boolean);
+        }
+      } catch (err) {
+        console.warn('Could not load engineers:', err);
+      }
+
+      const reSearchBox   = document.getElementById('reSearchBox');
+      const reSearchInput = document.getElementById('reSearchInput');
+      const reList        = document.getElementById('reList');
+      const engineerInput = document.getElementById('inputResponsibleEngineer');
+
+      function renderList(filter) {
+        const filtered = filter ? allEngineers.filter(u => u.toLowerCase().includes(filter.toLowerCase())): allEngineers;
+        reList.innerHTML = '';
+        if (filtered.length === 0) {
+          reList.innerHTML = '<div class="re-list-item no-results">No results found</div>';
+          return;
+        }
+        filtered.forEach(name => {
+          const item = document.createElement('div');
+          item.className = 're-list-item';
+          item.textContent = name;
+          item.addEventListener('click', () => {
+            engineerInput.value = name;
+            reSearchInput.value = name;
+            reList.innerHTML = '';
+            reSearchBox.classList.remove('open');
+          });
+          reList.appendChild(item);
+        });
+      }
+
+      document.getElementById('reSearchIcon').addEventListener('click', () => {
+        renderList('');
+        reSearchBox.classList.add('open');
+        reSearchInput.focus();
+      });
+
+      reSearchInput.addEventListener('input', () => {
+        const val = reSearchInput.value;
+        if (val.length === 0) {
+          reSearchBox.classList.remove('open');
+          reList.innerHTML = '';
+        } else if (val.length >= 3) {
+          renderList(val);
+          reSearchBox.classList.add('open');
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.re-wrapper')) {
+          reSearchBox.classList.remove('open');
+        }
+      });
+
+      // Pre-fill search input
+      if (user && user.username) {
+        reSearchInput.value = user.username;
+      }
+	// BUG_1035 Fix ended by koushik
       const $mfgInput   = $('#manufacturerInput');
       const $mfgHidden  = $('#manufacturer');
       const $clearBtn   = $('#mfgClearBtn');

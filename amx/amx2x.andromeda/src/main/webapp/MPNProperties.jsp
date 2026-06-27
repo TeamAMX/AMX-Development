@@ -258,69 +258,85 @@
   }
 
   .edit-modal h5 {
-    padding: 22px 26px;
+    padding: 22px 24px;
     margin: 0;
-    font-size: 28px;
+    font-size: 1.15rem;
     font-weight: 700;
-    border-bottom: 1px solid #eef2f7;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
   }
 
-  .edit-form-body {
-    max-height: 300px;
+ .edit-form-body {
+    max-height: calc(82vh - 140px);
     overflow-y: auto;
-    padding: 22px 26px;
+    padding: 22px 24px;
   }
 
   .edit-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    padding: 18px 26px;
-    border-top: 1px solid #eef2f7;
-    background: #fafbfd;
+    padding: 16px 24px;
+    border-top: 1px solid #edf0f2;
+    background: #fafbfc;
   }
 
   #editForm .form-control {
     height: 42px;
     border-radius: 10px;
     font-size: 14px;
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    padding: 8px 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #editForm .form-control[readonly] {
+    background-color: #f3f4f6;
+    color: #6b7280;
   }
 
   #editForm .form-label {
     margin-bottom: 6px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #6b7280;
+    display: block;
   }
+  
 
   @keyframes popupScale {
     from { transform: scale(0.96); opacity: 0; }
     to   { transform: scale(1);    opacity: 1; }
   }
 
-  #saveBtn {
-    background: #1f2937;
+ #saveBtn {
+    background: #111827;
     color: white;
     border: none;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-size: 13px;
+    min-width: 110px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
   }
-  #saveBtn:hover { background: #374151; }
+  #saveBtn:hover { background: #1f2937; }
 
   #cancelBtn {
     background: #f3f4f6;
     color: #374151;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-size: 13px;
+    border: 1px solid #d1d5db;
+    min-width: 110px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
   }
   #cancelBtn:hover { background: #e5e7eb; }
+  
 </style>
 </head>
 
@@ -389,8 +405,8 @@
       <form id="editForm"></form>
     </div>
     <div class="edit-footer">
-      <button id="cancelBtn" type="button">Cancel</button>
       <button id="saveBtn" type="button">Save</button>
+      <button id="cancelBtn" type="button">Cancel</button>
     </div>
   </div>
 </div>
@@ -446,14 +462,12 @@ if(loggedInUserAccess.trim().toLowerCase() === 'reader') $('#editBtn').hide();
         sessionStorage.setItem('mpnInfo', JSON.stringify(data));
         populateTopBar(data);
         populateCard(data);
-//BUG-1039 Start
+//BUG-1035 Fix started by koushik
         if (loggedInUserAccess.toLowerCase() === 'admin' ||
-        	    loggedInUserAccess.toLowerCase() === 'leader' ||
-        	    loggedInUserAccess.toLowerCase() === 'author') {
-
-        	    $('#editBtn').show();
-        	}
-        	//BUG-1039 End
+            loggedInUserAccess.toLowerCase() === 'leader') {
+          $('#editBtn').show();
+        }
+//BUG-1035 Fix ended by koushik
       },
       error: function () {
         showError("Error fetching MPN details.");

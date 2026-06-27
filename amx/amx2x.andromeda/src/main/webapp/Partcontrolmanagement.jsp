@@ -559,12 +559,26 @@ function loadPartTable() {
             $('#partTable').show();
 
             const excludedFields = ['objectid', 'linkedobjectid', 'connectionid', 'fts_document'];
-            const columns = Object.keys(data[0])  
-                .filter(key => !excludedFields.includes(key))
-                .map(key => ({
-                    data: key,
-                    title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
-                }));
+        
+            //BUG-1034 Fixing started by koushik
+            // Get all columns except excluded ones
+            let keys = Object.keys(data[0]).filter(key => !excludedFields.includes(key));
+
+            // Swap "apn" and "name"
+            const apnIndex = keys.indexOf("apn");
+            const nameIndex = keys.indexOf("name");
+
+            if (apnIndex !== -1 && nameIndex !== -1) {
+                [keys[apnIndex], keys[nameIndex]] = [keys[nameIndex], keys[apnIndex]];
+            }
+
+            // Create DataTable columns
+            const columns = keys.map(key => ({
+                data: key,
+                title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
+            }));
+          //BUG-1034 Fixing Ended by koushik
+            
 
             if ($.fn.DataTable.isDataTable('#partTable')) {
                 $('#partTable').DataTable().destroy();
@@ -619,21 +633,12 @@ function loadPartTable() {
          alert('No object ID found.');
          return;
      }
-     //BUG-1038 Start
-     document.getElementById('createPartLink').addEventListener('click', async function (e) {
-
-    	    e.preventDefault();
-
-    	    const access = await getUserAccess();
-
-    	    if (access && access.toLowerCase() === "reader") {
-    	        alert("The current user is not having access to process this functionality. Please check your access level.");
-    	        return;
-    	    }
-
-    	    loadFormInModal('CreatePartForControl.jsp?name=' + encodeURIComponent(objectid));
-    	});
-     //BUG-1038 End
+     //BUG-1034 started by koushik
+     document.getElementById('createPartLink').addEventListener('click', function (e) {
+         e.preventDefault();
+         loadFormInModal('CreatePartForControl.jsp?name=' + encodeURIComponent(objectid));
+     });
+	//BUG-1034 ended by koushik
 
     });
     
