@@ -154,19 +154,7 @@ public class DataFetchService {
             return Response.status(Response.Status.BAD_REQUEST).entity(resp.toString()).build();
         }
         try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
-//BUG-1024 Created By Nageswari Start
-        	String access = getUserAccess(conn, username);
 
-        	if ("Reader".equalsIgnoreCase(access)) {
-        	    resp.put("Status", "Failed");
-        	    resp.put("Message",
-        	        "The current user is not having access to process this functionality. Please check your access level.");
-
-        	    return Response.status(Response.Status.FORBIDDEN)
-        	            .entity(resp.toString())
-        	            .build();
-        	}
-        	//BUG-1024 Created By Nageswari Ended
             // Generate objectId
             SecureRandom random = new SecureRandom();
             byte[] bytes = new byte[8];
@@ -3052,7 +3040,7 @@ public class DataFetchService {
                       insertPS.setString(13, firstState);
                       insertPS.executeUpdate();
                   }
-       
+       //Bug-1024 added by Nageswari 
                   String historyMsg = "Created by " + username + " at " + createdDate;
                   try (PreparedStatement hSel = conn.prepareStatement("SELECT history FROM parthistory WHERE objectid = ?")) {
                       hSel.setString(1, objectId);
