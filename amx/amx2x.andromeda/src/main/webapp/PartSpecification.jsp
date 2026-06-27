@@ -680,11 +680,22 @@ $(document).ready(function() {
         alert('No object ID found.');
         return;
     }
+//BUG-1038 start
+    document.getElementById('createPartSpecificationLink').addEventListener('click', async function (e) {
 
-    document.getElementById('createPartSpecificationLink').addEventListener('click', function (e) {
         e.preventDefault();
+
+        const access = await getUserAccess();
+//BUG-1039 Start
+          if (access &&(access.toLowerCase() === "reader" ||access.toLowerCase() === "author")) {
+        	    alert("The current user is not having access to process this functionality. Please check your access level.");
+        	    return;
+        	}
+//Bug-1039 End
+
         loadFormInModal('PartSpecificationwithconnection.jsp?name=' + encodeURIComponent(objectid));
     });
+    //BUG-1038 End
 });
 
 function loadFormInModal(url) {
@@ -759,6 +770,30 @@ $('#excelexport').on('click', function () {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'PartSpecification');
     XLSX.writeFile(workbook, 'PartSpecification.xlsx');
 });
+//BUG-1038 Start
+async function getUserAccess() {
+
+    try {
+
+        const response = await fetch(BASIC_URL + "/api/navigatorutilites/getUserAccess", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const data = await response.json();
+
+        if (data.Status === "Success") {
+            return data.Access;
+        }
+
+        return "";
+
+    } catch (e) {
+        console.error(e);
+        return "";
+    }
+}
+//BUG-1038 End
 </script>
 </body>
 </html>

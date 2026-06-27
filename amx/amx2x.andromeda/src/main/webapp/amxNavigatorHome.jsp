@@ -431,9 +431,8 @@
     	}
 
     window.addEventListener('DOMContentLoaded', async () => {
-    	  updateProfileDropdown();
-
-    	});
+        updateProfileDropdown();
+    });
 
     function loadRightPanel(url, element) {
         const iframe = document.getElementById('contentFrame');
@@ -446,27 +445,82 @@
             element.classList.add('active');
         }
     }
+  //BUG-1038 Started
+    async function getUserAccess() {
 
-    document.getElementById('createPartLink').addEventListener('click', function (e) {
+        try {
+
+            const response = await fetch(BASIC_URL + "/api/navigatorutilites/getUserAccess", {
+                method: "GET",
+                credentials: "include"
+            });
+
+            const data = await response.json();
+
+            if (data.Status === "Success") {
+                return data.Access;
+            }
+
+            return "";
+
+        } catch (e) {
+            console.error(e);
+            return "";
+        }
+    }
+  
+    document.getElementById('createPartLink').addEventListener('click', async function (e) {
+
         e.preventDefault();
+
+        const access = await getUserAccess();
+
+        if (access && access.toLowerCase() === "reader") {
+            alert("The current user is not having access to process this functionality. Please check your access level.");
+            return;
+        }
+
         loadFormInModal('CreatePartForm.jsp');
     });
     
-    document.getElementById('createPartControlLink').addEventListener('click', function (e) {
+    document.getElementById('createPartControlLink').addEventListener('click', async function (e) {
         e.preventDefault();
+        const access = await getUserAccess();
+//Bug-1039 start
+        if (access &&(access.toLowerCase() === "reader" ||access.toLowerCase() === "author")) {
+    	    alert("The current user is not having access to process this functionality. Please check your access level.");
+    	    return;
+    	}
+    	//Bug-1039 End
+
         loadFormInModal('CreatePartControl.jsp');
     });
 
-    document.getElementById('createPartSpecificationLink').addEventListener('click', function(e){
+    document.getElementById('createPartSpecificationLink').addEventListener('click',async function(e){
         e.preventDefault();
+        const access = await getUserAccess();
+//BUG-1039 Start
+        if (access &&(access.toLowerCase() === "reader" ||access.toLowerCase() === "author")) {
+        	    alert("The current user is not having access to process this functionality. Please check your access level.");
+        	    return;
+        	}
+//Bug-1039 End
+
         loadFormInModal('CreatePartSpecification.jsp');
     });
 
-    document.getElementById('createMPNLink').addEventListener('click', function (e) {
+    document.getElementById('createMPNLink').addEventListener('click', async function (e) {
         e.preventDefault();
+        const access = await getUserAccess();
+
+        if (access && access.toLowerCase() === "reader") {
+            alert("The current user is not having access to process this functionality. Please check your access level.");
+            return;
+        }
+
         loadFormInModal('CreateMPNForm.jsp');
     });  
- 
+ //Bug-1038 Ended
     function loadFormInModal(url) {
         const modal = document.getElementById('myModal');
         document.getElementById('nativeFormContainer').style.display = 'none';

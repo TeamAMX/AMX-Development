@@ -1299,7 +1299,48 @@ public class NavigatorUtilites {
                    return Response.ok("{\"error\":\"" + e.getMessage() + "\"}").build();
                }
            }
+        @GET
+        @Path("/getUserAccess")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getUserAccess(@Context HttpServletRequest request) {
 
-    
+            JSONObject resp = new JSONObject();
+
+            HttpSession session = request.getSession(false);
+            String username = (session != null) ? (String) session.getAttribute("username") : null;
+
+            if (username == null) {
+                resp.put("Status", "Failed");
+                resp.put("Message", "User not logged in.");
+                return Response.status(Response.Status.UNAUTHORIZED).entity(resp.toString()).build();
+            }
+//BUG-1038 Started
+            String sql = "SELECT access FROM amxcorepersondata WHERE LOWER(username)=LOWER(?)";
+
+            try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setString(1, username);
+
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    resp.put("Status", "Success");
+                    resp.put("Access", rs.getString("access"));
+                } else {
+                    resp.put("Status", "Failed");
+                    resp.put("Message", "User not found.");
+                }
+
+                return Response.ok(resp.toString(), MediaType.APPLICATION_JSON).build();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                resp.put("Status", "Failed");
+                resp.put("Message", e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(resp.toString()).build();
+            }
+        }
+    //BUG-1038 End
     
 }

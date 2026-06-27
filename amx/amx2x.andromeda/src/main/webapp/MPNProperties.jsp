@@ -446,11 +446,14 @@ if(loggedInUserAccess.trim().toLowerCase() === 'reader') $('#editBtn').hide();
         sessionStorage.setItem('mpnInfo', JSON.stringify(data));
         populateTopBar(data);
         populateCard(data);
-
+//BUG-1039 Start
         if (loggedInUserAccess.toLowerCase() === 'admin' ||
-            loggedInUserAccess.toLowerCase() === 'leader') {
-          $('#editBtn').show();
-        }
+        	    loggedInUserAccess.toLowerCase() === 'leader' ||
+        	    loggedInUserAccess.toLowerCase() === 'author') {
+
+        	    $('#editBtn').show();
+        	}
+        	//BUG-1039 End
       },
       error: function () {
         showError("Error fetching MPN details.");

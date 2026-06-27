@@ -93,6 +93,30 @@ href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
 <script>
 
 const BASIC_URL = '<%= request.getContextPath() %>';
+//BUG-1038 Start
+async function getUserAccess() {
+
+    try {
+
+        const response = await fetch(BASIC_URL + "/api/navigatorutilites/getUserAccess", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const data = await response.json();
+
+        if (data.Status === "Success") {
+            return data.Access;
+        }
+
+        return "";
+
+    } catch (e) {
+        console.error(e);
+        return "";
+    }
+}
+//BUG-1038 end
 function removeDescendants(objectId) {
     $('#EBOMTable tbody tr.child-row[data-parent="' + objectId + '"]').each(function() {
         const childId = $(this).data('objectid');
@@ -406,7 +430,13 @@ $(document).ready(function() {
     }
 
     // Create child part via slide-in panel
-    document.getElementById('openCreatePanelBtn').addEventListener('click', function () {
+    document.getElementById('openCreatePanelBtn').addEventListener('click', async function () {
+    	const access = await getUserAccess();
+
+    	if (access && access.toLowerCase() === "reader") {
+    	    alert("The current user is not having access to process this functionality. Please check your access level.");
+    	    return;
+    	}
         const checkedParent = document.querySelector('.row-checkbox:checked');
         const checkedChild = document.querySelector('.child-row-checkbox:checked');
 
