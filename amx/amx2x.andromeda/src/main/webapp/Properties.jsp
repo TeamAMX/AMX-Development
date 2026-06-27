@@ -49,8 +49,7 @@
         <img src="https://img.icons8.com/?size=100&id=43068&format=png&color=000000" alt="Edit" />
       </button>
       <button id="refreshBtn" title="Refresh">
-        <img src="https://img.icons8.com/ios-glyphs/30/000000/refresh.png" alt="Refresh" />
-      </button>
+<i class="fa-solid fa-arrows-rotate"></i>      </button>
     </div>
 
     <div id="loadingSpinner"></div>
@@ -217,6 +216,7 @@ function populateTable(part) {
     if (part.variant) addProperty('Variant', part.variant, 'fa-solid fa-layer-group');
     addProperty('Type', part.type, 'fa-solid fa-screwdriver-wrench');
     addProperty('Owner', part.owner, 'fa-regular fa-user');
+    addProperty('Responsible Engineer',part.responsibleengineer,'fa-solid fa-user-gear');
     addProperty('APN', part.apn, 'fa-solid fa-barcode');
     addProperty('Supertype', part.supertype, 'fa-solid fa-diagram-project');
     addProperty('Email', part.email, 'fa-solid fa-envelope');

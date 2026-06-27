@@ -207,6 +207,12 @@ const BASIC_URL = '<%= request.getContextPath() %>';
       const descriptionInput = document.getElementById('inputDescription');
       const engineerInput = document.getElementById('inputResponsibleEngineer');
       const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+      /////////////////////////////////////////////////////////////////////
+      document.getElementById('cancelCreatePartBtn').addEventListener('click', () => {
+    	    window.parent.postMessage({ action: 'closeAndRefresh' }, '*');
+    	});
+      
+      ////////////////////////////////////////////////////////////////////
       if (user) {
           engineerInput.value = user.username || user.name || user.email || '';
       }

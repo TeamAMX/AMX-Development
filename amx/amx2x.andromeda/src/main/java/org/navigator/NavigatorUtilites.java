@@ -658,8 +658,9 @@ public class NavigatorUtilites {
             resp.put("Status", "Failed").put("Message", "Missing required fields.");
             return Response.status(Response.Status.BAD_REQUEST).entity(resp.toString()).build();
         }
-
-        try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+        String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
 
             String manufacturerId = getManufacturerId(conn, manufacturer);
             if (manufacturerId == null) {
@@ -824,10 +825,10 @@ public class NavigatorUtilites {
             return Response.ok("{\"error\":\"objectid query parameter is required\"}").build();
         }
 
-        String sql = "select * from amxcorempndetails where connectionid=(select connectionid from amxcorepartdata where objectid=? and connectionid != '')";
-
+        String sql = "select * from amxcorempndetails where connectionid=(select connectionid from amxcorepartdata where objectid= ? and connectionid != '')";
+        
         List<Map<String, String>> results = new ArrayList<>();
-
+        
         try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -845,7 +846,8 @@ public class NavigatorUtilites {
                     results.add(row);
                 }
             }
-
+            
+           
             if (results.isEmpty()) {
                 return Response.ok("{\"message\":\"No MPN equivalents found.\"}").build();
             }
@@ -863,10 +865,12 @@ public class NavigatorUtilites {
     @Path("linkMPNs/{objectid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response linkMPNs(@PathParam("objectid") String objectid, List<Map<String, Object>> selectedMPNs) {
+    public Response linkMPNs(@PathParam("objectid") String objectid, List<Map<String, Object>> selectedMPNs,@Context HttpServletRequest request) {
         try {
+            String appName = request.getContextPath().replace("/", "");  // ← ADD THIS
+            DBConfig.setAppName(appName);  
             Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(url, user, db_password);
+            Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
 
             for (Map<String, Object> mpn : selectedMPNs) {
                 String mpnId = (String) mpn.get("objectid");
@@ -875,7 +879,7 @@ public class NavigatorUtilites {
                 if (isMPNAlreadyLinked(conn, mpnId)) {
                     Map<String, String> error = new HashMap<>();
                     error.put("Status", "Error");
-                    error.put("Message", "MPN " + mpnName + " is already linked to a part.");
+                    error.put("Message", "MPN " + mpnName + " is already linked to a different part.");
                     return Response.status(Response.Status.CONFLICT).entity(error).build();
                 }
 
@@ -934,7 +938,7 @@ public class NavigatorUtilites {
     
     public String getConnectionIdFromPart(String objectId) {
         String sql = "SELECT connectionid FROM amxcorepartdata WHERE objectid = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, db_password);
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, objectId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -948,10 +952,11 @@ public class NavigatorUtilites {
         return null;
     }
     
+
+ 
     private boolean isMPNAlreadyLinked(Connection conn, String mpnObjectId) throws Exception {
         String sql = "SELECT connectionid FROM amxcorempndetails " +
                      "WHERE objectid = ? AND connectionid IS NOT NULL and connectionid !=''";
-
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, mpnObjectId);
             ResultSet rs = ps.executeQuery();
@@ -960,7 +965,6 @@ public class NavigatorUtilites {
             return exists;
         }
     }
-    
     
 
     
@@ -1034,10 +1038,13 @@ public class NavigatorUtilites {
     @Path("linkAPN/{objectid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response linkAPNToMPN(@PathParam("objectid") String objectid, List<Map<String, Object>> selectedAPNs) {
+    public Response linkAPNToMPN(@PathParam("objectid") String objectid,List<Map<String, Object>> selectedAPNs,@Context HttpServletRequest request) {
         try {
+        	String appName = request.getContextPath().replace("/", "");
+        	DBConfig.setAppName(appName);
+        	
             Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(url, user, db_password);
+            Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password);
 
             for (Map<String, Object> apn : selectedAPNs) {
                 String apnId = (String) apn.get("objectid");

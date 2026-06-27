@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <title>Create Part</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
    * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,6 +17,43 @@ html, body {
     font-family: 'Inter', -apple-system, sans-serif;
     margin: 0;
     background: transparent;
+}
+
+.ui-autocomplete{
+    position:absolute !important;
+    z-index:99999 !important;
+
+    max-height:180px;
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    background:#fff;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.ui-autocomplete::-webkit-scrollbar{
+    width:8px;
+}
+
+.ui-autocomplete::-webkit-scrollbar-thumb{
+    background:#b5b5b5;
+    border-radius:4px;
+}
+
+.ui-autocomplete::-webkit-scrollbar-track{
+    background:#f5f5f5;
+}
+
+.ui-menu-item-wrapper{
+    padding:10px 12px;
+}
+
+.ui-state-active{
+    background:#e2e8f0 !important;
+    color:#000 !important;
+    border:none !important;
 }
 
 #createPartForm {
@@ -74,6 +114,7 @@ h2 {
     flex: 0 0 auto; 
     z-index: 10;
 }
+
 
 .btn-submit {
     min-width: 110px;
@@ -141,6 +182,75 @@ input[readonly], textarea[readonly] {
 #inputDescription { min-height: 80px; resize: vertical; }
 #inputResponsibleEngineer { height: 40px; resize: none; }
 
+.mfg-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.mfg-search-wrapper .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+    z-index: 5;
+}
+
+.mfg-search-wrapper .search-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.mfg-search-wrapper #inputResponsibleEngineer {
+    padding-left: 40px !important;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.mfg-search-wrapper:focus-within .search-icon {
+    color: #0f172a;
+}
+
+.mfg-clear-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #94a3b8;
+    display: none;
+    align-items: center;
+    line-height: 1;
+    transition: color 0.2s;
+    z-index: 5;
+}
+
+.mfg-clear-btn:hover {
+    color: #0f172a;
+}
+
+.mfg-clear-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
   </style>
 </head>
 <body>
@@ -183,9 +293,24 @@ input[readonly], textarea[readonly] {
         <textarea id="inputDescription" class="form-control" rows="4" placeholder="Enter description" required></textarea>
       </div>
       <div class="mb-3">
-        <label for="inputResponsibleEngineer">Responsible Engineer</label>
-        <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
-      </div>
+    <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
+    <div class="mfg-search-wrapper">
+        <span class="search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="16.5" y1="16.5" x2="22" y2="22"></line>
+            </svg>
+        </span>
+        <input type="text"id="inputResponsibleEngineer" class="form-control" placeholder="Search Responsible Engineer..." autocomplete="off" />
+        <button type="button" class="mfg-clear-btn" id="engineerClearBtn" title="Clear" tabindex="-1">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+    <input type="hidden" id="engineerHidden">
+</div>
     </div>
 
     <div class="form-footer">
@@ -210,23 +335,33 @@ const BASIC_URL = '<%= request.getContextPath() %>';
       const supertypeSelect = document.getElementById('supertype');
       const typeSelect = document.getElementById('type');
       const apnSelect = document.getElementById('APN');
-       const subtypeContainer = document.getElementById('subtype-container');
+      const subtypeContainer = document.getElementById('subtype-container');
       const variantContainer = document.getElementById('variant-container');
       const descriptionInput = document.getElementById('inputDescription');
-      const engineerInput = document.getElementById('inputResponsibleEngineer');
+      const engineerInput = document.getElementById('inputResponsibleEngineer');   
+      const $engineerInput = $('#inputResponsibleEngineer');
+      const $engineerHidden = $('#engineerHidden');
+      const $engineerClear = $('#engineerClearBtn');
       const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
       if (user) {
           engineerInput.value = user.username || user.name || user.email || '';
       }
+      function toggleEngineerClear() {
+    	    $engineerClear.css('display', $engineerInput.val() ? 'flex' : 'none');
+    	}
+    	toggleEngineerClear();
+    	$engineerInput.on('input', toggleEngineerClear);
+    	$engineerClear.on('click', function () {
+    	    $engineerInput.val('');
+    	    $engineerHidden.val('');
+    	    toggleEngineerClear();
+    	    $engineerInput.focus();
+    	});
       const form = document.getElementById('createPartForm');
-      
     let dropdownData = {};
-
-    try {
-      
+    try {    
     	const response = await fetch(BASIC_URL+'/api/db/dropdowns');
         dropdownData = await response.json();
- 
         dropdownData.superTypes = dropdownData.superTypes || [];
  
         supertypeSelect.innerHTML = '<option value="">Select</option>';
@@ -236,7 +371,15 @@ const BASIC_URL = '<%= request.getContextPath() %>';
           supertypeSelect.add(option);
         }
  
- 
+ 		
+        $('.search-icon').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $engineerInput.autocomplete("search", "");
+        });
+        
+        
+        
         supertypeSelect.addEventListener('change', () => {
           const selectedSuper = supertypeSelect.value;
           typeSelect.innerHTML = '<option value="">Select</option>';
@@ -348,7 +491,33 @@ const BASIC_URL = '<%= request.getContextPath() %>';
         //});
       //}
     //});
-
+ // BUG-1031 fixing started and did by koushik
+ $engineerInput.autocomplete({
+    minLength:0,
+    position: {
+        my: "left top",
+        at: "left bottom",
+        collision: "none"
+    },
+    appendTo: ".mfg-search-wrapper",
+    source:function(request,response){
+        $.ajax({
+            url:BASIC_URL + "/api/db/persons",
+            method:"GET",
+            data:{
+                search:request.term
+            },
+            dataType:"json",
+            success:function(data){
+            response(data);
+            },
+            error:function(){
+                response([]);
+            }
+        });
+    }
+  });
+ //BUG-1031 fixing ended and did by koushik
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -369,7 +538,7 @@ const BASIC_URL = '<%= request.getContextPath() %>';
     	        Subtype: document.getElementById('subtype').value.trim(), // This is your subtype value
     	        Variant: document.getElementById('variant').value.trim(),
     	        Description: descriptionInput.value.trim(),
-    	        ResponsibleEngineer: engineerInput.value.trim()
+    	        ResponsibleEngineer: $engineerHidden.val().trim()
     	    };
         
         if (formData.Type.toLowerCase() === 'fastener') {
