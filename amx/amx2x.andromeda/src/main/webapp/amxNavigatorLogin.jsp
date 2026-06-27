@@ -469,6 +469,7 @@
           }
         });
       });
+     //BUG-1027 fixing started here by koushik
       $('#firstname, #lastname').on('input', function () {
     	  this.value = this.value.replace(/[^a-zA-Z\s\-]/g, '');
     	});
@@ -478,7 +479,7 @@
     	});
 
     	$('#regPassword, #confirmPassword').on('input', function () {
-    	  this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+    	  this.value = this.value.replace(/[^a-zA-Z0-9@]/g, '');
     	});
       $('#registerForm').on('submit', function (e) {
         e.preventDefault();
@@ -524,7 +525,8 @@
         }
 
         disableForm('#registerForm', true);
-
+		//BUG-1027 fixing ended here by koushik
+        
         $.ajax({
           url: BASIC_URL + '/api/myresource/register',
           type: 'POST',
