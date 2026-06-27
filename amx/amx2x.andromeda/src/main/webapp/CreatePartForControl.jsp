@@ -578,8 +578,10 @@ const BASIC_URL = '<%= request.getContextPath() %>';
                 } else {
                     alert('Error: ' + (result.error || 'Failed to create part control'));
                 }
-                window.top.postMessage({ action: 'closeOnly' }, '*');
+            	//BUUG-1028 Start
+                window.parent.postMessage({ action: 'closeOnly' }, '*');
                 return;
+                //Bug-1028 End
             }
 
             alert('The following object was created successfully!\n' +
@@ -592,10 +594,13 @@ const BASIC_URL = '<%= request.getContextPath() %>';
             alert('Submission failed: ' + error.message);
             window.top.postMessage({ action: 'closeOnly' }, '*');
         }
+        //BUG-1028 Start
 
+        
         function onPartCreationSuccess() {
-            window.top.postMessage({ action: 'closeAndRefresh' }, '*');
+            window.parent.postMessage({ action: 'closeAndRefresh' }, '*');
         }
+        //BUG-1028 End
     });
   });
 </script>

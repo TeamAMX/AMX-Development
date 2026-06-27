@@ -221,7 +221,7 @@
 </div>
     <div class="toolbar">
       <button class="btn btn-light" title="Link Part/APN" id="addLinkedPart">
-        <i class="fa-solid fa-plus" style="color:white;font-size:18px;"></i>
+        <i class="fa-solid fa-link" style="color:white;font-size:18px;"></i>
       </button>
       <button class="btn btn-light" data-bs-toggle="tooltip" title="Export to Excel" id="excelexport">
             <img src="https://img.icons8.com/?size=100&id=112690&format=png&color=000000" alt="Add" style="width: 20px; height: 20px;">
@@ -242,6 +242,30 @@
 <script>
 
 const BASIC_URL = '<%= request.getContextPath() %>';
+//BUG-1038 start
+async function getUserAccess() {
+
+    try {
+
+        const response = await fetch(BASIC_URL + "/api/navigatorutilites/getUserAccess", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const data = await response.json();
+
+        if (data.Status === "Success") {
+            return data.Access;
+        }
+
+        return "";
+
+    } catch (e) {
+        console.error(e);
+        return "";
+    }
+}
+//Bug-1038 End
 function loadLinkedTable() {
     const objectid = new URLSearchParams(window.location.search).get('name');
     if (!objectid) {
@@ -320,17 +344,27 @@ $(document).ready(function () {
         }
     }
 
-    $('#addLinkedPart').on('click', function () {
-        const objectid = new URLSearchParams(window.location.search).get('name');
-        if (objectid) {
-            document.getElementById('searchOverlayFrame').src =
-                'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=part';
-            document.getElementById('searchOverlay').classList.add('active');
-        } else {
-            alert('No object ID found!');
-        }
-    });
+    //Bug-1038 Start
+    $('#addLinkedPart').on('click', async function () {
 
+    const access = await getUserAccess();
+
+    if (access && access.toLowerCase() === "reader") {
+        alert("The current user is not having access to process this functionality. Please check your access level.");
+        return;
+    }
+
+    const objectid = new URLSearchParams(window.location.search).get('name');
+
+    if (objectid) {
+        document.getElementById('searchOverlayFrame').src =
+            'search.jsp?name=' + encodeURIComponent(objectid) + '&mode=part';
+        document.getElementById('searchOverlay').classList.add('active');
+    } else {
+        alert('No object ID found!');
+    }
+});
+//Bug-1038 End
     document.getElementById('closeSearchOverlay').addEventListener('click', function () {
         document.getElementById('searchOverlay').classList.remove('active');
         document.getElementById('searchOverlayFrame').src = '';
