@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -403,10 +402,7 @@
       </button>
       <button id="cancelBtn" type="button" class="btn-cancel">
         Cancel
-      </button>
-      <button id="saveBtn" type="button" class="btn-save">
-        Save
-      </button>
+   	  </button>
     </div>
   </div>
 </div>

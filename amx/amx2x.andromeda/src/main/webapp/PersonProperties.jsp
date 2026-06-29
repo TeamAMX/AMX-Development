@@ -344,10 +344,6 @@
     <button type="button" class="btn-cancel" id="cancelBtn">
         Cancel
     </button>
-
-    <button type="button" class="btn-save" id="saveBtn">
-        Save 
-    </button>
 </div>
 	</div>
 	</div>
