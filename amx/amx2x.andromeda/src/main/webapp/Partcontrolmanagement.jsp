@@ -634,10 +634,20 @@ function loadPartTable() {
          return;
      }
      //BUG-1034 started by koushik
-     document.getElementById('createPartLink').addEventListener('click', function (e) {
-         e.preventDefault();
-         loadFormInModal('CreatePartForControl.jsp?name=' + encodeURIComponent(objectid));
-     });
+     //BUG-1038 Started by Nageswari
+    document.getElementById('createPartLink').addEventListener('click', async function (e) {
+    e.preventDefault();
+
+    const access = await getUserAccess();
+
+    if (access && access.toLowerCase() === "reader") {
+        alert("The current user is not having access to process this functionality. Please check your access.");
+        return;
+    }
+
+    loadFormInModal('CreatePartForControl.jsp?name=' + encodeURIComponent(objectid));
+});
+     //Bug-1038 Ended by Nageswari
 	//BUG-1034 ended by koushik
 
     });
