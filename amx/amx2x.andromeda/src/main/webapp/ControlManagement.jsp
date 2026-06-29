@@ -299,7 +299,7 @@
         padding: 24px; 
         border-radius: 18px;
         width: 100%;
-        max-width: 500px; 
+        max-width: 820px; 
         box-shadow: 0 25px 60px rgba(0,0,0,0.18);
         overflow: hidden;
         border: none;
@@ -595,13 +595,28 @@ function loadPartControlTable() {
             $('#partControlTable').show();
             
             const excludedFields = ['objectid', 'linkedobjectid', 'connectionid', 'fts_document'];
+           //Added by Ajay BUG-1040 Enhancement started
             const columns = Object.keys(data[0])  
-                .filter(key => !excludedFields.includes(key))
-                .map(key => ({
+            .filter(key => !excludedFields.includes(key))
+            .map(key => {
+                if (key === 'name') {
+                    return {
+                        data: key,
+                        title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return '<a href="javascript:void(0)" class="part-control-link" data-objectid="' + (row.objectid || '') + '" data-name="' + data + '" style="color:#2563eb;text-decoration:underline;cursor:pointer;">' + data + '</a>';
+                            }
+                            return data;
+                        }
+                    };
+                }
+                return {
                     data: key,
                     title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
-                }));
-
+                };
+            });
+           //Added by Ajay BUG-1040 Enhancement Ended
             if ($.fn.DataTable.isDataTable('#partControlTable')) {
                 $('#partControlTable').DataTable().clear().destroy();
             }
@@ -730,6 +745,28 @@ function loadPartControlTable() {
         }
     });
     
+    //Added by Ajay BUG-1040 Enhancement started
+    $(document).on('click', '.part-control-link', function () {
+        const objectid = $(this).data('objectid');
+        if (!objectid) {
+            alert('No object ID found for this part control.');
+            return;
+        }
+        openPartControlProperties(objectid);
+    });
+
+    function openPartControlProperties(objectid) {
+        const width = 900;
+        const height = 650;
+        const left = (screen.width / 2) - (width / 2);
+        const top = (screen.height / 2) - (height / 2);
+        window.open(
+            'Partcontroldetails.jsp?name=' + encodeURIComponent(objectid),
+            'PartControlDetails',
+            'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes'
+        );
+    }
+    //Added by Ajay BUG-1040 Enhancement Ended
     $('#excelexport').on('click', function () {
 
         const exportData = [];

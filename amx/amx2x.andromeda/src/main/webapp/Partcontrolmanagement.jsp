@@ -573,13 +573,27 @@ function loadPartTable() {
             }
 
             // Create DataTable columns
-            const columns = keys.map(key => ({
-                data: key,
-                title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
-            }));
+            //Added by Ajay BUG-1041 Issue started
+           const columns = keys.map(key => {
+      if (key === 'name') {
+        return {
+            data: key,
+            title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+            render: function(data, type, row) {
+                if (type === 'display') {
+                    return '<a href="javascript:void(0)" class="part-name-link" data-objectid="' + (row.objectid || '') + '" style="color:#2563eb;text-decoration:underline;cursor:pointer;">' + data + '</a>';
+                }
+                return data;
+            }
+        };
+    }
+    return {
+        data: key,
+        title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
+    };
+});
+          //Added by Ajay BUG-1041 Issue ended
           //BUG-1034 Fixing Ended by koushik
-            
-
             if ($.fn.DataTable.isDataTable('#partTable')) {
                 $('#partTable').DataTable().destroy();
             }
@@ -697,6 +711,28 @@ function loadPartTable() {
         panel.classList.remove('active');
         document.getElementById('iframeContainer').src = '';
     }
+    //Added by Ajay BUG-1041 started
+    $(document).on('click', '.part-name-link', function () {
+    const objectid = $(this).data('objectid');
+    if (!objectid) {
+        alert('No object ID found for this part.');
+        return;
+    }
+    openPartProperties(objectid);
+});
+
+function openPartProperties(objectid) {
+    const width = 900;
+    const height = 650;
+    const left = (screen.width / 2) - (width / 2);
+    const top = (screen.height / 2) - (height / 2);
+    window.open(
+        'Properties.jsp?name=' + encodeURIComponent(objectid),
+        'PartProperties',
+        'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes'
+    );
+}
+    //Added by Ajay BUG-1041 ended
     
     $('#excelexport').on('click', function () {
 
