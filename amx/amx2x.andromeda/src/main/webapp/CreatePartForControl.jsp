@@ -324,7 +324,7 @@ const BASIC_URL = '<%= request.getContextPath() %>';
   const isInIframe = window.self !== window.top;
   document.getElementById('cancelCreatePartBtn').addEventListener('click', () => {
 	    if (isInIframe) {
-	      window.top.postMessage({ action: 'closeOnly' }, '*');
+	      window.parent.postMessage({ action: 'closeOnly' }, '*');//BUG-1044 fixing done by koushik 
 	    } else {
 	      window.close();
 	    }

@@ -293,9 +293,15 @@ background-color: #f8f9fa;
             errorMessage.style.display = 'none';
             resultsBody.innerHTML = '';
             tableHeaderRow.innerHTML = '';
-
+			//BUG-1043 fixing stated by koushik
+            const isPCNumberSearch = searchQuery === 'pc-0000' || /^pc-0000[0-9]+$/.test(searchQuery);
             let headerMap;
-            if (searchQuery === 'pc' || searchQuery === 'pc-' || searchQuery === 'pc-000') {
+            if (isPCNumberSearch) {
+                headerMap = {"Name": "name","SuperType": "supertype","Type": "type","Description": "description",
+                    "Createddate": "createddate","Owner": "owner","Email": "email","Assignee": "assignee","Currentstate": "currentstate"
+                };
+            } else if (searchQuery === 'pc' || searchQuery === 'pc-' || searchQuery === 'pc-000') {
+            //BUG-1043 fixing ended by koushik
                 headerMap = {"Name": "name","SuperType": "supertype","Type": "type","Description": "description",
                     "Createddate": "createddate","Owner": "owner","Email": "email","Assignee": "assignee","Currentstate": "currentstate"
                 };
@@ -338,7 +344,7 @@ background-color: #f8f9fa;
                         a.setAttribute('ObjectId', item.objectid);
                         a.setAttribute('data-type', 'apn');
                         td.appendChild(a);
-                    } else if (header === 'Name' && (searchQuery === 'pc' || searchQuery === 'pc-' || searchQuery === 'pc-000')) {
+                    } else if (header === 'Name' && (searchQuery === 'pc' || searchQuery === 'pc-' ||  searchQuery === 'pc-0' || searchQuery === 'pc-00' ||searchQuery === 'pc-000' || searchQuery === 'pc-0000' || /^pc-0000[0-9]+$/.test(searchQuery))) {//BUG-1043 fixed by koushik
                         const a = document.createElement('a');
                         a.href = '#';
                         a.classList.add('apn-link');
@@ -363,13 +369,17 @@ background-color: #f8f9fa;
 
                 resultsBody.appendChild(tr);
             });
-
-            resultsTable.DataTable({
+			//BUG-1043 fixing started by koushik
+           const dt = resultsTable.DataTable({
                 paging: false,
                 info: false,
                 lengthChange: false,
                 ordering: false
             });
+            if (isPCNumberSearch) {
+                $('.dataTables_filter').hide();
+            }
+          //BUG-1043 fixing ended by koushik
         }
 
         function renderNoResults() {
