@@ -212,7 +212,7 @@
       font-size: 13px;
     }
     .table-scroll {
-  max-height: calc(100vh - 100px);
+  height: calc(100vh - 100px);
   overflow-y: auto;
   overflow-x: auto;
 }

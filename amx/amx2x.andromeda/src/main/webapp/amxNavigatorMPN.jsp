@@ -149,7 +149,7 @@ body {
 }
 /* BUG-1032 Started by Nageswari */
 .table-scroll {
-  max-height:315px;
+  height:315px;
   overflow-y: auto;
   overflow-x: scroll;
   position: relative;
