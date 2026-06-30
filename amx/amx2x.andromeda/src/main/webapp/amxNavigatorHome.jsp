@@ -347,6 +347,13 @@
         		<span class="nav-text"> MPN</span>
     		</a>
 		</li>
+		
+		<li class="nav-item">
+        	<a class="nav-link" href="#" onclick="loadRightPanel('amxNavigatorPartSpecification.jsp', this)"><i class="fa-regular fa-file-lines"></i>
+        		<span class="nav-text">Part Specification</span>
+    		</a>
+		</li>
+		
 		<li class="nav-item" >
         	<a class="nav-link" id="sql-btn" style="display:none;" href="#" onclick="loadRightPanel('amxRunSql.jsp', this)"><i class="fa-solid fa-terminal" ></i>
         		<span class="nav-text"> RunSQL</span>
