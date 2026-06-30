@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,7 +61,26 @@
       margin: 0 0 8px 0;
       text-transform: uppercase;
     }
+	
+	.search-icon-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    transition: color 0.2s;
+	}
 
+	.search-icon-btn:hover {
+    color: #5ec22e;
+	}
+	
     .homepage-welcome-overlay p {
       font-family: 'Inter', sans-serif;
       font-size: 1.05rem;
@@ -150,8 +170,14 @@
    			</div>
    	 		<div class="search-scope-divider"></div>
     		<input type="text" id="searchInput" class="form-control search-input" placeholder="Search by parts, persons...">
-    		<input type="hidden" id="searchFilter" value="">
-  		</div>
+			<input type="hidden" id="searchFilter" value="">
+			<span class="search-icon-btn" id="searchIconBtn">
+   				 <i class="fa-solid fa-magnifying-glass"></i>
+			</span>
+		</div>
+		
+		 
+          
   		<div class="search-scope-dropdown" id="searchScopeDropdown">
     		<div class="scope-label">SEARCH SCOPE</div>
     		<div class="scope-option active" data-value="" data-label="All">
@@ -572,7 +598,8 @@
       scopeTrigger.classList.remove('open');
     }
   });
-
+  //BUG-1047 fixing started by koushik
+	/*
   document.getElementById('searchInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -594,7 +621,13 @@
       };
     }
   });
-
+ */
+ document.getElementById('searchIconBtn').addEventListener('click', function () {
+	    const query = document.getElementById('searchInput').value.trim();
+	    const filter = document.getElementById('searchFilter').value;
+	    document.getElementById('contentFrame').src ='searchResults.jsp?query=' +encodeURIComponent(query) +'&filter=' +encodeURIComponent(filter);});
+ //BUG-1047 fixing ended by koushik
+ 
   window.addEventListener('message', function(event) {
     if (!event.data) return;
 

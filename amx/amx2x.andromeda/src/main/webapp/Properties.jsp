@@ -221,7 +221,7 @@ function populateTable(part) {
     addProperty('Owner', part.owner, 'fa-regular fa-user');
     //Added by Ajay  Issue FIX BUG-1030 Starts
 
-    addProperty('Responsible Engineer',part.owner,'fa-solid fa-user-gear');
+    addProperty('Responsible Engineer',part.responsibleengineer,'fa-solid fa-user-gear');// BUG-1048 fixing done by koushik
     //Added by Ajay  Issue FIX BUG-1030 Ended
 
     addProperty('APN', part.apn, 'fa-solid fa-barcode');

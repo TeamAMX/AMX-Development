@@ -102,7 +102,7 @@ public class NavigatorUtilites {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createPart(@FormParam("SuperType") String supertype,@FormParam("Type") String type,@FormParam("APN") String apn,
                  @FormParam("Description") String description,@FormParam("FastenerSubPart") String fastenerSubPart,
-              @FormParam("Variant") String variant,@Context HttpServletRequest request) {
+              @FormParam("Variant") String variant, @FormParam("ResponsibleEngineer") String responsibleEngineer,@Context HttpServletRequest request) {//BUG-1048 fixing done by koushik
     	
     	String appName =request.getContextPath().replace("/", "");
     	DBConfig.setAppName(appName);
@@ -134,6 +134,7 @@ public class NavigatorUtilites {
         }
 
         try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
+        	ensureResponsibleEngineerColumn(conn);//BUG-1048 fixing done by koushik
             String firstState = "InWork"; 
             try (PreparedStatement psState = conn.prepareStatement("SELECT rulevalue FROM amxschemarules WHERE rulename = 'PartStates'")) {
                 ResultSet rsState = psState.executeQuery();
@@ -186,8 +187,8 @@ public class NavigatorUtilites {
 
             String createdDate = sf.format(new java.util.Date());
 
-            String insertSQL = "INSERT INTO amxcorepartdata(objectid, apn, name, type, supertype, description, createddate, owner, email, fastenersubpart, variant, connectionid, currentstate) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSQL = "INSERT INTO amxcorepartdata(objectid, apn, name, type, supertype, description, createddate, owner, email, fastenersubpart, variant, connectionid, currentstate, responsibleengineer) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";//BUG-1048 fixing done by koushik
 
             try (PreparedStatement insertPS = conn.prepareStatement(insertSQL)) {
                 insertPS.setString(1, objectId);
@@ -203,6 +204,7 @@ public class NavigatorUtilites {
                 insertPS.setString(11, variant);
                 insertPS.setString(12, "");
                 insertPS.setString(13, firstState); 
+                insertPS.setString(14, responsibleEngineer);//BUG-1048 fixing done by koushik
                 insertPS.executeUpdate();
             }
 
@@ -245,7 +247,25 @@ public class NavigatorUtilites {
         }
     }
     
-    
+  //BUG-1048 fixing started by koushik
+    private void ensureResponsibleEngineerColumn(Connection conn) throws SQLException {
+        String checkSql =
+            "SELECT 1 FROM information_schema.columns " +
+            "WHERE table_name='amxcorepartdata' " +
+            "AND column_name='responsibleengineer'";
+        try (PreparedStatement ps = conn.prepareStatement(checkSql);
+             ResultSet rs = ps.executeQuery()) {
+            if (!rs.next()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.executeUpdate(
+                        "ALTER TABLE amxcorepartdata " +
+                        "ADD COLUMN responsibleengineer VARCHAR(255)"
+                    );
+                }
+            }
+        }
+    }
+  //BUG-1048 fixing ended by koushik
 	/**
 	* @args None
 	* @return Response
