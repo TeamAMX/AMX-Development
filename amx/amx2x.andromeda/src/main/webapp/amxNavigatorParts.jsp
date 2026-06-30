@@ -14,7 +14,11 @@
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <!--   BUG-1046 started by Nageswari -->
   <style>
-  
+    html,
+body {
+    overflow-y: hidden;
+    overflow-x:hidden;
+}
   .toolbar{
     background:#1f2937;
     height:40px;
@@ -40,7 +44,7 @@
     font-size: 12px !important;
     margin-top: 10px;
 }
-
+ 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     font-size: 12px !important;
     padding: 3px 8px !important;
@@ -51,6 +55,12 @@
     font-weight: 600;
 }
 
+   .table-scroll {
+  height: 320px;
+  overflow-y: auto;
+  overflow-x: auto;
+  }
+ 
 </style>
 <!-- BUG-1046 Ended by Nageswari -->
 </head>
@@ -81,12 +91,14 @@
 </div>
 <!-- BUG-1046 Ended by Nageswari -->
   <div class="table-container shadow-sm">
+  <div class="table-scroll">
     <table id="partsTable" class="table table-hover m-0" style="width:100%">
       <thead>
         <tr></tr>
       </thead>
       <tbody></tbody>
     </table>
+    </div>
     <div class="error" id="errorMessage"></div>
   </div>
 <script>
