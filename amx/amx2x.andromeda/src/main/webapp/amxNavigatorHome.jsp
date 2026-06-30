@@ -598,8 +598,6 @@
       scopeTrigger.classList.remove('open');
     }
   });
-  //BUG-1047 fixing started by koushik
-	/*
   document.getElementById('searchInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -621,7 +619,7 @@
       };
     }
   });
- */
+//BUG-1047 fixing started by koushik
  document.getElementById('searchIconBtn').addEventListener('click', function () {
 	    const query = document.getElementById('searchInput').value.trim();
 	    const filter = document.getElementById('searchFilter').value;
