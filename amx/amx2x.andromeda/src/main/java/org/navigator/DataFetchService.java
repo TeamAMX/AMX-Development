@@ -432,7 +432,29 @@ public class DataFetchService {
  * @return JSON containing history entries or error message
  * @usage Retrieves history of a part by objectId
  */
-			
+		//BUG-1046 Started By Nageswari
+    @GET
+    @Path("/mycreatedparts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response myCreatedParts(@Context HttpServletRequest request) {
+
+        return getMyCreatedObjects(request, "amxcorepartdata");
+    }
+    @GET
+    @Path("/mypartcontrols")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response myPartControls(@Context HttpServletRequest request) {
+
+        return getMyCreatedObjects(request, "amxpartcontroldata");
+    }
+    @GET
+    @Path("/mympns")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response myMpns(@Context HttpServletRequest request) {
+
+        return getMyCreatedObjects(request, "amxcorempndetails");
+    }
+    //BUG-1046 Ended by Nageswari
     //history
     @GET
        @Path("/history")
@@ -3762,6 +3784,54 @@ public class DataFetchService {
                }
                return null;
            }
+           //BUG-11046 Strated By Nageswari
+           private Response getMyCreatedObjects(HttpServletRequest request, String tableName) {
+
+        	    HttpSession session = request.getSession(false);
+
+        	    if (session == null || session.getAttribute("username") == null) {
+        	        return Response.status(Response.Status.UNAUTHORIZED)
+        	                .entity("{\"error\":\"User not logged in.\"}")
+        	                .build();
+        	    }
+
+        	    String username = (String) session.getAttribute("username");
+
+        	    String sql = "SELECT * FROM " + tableName + " WHERE owner=? ORDER BY createddate DESC";
+
+        	    try (Connection conn = getConn();
+        	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        	        ps.setString(1, username);
+
+        	        ResultSet rs = ps.executeQuery();
+
+        	        List<Map<String, String>> list = new ArrayList<>();
+        	        ResultSetMetaData md = rs.getMetaData();
+
+        	        while (rs.next()) {
+
+        	            Map<String, String> row = new LinkedHashMap<>();
+
+        	            for (int i = 1; i <= md.getColumnCount(); i++) {
+        	                row.put(md.getColumnName(i), rs.getString(i));
+        	            }
+
+        	            list.add(row);
+        	        }
+
+        	        return Response.ok(list).build();
+
+        	    } catch (SQLException e) {
+
+        	        e.printStackTrace();
+
+        	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+        	                .entity("{\"error\":\"" + e.getMessage() + "\"}")
+        	                .build();
+        	    }
+        	}
+           //BUG-1046 Ended By Nageswari
            
   }
 

@@ -12,8 +12,47 @@
   
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<!--   BUG-1046 started by Nageswari -->
   <style>
+  
+  .toolbar{
+    background:#1f2937;
+    height:40px;
+    display:flex;
+    align-items:center;
+    padding:0 15px;
+     margin:5px 0 5px 0;
+}
+
+.toolbar-icon{
+    color:#fff;
+    font-size:24px;
+    cursor:pointer;	
+    padding:8px;
+}
+
+.toolbar-icon:hover{
+    background:#666;
+    border-radius:4px;
+}
+/* Pagination Style */
+.dataTables_wrapper .dataTables_paginate {
+    font-size: 12px !important;
+    margin-top: 10px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    font-size: 12px !important;
+    padding: 3px 8px !important;
+    margin: 0 2px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    font-weight: 600;
+}
+
 </style>
+<!-- BUG-1046 Ended by Nageswari -->
 </head>
 <body>
 
@@ -34,7 +73,13 @@
     <span id="recordCount">0 Records</span>
   </div>
 </div>
-
+<!-- BUG-1046 started by Nageswari -->
+<div class="toolbar">
+    <i class="fa-solid fa-address-card toolbar-icon"
+       id="showAllParts"
+       title="Show All My Parts"></i>
+</div>
+<!-- BUG-1046 Ended by Nageswari -->
   <div class="table-container shadow-sm">
     <table id="partsTable" class="table table-hover m-0" style="width:100%">
       <thead>
@@ -47,81 +92,127 @@
 <script>
 
 const BASIC_URL = '<%= request.getContextPath() %>';
-  $(document).ready(function () {
-    const desiredHeaders = ['name', 'apn', 'supertype', 'type', 'description', 'createddate', 'owner', 'email', 'currentstate'];
+//BUG-1046 Started By Nageswari
+var desiredHeaders = ['name', 'apn', 'supertype', 'type', 'description', 'createddate', 'owner', 'email', 'currentstate'];
 
+function loadTable(data,enablePaging) {
+
+    $('#recordCount').text(data.length + ' Records');
+
+    $('#partsTable thead tr').empty();
+    $('#partsTable tbody').empty();
+
+    desiredHeaders.forEach(header => {
+        const displayName = header.charAt(0).toUpperCase() + header.slice(1);
+        $('#partsTable thead tr').append('<th>' + displayName + '</th>');
+    });
+
+    const dtColumns = desiredHeaders.map(field => {
+
+        if (field === 'name') {
+            return {
+                data: field,
+                render: function (data, type, row) {
+                    return '<a href="Properties.jsp?name=' +
+                        encodeURIComponent(row.objectid) +
+                        '" class="part-link">' + data + '</a>';
+                }
+            };
+        }
+
+        if (field === 'createddate') {
+            return {
+                data: field,
+                render: function (data) {
+                    if (!data) return '';
+                    const date = new Date(data);
+                    if (isNaN(date.getTime())) return data;
+                    return date.toLocaleDateString();
+                }
+            };
+        }
+
+        if (field === 'currentstate') {
+            return {
+                data: field,
+                render: function (data) {
+                    if (!data) return '';
+                    return '<span class="state-badge ' +
+                        data.replace(/\s/g,'') +
+                        '">' + data + '</span>';
+                }
+            };
+        }
+
+        return {
+            data: field,
+            defaultContent: ''
+        };
+    });
+
+    $('#partsTable').DataTable({
+        data:data,
+        columns:dtColumns,
+        paging:enablePaging,
+        pageLength:10,
+        searching:false,
+        info:false,
+        ordering:true,
+        lengthChange:false,
+        destroy:true
+    });
+}
+//BUG-1046 Ended By Nageswari
+  $(document).ready(function () {
+    
     $.ajax({
       url: BASIC_URL+'/api/datafetchservice/latestparts',
       method: 'GET',
       dataType: 'json',
       success: function (data) {
-    	  $('#recordCount').text(data.length + ' Records');
-        if (!Array.isArray(data) || data.length === 0) {
-          $('#errorMessage').text('No parts data found.');
-          return;
-        }
+    	  if (!Array.isArray(data)) {
+    	        $('#errorMessage').text('No parts data found.');
+    	        return;
+    	    }
 
-        $('#partsTable thead tr').empty();
-        $('#partsTable tbody').empty();
-
-        desiredHeaders.forEach(header => {
-          const displayName = header.charAt(0).toUpperCase() + header.slice(1);
-          $('#partsTable thead tr').append('<th>' + displayName + '</th>');
-        });
-
-        const dtColumns = desiredHeaders.map(field => {
-          if (field === 'name') {
-            return {
-              data: field,
-              render: function (data, type, row) {
-                return '<a href="Properties.jsp?name=' + encodeURIComponent(row.objectid) + '" class="part-link">' + data + '</a>';
-              }
-            };
-          }
-          if (field === 'createddate') {
-            return {
-              data: field,
-              render: function (data) {
-                if (!data) return '';
-                const date = new Date(data);
-                if (isNaN(date.getTime())) return data;
-                return date.toLocaleDateString();
-              }
-            };
-          }
-          if (field === 'currentstate') {
-            return {
-              data: field,
-              render: function (data) {
-                if (!data) return '';
-                const stateClass = data.replace(/\s/g, ''); 
-                return '<span class="state-badge ' + stateClass + '">' + data + '</span>';
-              }
-            };
-          }
-          return {
-            data: field,
-            defaultContent: ''
-          };
-        });
-
-        $('#partsTable').DataTable({
-          data: data,
-          columns: dtColumns,
-          paging: false,
-          searching: false,
-          info: false,
-          ordering: true,
-          lengthChange: false,
-          destroy: true
-        });
+    	    loadTable(data,false);
       },
       error: function (xhr, status, error) {
         console.error('Error fetching parts:', error);
         $('#errorMessage').text('Failed to fetch parts data.');
       }
     });
+    //BUG-1046 Started By Nageswari
+    $('#showAllParts').click(function () {
 
+        $.ajax({
+            url: BASIC_URL + '/api/datafetchservice/mycreatedparts',
+            method: 'GET',
+            dataType: 'json',
+
+            success: function (data) {
+
+                if (!Array.isArray(data)) {
+                    $('#errorMessage').text('No parts data found.');
+                    return;
+                }
+
+                loadTable(data,true);
+
+                if (data.length === 0) {
+                    alert("No records to display for the current user.");
+                }
+            },
+
+            error: function (xhr, status, error) {
+                console.error('Error fetching current user parts:', error);
+                $('#errorMessage').text('Failed to fetch current user parts.');
+            }
+        });
+
+    });
+
+    //BUG-1046 Ended By Nageswari
     $(document).on('click', 'a.part-link', function (e) {
       e.preventDefault();
       const url = $(this).attr('href');

@@ -202,7 +202,6 @@
 
     /* ===== HIDE DATATABLES UI ===== */
     .dataTables_info,
-    .dataTables_paginate,
     .dataTables_length,
     .dataTables_filter { display: none !important; }
 
@@ -217,6 +216,43 @@
   overflow-y: auto;
   overflow-x: auto;
 }
+/* BUG-1046 Started by Nageswari */
+.toolbar{
+    background:#1f2937;
+    height:40px;
+    display:flex;
+    align-items:center;
+    padding:0 15px;
+    margin:5px 0;
+}
+
+.toolbar-icon{
+    color:#fff;
+    font-size:24px;
+    cursor:pointer;
+    padding:8px;
+}
+
+.toolbar-icon:hover{
+    background:#374151;
+    border-radius:4px;
+}
+/* Pagination Style */
+.dataTables_wrapper .dataTables_paginate {
+    font-size: 12px !important;
+    margin-top: 10px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    font-size: 12px !important;
+    padding: 3px 8px !important;
+    margin: 0 2px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    font-weight: 600;
+}
+/* BUG-1046 Ended by Nageswari */
   </style>
 </head>
 <body>
@@ -237,7 +273,13 @@
       <span>-- Records</span>
     </div>
   </div>
-
+<!-- BUG-1046 Started By Nageswari -->
+<div class="toolbar">
+    <i class="fa-solid fa-address-card toolbar-icon"
+       id="showMyPartControls"
+       title="Show All My Part Controls"></i>
+</div>
+<!-- BUG-1046 Ended By Nageswari -->
   <!-- Table -->
   <div class="table-container">
   <div class="table-scroll">
@@ -252,98 +294,193 @@
   <script>
   
   const BASIC_URL = '<%= request.getContextPath() %>';
-    $(document).ready(function () {
-      $.ajax({
-        url: BASIC_URL+'/api/datafetchservice/getallpartcontrol',
-        method: 'GET',
-        dataType: 'json',
-        success: function (response) {
-          if (!Array.isArray(response) || response.length === 0) {
-            $('#errorMessage').text('No part control data found.');
-            return;
-          }
+  /* BUG-1046 Started by Nageswari */
+  function loadTable(response,enablePaging) {
 
-          $('#recordCount span').text(response.length + ' Records');
+	    $('#recordCount span').text(response.length + ' Records');
 
-          const desiredColumns = ["name", "supertype", "type", "description", "createddate", "owner", "email", "assignee", "currentstate"];
+	    const desiredColumns = ["name", "supertype", "type", "description", "createddate", "owner", "email", "assignee", "currentstate"];
 
-          const $theadTr = $('#partsTable thead tr');
-          $theadTr.empty();
+	    const $theadTr = $('#partsTable thead tr');
+	    $theadTr.empty();
 
-          const headerLabels = {
-            name: 'Name', supertype: 'Supertype', type: 'Type',
-            description: 'Description', createddate: 'Created Date',
-            owner: 'Owner', email: 'Email', assignee: 'Assignee',
-            currentstate: 'Status'
-          };
+	    const headerLabels = {
+	        name: 'Name',
+	        supertype: 'Supertype',
+	        type: 'Type',
+	        description: 'Description',
+	        createddate: 'Created Date',
+	        owner: 'Owner',
+	        email: 'Email',
+	        assignee: 'Assignee',
+	        currentstate: 'Status'
+	    };
 
-          const columns = [];
-          desiredColumns.forEach(function (key) {
-            $theadTr.append('<th>' + (headerLabels[key] || key) + '</th>');
+	    const columns = [];
 
-            if (key === 'name') {
-              columns.push({
-                data: 'name',
-                render: function (data, type, row) {
-                  if (!data) return '';
-                  return '<a href="Partcontroldetails.jsp?name=' + encodeURIComponent(row.objectid) + '" class="part-link"><i class="fa-regular fa-file-lines"></i>' + data + '</a>';
-                }
-              });
-            } else if (key === 'createddate') {
-              columns.push({
-                data: 'createddate',
-                render: function (data) {
-                  const date = new Date(data);
-                  return !isNaN(date.getTime()) ? date.toLocaleString() : (data || '');
-                }
-              });
-            } else if (key === 'owner' || key === 'assignee') {
-              columns.push({
-                data: key,
-                render: function (data) {
-                  if (!data) return 'N/A';
-                  return '<div class="person-cell"><i class="fa-regular fa-user"></i>' + data + '</div>';
-                }
-              });
-            } else if (key === 'email') {
-              columns.push({
-                data: 'email',
-                render: function (data) {
-                  if (!data) return 'N/A';
-                  return '<div class="email-cell"><i class="fa-regular fa-envelope"></i>' + data + '</div>';
-                }
-              });
-            } else if (key === 'currentstate') {
-              columns.push({
-                data: 'currentstate',
-                render: function (data) {
-                  if (!data) return '';
-                  const cls = data.replace(/\s+/g, '');
-                  return '<span class="state-badge ' + cls + '">' + data + '</span>';
-                }
-              });
-            } else {
-              columns.push({ data: key, render: function (data) { return data || 'N/A'; } });
-            }
-          });
+	    desiredColumns.forEach(function (key) {
 
-          $('#partsTable').DataTable({
-            data: response,
-            columns: columns,
-            paging: false,
-            searching: false,
-            info: false,
-            ordering: true,
-            lengthChange: false,
-            destroy: true
-          });
-        },
-        error: function (xhr, status, error) {
-          console.error('Error:', error);
-          $('#errorMessage').text('Failed to fetch part control data.');
-        }
-      });
-    });
+	        $theadTr.append('<th>' + (headerLabels[key] || key) + '</th>');
+
+	        if (key === 'name') {
+
+	            columns.push({
+	                data: 'name',
+	                render: function (data, type, row) {
+
+	                    if (!data) return '';
+
+	                    return '<a href="Partcontroldetails.jsp?name=' +
+	                        encodeURIComponent(row.objectid) +
+	                        '" class="part-link"><i class="fa-regular fa-file-lines"></i>' +
+	                        data + '</a>';
+	                }
+	            });
+
+	        } else if (key === 'createddate') {
+
+	            columns.push({
+	                data: 'createddate',
+	                render: function (data) {
+
+	                    const date = new Date(data);
+
+	                    return !isNaN(date.getTime())
+	                        ? date.toLocaleString()
+	                        : (data || '');
+	                }
+	            });
+
+	        } else if (key === 'owner' || key === 'assignee') {
+
+	            columns.push({
+	                data: key,
+	                render: function (data) {
+
+	                    if (!data) return 'N/A';
+
+	                    return '<div class="person-cell"><i class="fa-regular fa-user"></i>' +
+	                        data +
+	                        '</div>';
+	                }
+	            });
+
+	        } else if (key === 'email') {
+
+	            columns.push({
+	                data: 'email',
+	                render: function (data) {
+
+	                    if (!data) return 'N/A';
+
+	                    return '<div class="email-cell"><i class="fa-regular fa-envelope"></i>' +
+	                        data +
+	                        '</div>';
+	                }
+	            });
+
+	        } else if (key === 'currentstate') {
+
+	            columns.push({
+	                data: 'currentstate',
+	                render: function (data) {
+
+	                    if (!data) return '';
+
+	                    return '<span class="state-badge ' +
+	                        data.replace(/\s+/g, '') +
+	                        '">' +
+	                        data +
+	                        '</span>';
+	                }
+	            });
+
+	        } else {
+
+	            columns.push({
+	                data: key,
+	                render: function (data) {
+	                    return data || 'N/A';
+	                }
+	            });
+
+	        }
+
+	    });
+
+	    $('#partsTable').DataTable({
+	        data: response,
+	        columns: columns,
+	        /* BUG-1046 Started by Nageswari */
+	        paging: enablePaging,
+	        pageLength: 10,
+	        /* BUG-1046 Ended by Nageswari */
+	        searching: false,
+	        info: false,
+	        ordering: true,
+	        lengthChange: false,
+	        destroy: true
+	    });
+
+	}
+  /* BUG-1046 Ended by Nageswari */
+  $(document).ready(function () {
+
+	    // Load all Part Controls on page load
+	    $.ajax({
+	        url: BASIC_URL + '/api/datafetchservice/getallpartcontrol',
+	        method: 'GET',
+	        dataType: 'json',
+
+	        success: function (response) {
+
+	            if (!Array.isArray(response) || response.length === 0) {
+	                $('#errorMessage').text('No part control data found.');
+	                return;
+	            }
+
+	            loadTable(response,false);
+	        },
+
+	        error: function (xhr, status, error) {
+	            console.error('Error:', error);
+	            $('#errorMessage').text('Failed to fetch part control data.');
+	        }
+	    });
+
+	    // BUG-1046 Started By Nageswari
+	    $('#showMyPartControls').click(function () {
+
+	        $.ajax({
+	            url: BASIC_URL + '/api/datafetchservice/mypartcontrols',
+	            method: 'GET',
+	            dataType: 'json',
+
+	            success: function (response) {
+
+	                if (!Array.isArray(response)) {
+	                    $('#errorMessage').text('No part control data found.');
+	                    return;
+	                }
+
+	                loadTable(response,true);
+
+	                if (response.length === 0) {
+	                    alert("No records to display for the current user.");
+	                }
+	            },
+
+	            error: function (xhr, status, error) {
+	                console.error('Error:', error);
+	                $('#errorMessage').text('Failed to fetch current user part controls.');
+	            }
+
+	        });
+
+	    });
+	    // BUG-1046 Ended By Nageswari
+
+	});
   </script>
 </body>
 </html>
