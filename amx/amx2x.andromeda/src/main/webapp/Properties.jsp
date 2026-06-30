@@ -220,8 +220,14 @@ function populateTable(part) {
     addProperty('Type', part.type, 'fa-solid fa-screwdriver-wrench');
     addProperty('Owner', part.owner, 'fa-regular fa-user');
     //Added by Ajay  Issue FIX BUG-1030 Starts
-
-    addProperty('Responsible Engineer',part.responsibleengineer,'fa-solid fa-user-gear');// BUG-1048 fixing done by koushik
+    // BUG-1048 fixing started by koushik
+	if(part.responsibleengineer != null){
+		 addProperty('Responsible Engineer',part.responsibleengineer,'fa-solid fa-user-gear');
+	}
+	else{
+		addProperty('Responsible Engineer',part.owner,'fa-solid fa-user-gear');
+	}
+    // BUG-1048 fixing ended by koushik
     //Added by Ajay  Issue FIX BUG-1030 Ended
 
     addProperty('APN', part.apn, 'fa-solid fa-barcode');
