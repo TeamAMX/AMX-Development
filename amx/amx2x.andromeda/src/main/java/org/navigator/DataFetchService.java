@@ -456,7 +456,7 @@ public class DataFetchService {
     }
     //BUG-1046 Ended by Nageswari
     
-    //Bug-1053 fixing started by Koushik
+    //Bug-1054 fixing started by Koushik
     @GET
     @Path("/mypartspecs")
     @Produces(MediaType.APPLICATION_JSON)
@@ -465,7 +465,7 @@ public class DataFetchService {
     	return getMyPartSpecs(request);
     	
     }
-        //Bug-1053 fixing ended by Koushik
+        //Bug-1054 fixing ended by Koushik
 
     
     

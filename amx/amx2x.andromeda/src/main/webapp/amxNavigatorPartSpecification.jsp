@@ -396,7 +396,8 @@ table.dataTable thead .sorting_desc:after {
           $('#errorMessage').text('Failed to fetch Part specifications data.');
         }
       });
-
+		
+      //BUG-1054 started by koushik
       $('#showMyPs').click(function () {
 
           $.ajax({
@@ -425,7 +426,7 @@ table.dataTable thead .sorting_desc:after {
           });
 
       });
-     
+    //BUG-1054 ended by koushik
     });
   </script>
 </body>
