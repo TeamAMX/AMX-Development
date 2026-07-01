@@ -305,7 +305,16 @@ background-color: #f8f9fa;
                 headerMap = {"Name": "name","SuperType": "supertype","Type": "type","Description": "description",
                     "Createddate": "createddate","Owner": "owner","Email": "email","Assignee": "assignee","Currentstate": "currentstate"
                 };
-            } else if (filter === "byPersons") {
+            } 
+            //BUG-1065 Started by Nageswari
+            else if (searchQuery === 'pasp'|| searchQuery === 'pasp-' || searchQuery === 'pasp-000') {
+
+   				 headerMap = {"Name": "name","SuperType": "supertype","Type": "type","Description": "description","CreatedDate": "createdtime","Owner": "owner","Email": "email","CurrentState": "currentstate"
+    			 };
+
+			}
+            //BUG-1065 ended by Nageswari
+            else if (filter === "byPersons") {
                 headerMap = {"Username": "username","First Name": "firstname","Last Name": "lastname","Country": "country",
                     "Email": "email","Access": "access"
                 };
@@ -344,15 +353,43 @@ background-color: #f8f9fa;
                         a.setAttribute('ObjectId', item.objectid);
                         a.setAttribute('data-type', 'apn');
                         td.appendChild(a);
-                    } else if (header === 'Name' && (searchQuery === 'pc' || searchQuery === 'pc-' ||  searchQuery === 'pc-0' || searchQuery === 'pc-00' ||searchQuery === 'pc-000' || searchQuery === 'pc-0000' || /^pc-0000[0-9]+$/.test(searchQuery))) {//BUG-1043 fixed by koushik
-                        const a = document.createElement('a');
+                    }
+                    //BUG-1065 Started by Nageswari
+                    else if (
+                    	    header === 'Name' &&
+                    	    (
+                    	        searchQuery === 'pasp' ||
+                    	        searchQuery === 'pasp-' ||
+                    	        searchQuery === 'pasp-0' ||
+                    	        searchQuery === 'pasp-00' ||
+                    	        searchQuery === 'pasp-000' ||
+                    	        searchQuery === 'pasp-0000' ||
+                    	        searchQuery === 'pc' ||
+                    	        searchQuery === 'pc-' ||
+                    	        searchQuery === 'pc-0' ||
+                    	        searchQuery === 'pc-00' ||
+                    	        searchQuery === 'pc-000' ||
+                    	        searchQuery === 'pc-0000' ||
+                    	        /^pc-0000[0-9]+$/.test(searchQuery)
+                    	    )
+                    	)
+                    	{
+                    	//BUG-1065 Ended by Nageswari
+                    	const a = document.createElement('a');
                         a.href = '#';
                         a.classList.add('apn-link');
                         a.textContent = item[key] != null ? item[key] : '';
                         a.setAttribute('ObjectId', item.objectid);
-                        a.setAttribute('data-type', 'pc-name');
+                        /* BUG-1065 started by Nageswari */
+                        if (searchQuery === 'pasp') {
+                            a.setAttribute('data-type', 'ps-name');
+                        } else {
+                            a.setAttribute('data-type', 'pc-name');
+                        }
+                        /* BUG-1065 Ended by Nageswari */
                         td.appendChild(a);
-                    } else if (header === 'Username' && filter === 'byPersons') {
+                    	}
+                     else if (header === 'Username' && filter === 'byPersons') {
                         const a = document.createElement('a');
                         a.href = '#';
                         a.classList.add('apn-link');
@@ -426,7 +463,13 @@ background-color: #f8f9fa;
                 propertiesUrl = BASIC_URL+'/Properties.jsp?name=' + encodeURIComponent(objectId);
             } else if (type === 'pc-name') {
                 propertiesUrl = BASIC_URL+'/Partcontroldetails.jsp?name=' + encodeURIComponent(objectId);
-            } else if (type === 'person-username') {
+            } 
+            //BUG-1065 Started by Nageswari
+            else if (type === 'ps-name') {
+    			propertiesUrl = BASIC_URL+'/PartSpecificationdetails.jsp?name=' + encodeURIComponent(objectId);
+			}
+            //BUG-1065 ended by Nageswari
+            else if (type === 'person-username') {
                 propertiesUrl = BASIC_URL+'/PersonProperties.jsp?name=' + encodeURIComponent(objectId);
             } else {
                 propertiesUrl = BASIC_URL+'/Properties.jsp?name=' + encodeURIComponent(objectId);

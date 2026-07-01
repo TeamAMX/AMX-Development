@@ -413,8 +413,20 @@ public class NavigatorUtilites {
                 	    }
                 	}
                 	String tsQuery = String.join(" & ", tsParts);
-                    String sql = "SELECT * FROM amxpartcontroldata WHERE fts_document @@ to_tsquery(?)";
-                    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                	//BUG-1065 started by Nageswari
+                	String sql;
+
+                	if (searchTerm.equalsIgnoreCase("PASP") || searchTerm.startsWith("pasp-")) {
+
+                	    sql = "SELECT * FROM amxpartspecificationdata WHERE fts_document @@ to_tsquery(?)";
+
+                	} else {
+
+                	    sql = "SELECT * FROM amxpartcontroldata WHERE fts_document @@ to_tsquery(?)";
+
+                	}
+                	//BUG-1065 ended by Nageswari
+                	try (PreparedStatement ps = conn.prepareStatement(sql)) {
                         ps.setString(1, tsQuery);
                         try (ResultSet rs = ps.executeQuery()) {
                             ResultSetMetaData meta = rs.getMetaData();
