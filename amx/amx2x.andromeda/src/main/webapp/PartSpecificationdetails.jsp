@@ -108,9 +108,10 @@
     text-decoration: none;
     margin-bottom: 6px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
   .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
   .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
@@ -367,7 +368,7 @@
 <div class="page-container">
   <!-- Sidebar -->
   <div class="sidebar">
-    <a href="PartSpecificationdetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link active"><i class="fa-solid fa-sliders"></i> PS-Properties</a>
+    <a href="PartSpecificationdetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link active"><i class="fa-solid fa-sliders"></i> PASP-Properties</a>
    <%--  <a class="nav-link" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clock"></i> History</a>
     <a class="nav-link" href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-arrows-rotate"></i> LifeCycle</a>
     <a class="nav-link" href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-shield-halved"></i> Part Management</a>
