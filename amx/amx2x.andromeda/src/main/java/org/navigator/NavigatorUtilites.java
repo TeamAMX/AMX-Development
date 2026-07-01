@@ -134,7 +134,6 @@ public class NavigatorUtilites {
         }
 
         try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
-        	ensureResponsibleEngineerColumn(conn);//BUG-1048 fixing done by koushik
             String firstState = "InWork"; 
             try (PreparedStatement psState = conn.prepareStatement("SELECT rulevalue FROM amxschemarules WHERE rulename = 'PartStates'")) {
                 ResultSet rsState = psState.executeQuery();
@@ -246,26 +245,6 @@ public class NavigatorUtilites {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(resp.toString()).build();
         }
     }
-    
-  //BUG-1048 fixing started by koushik
-    private void ensureResponsibleEngineerColumn(Connection conn) throws SQLException {
-        String checkSql =
-            "SELECT 1 FROM information_schema.columns " +
-            "WHERE table_name='amxcorepartdata' " +
-            "AND column_name='responsibleengineer'";
-        try (PreparedStatement ps = conn.prepareStatement(checkSql);
-             ResultSet rs = ps.executeQuery()) {
-            if (!rs.next()) {
-                try (Statement stmt = conn.createStatement()) {
-                    stmt.executeUpdate(
-                        "ALTER TABLE amxcorepartdata " +
-                        "ADD COLUMN responsibleengineer VARCHAR(255)"
-                    );
-                }
-            }
-        }
-    }
-  //BUG-1048 fixing ended by koushik
 	/**
 	* @args None
 	* @return Response
