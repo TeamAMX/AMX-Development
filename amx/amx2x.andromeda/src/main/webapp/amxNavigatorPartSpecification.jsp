@@ -315,7 +315,7 @@ table.dataTable thead .sorting_desc:after {
 <div class="toolbar">
     <i class="fa-solid fa-address-card toolbar-icon"
        id="showMyPs"
-       title="Show All My Ps"></i>
+       title="Show All My Part Specifications"></i>
 </div>
 
 <div class="table-container">
