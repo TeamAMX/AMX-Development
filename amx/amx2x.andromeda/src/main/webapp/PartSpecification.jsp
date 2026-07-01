@@ -723,21 +723,35 @@ document.getElementById('closeSearchOverlay').addEventListener('click', function
     document.getElementById('searchOverlay').classList.remove('active');
     document.getElementById('searchOverlayFrame').src = '';
 });
-
+//BUG-1055 started by Nageswari
 window.addEventListener('message', function(event) {
     if (!event.data) return;
 
-    if (event.data.action === 'closeOnly' || event.data.action === 'closeAndRefresh') {
+    if (event.data.action === 'openPSProperties') {
+
+        document.getElementById('myModal').style.display = 'none';
+        document.getElementById('iframeContainer').innerHTML = '';
+
+        // TODO: Open PS Properties page here
+        console.log("Created PS ObjectId : ", event.data.objectId);
+
+    }
+    else if (event.data.action === 'closeOnly' || event.data.action === 'closeAndRefresh') {
+
         document.getElementById('myModal').style.display = 'none';
         document.getElementById('iframeContainer').innerHTML = '';
         loadPartSpecificationTable();
-    } else if (event.data.selectedParts) {
+
+    }
+    else if (event.data.selectedParts) {
+
         receiveSelectedParts(event.data.selectedParts);
         document.getElementById('searchOverlay').classList.remove('active');
         document.getElementById('searchOverlayFrame').src = '';
+
     }
 });
-
+//BUG-1055 Ended by Nageswari
 function closeCreatePanel() {
     const panel = document.getElementById('createPanel');
     panel.classList.remove('active');

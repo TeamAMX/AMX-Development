@@ -419,21 +419,26 @@
 		            alert('Error: ' + (result.Message || 'Something went wrong'));
 		            return;
 		        }
+				//BUG-1055 Started by /nageswari
+		        alert('The following object was created successfully!\nSuperType: ' + formData.SuperType +
+		        	      '\nType: ' + formData.Type +
+		        	      '\nName: ' + result.Name);
 
-		        alert('The following object was created successfully!\nSuperType: ' + formData.SuperType + '\nType: ' + formData.Type +
-		              '\nName: ' + result.Name);
+		        if (result.ObjectId) {
 
-		        if (result.Name) {
-		            const isInIframe = window.self !== window.top;
 		            if (isInIframe) {
-		                // Just close the popup, do nothing else
-		                window.parent.postMessage({ action: 'closeOnly' }, '*');
+		                window.parent.postMessage({
+		                    action: 'loadProperties',
+		                    type: 'partspecification',
+		                    id: result.ObjectId
+		                }, '*');
 		            } else {
-		                window.close(); 
+		                window.close();
 		            }
 		        } else {
-		            alert('Could not retrieve the Name for the new part specification.');
+		            alert('Could not retrieve the ObjectId for the new part specification.');
 		        }
+		        	//BUG-1055 Ended by Nageswari
 
 		    } catch (error) {
 		        alert('Submission failed: ' + error.message);

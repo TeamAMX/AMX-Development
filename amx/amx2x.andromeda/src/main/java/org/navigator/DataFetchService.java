@@ -1224,6 +1224,65 @@ public class DataFetchService {
                     .build();
             }
         }
+        
+        /**
+         * @args String objectId
+         * @return JSON containing Part Specification details
+         * @usage Retrieves Part Specification details by ObjectId
+         */
+        //BUG-1055 Started by Nageswari
+        @GET
+        @Path("/getinfops")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getInfoPS(@QueryParam("objectId") String objectId) {
+
+            if (objectId == null || objectId.trim().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"Message\":\"ObjectId is required\"}")
+                        .build();
+            }
+
+            try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
+
+                String sql = "SELECT * FROM amxpartspecificationdata WHERE objectid = ?";
+
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                    ps.setString(1, objectId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+
+                        if (!rs.next()) {
+                            return Response.status(Response.Status.NOT_FOUND)
+                                    .entity("{\"Message\":\"Part Specification not found\"}")
+                                    .build();
+                        }
+
+                        JSONObject obj = new JSONObject();
+
+                        ResultSetMetaData meta = rs.getMetaData();
+
+                        for (int i = 1; i <= meta.getColumnCount(); i++) {
+
+                            String column = meta.getColumnName(i);
+                            obj.put(column, rs.getString(i));
+
+                        }
+
+                        return Response.ok(obj.toString(), MediaType.APPLICATION_JSON).build();
+                    }
+                }
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("{\"Message\":\"" + e.getMessage() + "\"}")
+                        .build();
+            }
+        }
+        //BUG-1055 Ended by Nageswari
 /**
  * @args String objectId - objectId to fetch history for
  * @return Response
@@ -1378,6 +1437,111 @@ public class DataFetchService {
                 return Response.status(Response.Status.BAD_REQUEST).entity(resp.toString()).build();
             }
         }
+        
+        //BUG-1055 started by Nageswari
+      //update Part Specification
+        @PUT
+        @Path("/updatepartspecification/{objectid}")
+        @Consumes(MediaType.APPLICATION_JSON)
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response updatePartSpecification(@PathParam("objectid") String objectId, String body) {
+
+            JSONObject resp = new JSONObject();
+
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            try {
+
+                JSONObject json = new JSONObject(body);
+                String description = json.optString("description", "").trim();
+
+                // Validate input
+                if (objectId == null || objectId.trim().isEmpty() || description.isEmpty()) {
+                    resp.put("Status", "Failed").put("Message", "objectid and description are required.");
+                    return Response.status(Response.Status.BAD_REQUEST).entity(resp.toString()).build();
+                }
+
+                String modifiedDate = sf.format(new Date());
+
+                try (Connection conn = DriverManager.getConnection(url, user, db_password);
+                     PreparedStatement ps = conn.prepareStatement(
+                             "UPDATE amxpartspecificationdata SET description = ?, modifiedtime = ? WHERE objectid = ?")) {
+
+                    ps.setString(1, description);
+                    ps.setTimestamp(2, Timestamp.valueOf(modifiedDate));
+                    ps.setString(3, objectId);
+
+                    int count = ps.executeUpdate();
+
+                    if (count == 0) {
+                        resp.put("Status", "Failed").put("Message", "objectid not found.");
+                        return Response.status(Response.Status.NOT_FOUND).entity(resp.toString()).build();
+                    }
+
+                    // History handling
+                    String historyMsg = "Updated description at " + modifiedDate;
+
+                    try (PreparedStatement psSel = conn.prepareStatement(
+                            "SELECT history FROM partspecificationhistory WHERE objectid = ?")) {
+
+                        psSel.setString(1, objectId);
+
+                        try (ResultSet rs = psSel.executeQuery()) {
+
+                            if (rs.next()) {
+
+                                String existing = rs.getString("history");
+                                String updated = existing + " | " + historyMsg;
+
+                                try (PreparedStatement psUpd = conn.prepareStatement(
+                                        "UPDATE partspecificationhistory SET history = ? WHERE objectid = ?")) {
+
+                                    psUpd.setString(1, updated);
+                                    psUpd.setString(2, objectId);
+                                    psUpd.executeUpdate();
+                                }
+
+                            } else {
+
+                                try (PreparedStatement psIns = conn.prepareStatement(
+                                        "INSERT INTO partspecificationhistory (objectid, history) VALUES (?, ?)")) {
+
+                                    psIns.setString(1, objectId);
+                                    psIns.setString(2, historyMsg);
+                                    psIns.executeUpdate();
+                                }
+                            }
+                        }
+                    }
+
+                    resp.put("Status", "Success");
+                    resp.put("Message", "Part Specification updated.");
+
+                    return Response.ok(resp.toString(), MediaType.APPLICATION_JSON).build();
+
+                } catch (SQLException e) {
+
+                    e.printStackTrace();
+
+                    resp.put("Status", "Failed");
+                    resp.put("Message", "Database error: " + e.getMessage());
+
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .entity(resp.toString()).build();
+                }
+
+            } catch (Exception ex) {
+
+                ex.printStackTrace();
+
+                resp.put("Status", "Failed");
+                resp.put("Message", "Invalid input: " + ex.getMessage());
+
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(resp.toString()).build();
+            }
+        }
+        //BUG-1055 ended by Nageswari
         /**
  * @args String supertype - SuperType of the part specification
  *       String type - Type of the part specification
@@ -1440,8 +1604,8 @@ public class DataFetchService {
                     objectIdBuilder.append(String.format("%04X", part));
                     if (i < bytes.length - 2) objectIdBuilder.append(".");
                 }
-                String objectId = objectIdBuilder.toString() + ".PASP";
-                String prefix = "PASP-";
+                String objectId = objectIdBuilder.toString() + ".PS";
+                String prefix = "PS-";
                 int maxNum = 0;
                 String selectMaxNum = "SELECT name FROM amxpartspecificationdata WHERE name LIKE ?";
                 try (PreparedStatement ps = conn.prepareStatement(selectMaxNum)) {
@@ -1468,8 +1632,8 @@ public class DataFetchService {
                 Timestamp timestampNow = Timestamp.valueOf(now);
                 String createdDateStr = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String insertSQL = "INSERT INTO amxpartspecificationdata " +
-                        "(objectid, name, supertype, type, description, createdtime, modifiedtime, owner, email, connectionid, currentstate) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; //Added by Ajay BUG-1057 New Feature
+                        "(objectid, name, supertype, type, description, createdtime, modifiedtime, owner, email, connectionid) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
                 try (PreparedStatement insertPS = conn.prepareStatement(insertSQL)) {
                     insertPS.setString(1, objectId);
@@ -1482,7 +1646,6 @@ public class DataFetchService {
                     insertPS.setString(8, responsibleEngineer);
                     insertPS.setString(9, emailId != null ? emailId : "");
                     insertPS.setString(10, "");
-                    insertPS.setString(11, firstState); //Added by Ajay BUG-1057 New Feature
                     insertPS.executeUpdate();
                 }
                 String historyMsg = "Created by " + username + " at " + createdDateStr;
@@ -1515,7 +1678,6 @@ public class DataFetchService {
                 success.put("Message", "Object created successfully");
                 success.put("ObjectId", objectId);
                 success.put("Name", name);
-                success.put("CurrentState", firstState);//Added by Ajay BUG-1057 New Feature
 
                 return Response.ok(success.toString(), MediaType.APPLICATION_JSON).build();
 
@@ -1859,7 +2021,7 @@ public class DataFetchService {
                     return Response.ok(Map.of("error", "A PartSpecification linked to this Part '"+ "' already exists.")).build();
                 }
                 String generatedName = getNextPartSpecificationName();
-                String generatedPartId = generateHexaId("PASP");
+                String generatedPartId = generateHexaId("PS");
                 String existingConnectionId = getConnectionId(sourceObjectId);
                 String connectionIdToUse = (existingConnectionId != null && !existingConnectionId.isEmpty())
                         ? existingConnectionId
@@ -1945,12 +2107,12 @@ public class DataFetchService {
             }
 			
 			/**
- * @return String - Next sequential part specification name in the format "PASP-000001"
+ * @return String - Next sequential part specification name in the format "PS-000001"
  * @throws SQLException if database access error occurs
- * @usage Retrieves the last part specification name and generates the next sequential name with prefix PASP-
+ * @usage Retrieves the last part specification name and generates the next sequential name with prefix PS-
  */
             public String getNextPartSpecificationName() throws SQLException {
-                String prefix = "PASP-";
+                String prefix = "PS-";
                 String query = "SELECT name FROM amxpartspecificationdata WHERE name LIKE ? ORDER BY name DESC LIMIT 1";
                 String lastName = null;
 
@@ -1978,8 +2140,8 @@ public class DataFetchService {
             }
 
 /**
- * @args String suffix - Suffix to append to the generated hex ID (e.g., "PASP", "CONN")
- * @return String - Generated unique hex ID string like "ABCD.EF12.3456.7890.PASP"
+ * @args String suffix - Suffix to append to the generated hex ID (e.g., "PS", "CONN")
+ * @return String - Generated unique hex ID string like "ABCD.EF12.3456.7890.PS"
  * @usage Generates a secure random hex ID with the specified suffix for unique object identification.
  */
             public String generateHexaId(String suffix) {
@@ -2265,7 +2427,7 @@ public class DataFetchService {
             @Path("/latestpartspecifications")
             @Produces(MediaType.APPLICATION_JSON)
             public Response latestPartspecification() {
-                String sql = "SELECT * FROM amxpartspecificationdata ORDER BY createdtime DESC LIMIT 10";// BUG-1053  Fixed by koushik
+                String sql = "SELECT * FROM amxpartspecificationdata ORDER BY createddate DESC LIMIT 10";
                 try (Connection conn = getConn(); 
                 	PreparedStatement ps = conn.prepareStatement(sql); 
                 	ResultSet rs = ps.executeQuery()) {
@@ -3862,45 +4024,6 @@ public class DataFetchService {
         	}
            //BUG-1046 Ended By Nageswari
            
-           //BUG-1054 Fixing started by koushik
-           public Response getMyPartSpecs(HttpServletRequest request) {
-        	   
-        	   HttpSession session = request.getSession(false);
-        	   List<Map<String,String>> list = new ArrayList<>();
-        	   if(session == null || session.getAttribute("username") == null) {
-        		   return Response.status(Response.Status.UNAUTHORIZED).entity("{\"error\" :\"user not loggd in\"}").build();
-        	   }
-        	   
-        	   String userName = session.getAttribute("username").toString();
-        	   String query = "SELECT * FROM amxpartspecificationdata WHERE owner =? ORDER BY createdtime DESC";
-        	   
-        	   try(Connection connect = getConn();
-        			   PreparedStatement prep = connect.prepareStatement(query)){
-        		   
-        		   prep.setString(1,userName);
-        		   
-        		   ResultSet rs = prep.executeQuery();
-        		   
-        		   ResultSetMetaData meta = rs.getMetaData();
-        		   
-        		   while(rs.next()) {
-        			   
-        			   HashMap<String,String> row = new LinkedHashMap<>();
-        			   for(int i = 1; i < meta.getColumnCount(); i ++) {
-        				   row.put(meta.getColumnName(i),rs.getString(i));
-        			   }
-        			   
-        			   list.add(row);
-        		   }
-        		  
-        	   }catch(SQLException e) {
-        		   e.printStackTrace();
-        		   
-        		   Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\": \"" + e.getMessage() + "\"}").build();
-        	   }
-        	   return Response.ok(list).build();
-           }
-         //BUG-1054 ended started by koushik
   }
 
 
