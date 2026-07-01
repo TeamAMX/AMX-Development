@@ -2236,7 +2236,7 @@ public class DataFetchService {
             @Path("/latestpartspecifications")
             @Produces(MediaType.APPLICATION_JSON)
             public Response latestPartspecification() {
-                String sql = "SELECT * FROM amxpartspecificationdata ORDER BY createddate DESC LIMIT 10";
+                String sql = "SELECT * FROM amxpartspecificationdata ORDER BY createdtime DESC LIMIT 10";// BUG-1053  Fixed by koushik
                 try (Connection conn = getConn(); 
                 	PreparedStatement ps = conn.prepareStatement(sql); 
                 	ResultSet rs = ps.executeQuery()) {
