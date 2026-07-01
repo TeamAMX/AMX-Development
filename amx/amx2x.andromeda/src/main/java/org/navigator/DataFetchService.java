@@ -461,11 +461,17 @@ public class DataFetchService {
     @Path("/mypartspecs")
     @Produces(MediaType.APPLICATION_JSON)
     public Response myPartSpecs(@Context HttpServletRequest request) {
+    	Response response;
+    	try {
+    		response = getMyCreatedObjects(request,"amxpartspecificationdata");
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    		return Response.ok("{\"error\":\""+e.getMessage()+"\"}").build();
+    	}
     	
-    	return getMyPartSpecs(request);
-    	
+    	return response;
     }
-        //Bug-1054 fixing ended by Koushik
+    //Bug-1054 fixing ended by Koushik
 
     
     
@@ -3989,9 +3995,15 @@ public class DataFetchService {
         	    }
 
         	    String username = (String) session.getAttribute("username");
-
-        	    String sql = "SELECT * FROM " + tableName + " WHERE owner=? ORDER BY createddate DESC";
-
+        	    //BUG-1054 Fixing started by koushik
+        	    String sql;
+        	    if(tableName == "amxpartspecificationdata") {
+        	    	sql = "SELECT * FROM " + tableName + " WHERE owner=? ORDER BY createdtime DESC";
+        	    }
+        	    else {
+        	    	sql = "SELECT * FROM " + tableName + " WHERE owner=? ORDER BY createddate DESC";
+        	    }
+        	    //BUG-1054 Fixing ended by koushik
         	    try (Connection conn = getConn();
         	         PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -4025,46 +4037,6 @@ public class DataFetchService {
         	    }
         	}
            //BUG-1046 Ended By Nageswari
-           
-           //BUG-1054 Fixing started by koushik
-           public Response getMyPartSpecs(HttpServletRequest request) {
-        	   
-        	   HttpSession session = request.getSession(false);
-        	   List<Map<String,String>> list = new ArrayList<>();
-        	   if(session == null || session.getAttribute("username") == null) {
-        		   return Response.status(Response.Status.UNAUTHORIZED).entity("{\"error\" :\"user not loggd in\"}").build();
-        	   }
-        	   
-        	   String userName = session.getAttribute("username").toString();
-        	   String query = "SELECT * FROM amxpartspecificationdata WHERE owner =? ORDER BY createdtime DESC";
-        	   
-        	   try(Connection connect = getConn();
-        			   PreparedStatement prep = connect.prepareStatement(query)){
-        		   
-        		   prep.setString(1,userName);
-        		   
-        		   ResultSet rs = prep.executeQuery();
-        		   
-        		   ResultSetMetaData meta = rs.getMetaData();
-        		   
-        		   while(rs.next()) {
-        			   
-        			   HashMap<String,String> row = new LinkedHashMap<>();
-        			   for(int i = 1; i < meta.getColumnCount(); i ++) {
-        				   row.put(meta.getColumnName(i),rs.getString(i));
-        			   }
-        			   
-        			   list.add(row);
-        		   }
-        		  
-        	   }catch(SQLException e) {
-        		   e.printStackTrace();
-        		   
-        		   Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\": \"" + e.getMessage() + "\"}").build();
-        	   }
-        	   return Response.ok(list).build();
-           }
-         //BUG-1054 ended  by koushik
   }
 
 
