@@ -43,6 +43,26 @@ body {
     table.dataTable a:hover {
       text-decoration: underline;
     }
+    
+    
+    table.dataTable a.part-link {
+      color: #1f2937;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    table.dataTable a.part-link:hover {
+      color: #374151;
+      text-decoration: underline;
+    }
+    table.dataTable a.part-link i {
+      color: #6b7280;
+      font-size: 12px;
+    }
+    
+    
 
     .state-badge {
   display: inline-flex;
@@ -223,13 +243,13 @@ table.dataTable tbody tr:hover {
 
 /* Links */
 
-table.dataTable a.mpn-link {
+table.dataTable a.part-link {
   color:black !important;
   font-weight: 600;
   text-decoration: none;
 }
 
-table.dataTable a.mpn-link:hover {
+table.dataTable a.part-link:hover {
   text-decoration: underline;
 }
 
@@ -314,7 +334,7 @@ table.dataTable thead .sorting_desc:after {
 
 <div class="toolbar">
     <i class="fa-solid fa-address-card toolbar-icon"
-       id="showMyPs"
+       id="showMyPartspecs"
        title="Show All My Part Specifications"></i>
 </div>
 
@@ -347,6 +367,17 @@ table.dataTable thead .sorting_desc:after {
       });
 
       const dtColumns = desiredHeaders.map(field => {
+    	  //BUG-1064 fixing started by koushik
+    		  if (field === 'name') {
+    		        return {
+    		            data: 'name',
+    		            render: function (data, type, row) {
+    		                if (!data) return '';
+    		                return '<a href="PartSpecificationdetails.jsp?name=' +encodeURIComponent(row.objectid) +'" class="part-link">' + data +'</a>';
+    		            }
+    		        };
+    		    }
+    	  //BUG-1064 fixing ended by koushik
           if (field === 'createddate') {
               return {
                   data: field,
@@ -398,7 +429,7 @@ table.dataTable thead .sorting_desc:after {
       });
 		
       //BUG-1054 started by koushik
-      $('#showMyPs').click(function () {
+      $('#showMyPartspecs').click(function () {
 
           $.ajax({
               url: BASIC_URL + '/api/datafetchservice/mypartspecs',

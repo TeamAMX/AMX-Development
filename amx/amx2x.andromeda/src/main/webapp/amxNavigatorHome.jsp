@@ -151,6 +151,21 @@
         background: #f1f5f9;
         color: #0f172a;
     }
+    
+    #sidebarToggle {
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1;
+	}
+
+	#sidebarArrow {
+    display: inline-block;
+    width: 18px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    user-select: none;
+	}
   </style>
 </head>
 <body>
@@ -322,9 +337,12 @@
   <div class="panels-container">
     <div class="left-panel">
     <div class="sidebar-header">
+<!-- BUG-1064 fixing started by koushik -->
     	<button id="sidebarToggle" class="sidebar-toggle" data-tooltip="Close Sidebar">
-    <i class="fa-solid fa-bars"></i>
-</button>
+    		<span id="sidebarArrow">&lt;</span>
+		</button>
+<!-- BUG-1064 fixing ended by koushik -->	
+		
 	</div>
       <ul class="nav flex-column core-navigation">
         <li class="nav-item">
@@ -694,19 +712,21 @@
   toggleBtn.addEventListener('mouseleave', () => {
       tooltip.classList.remove('visible');
   });
-
-  toggleBtn.addEventListener('click', () => {
-      const sidebar = document.querySelector('.left-panel');
-      sidebar.classList.toggle('collapsed');
-      tooltip.classList.remove('visible');
-
-      if (sidebar.classList.contains('collapsed')) {
-          toggleBtn.setAttribute('data-tooltip', 'Open Sidebar');
-      } else {
-          toggleBtn.setAttribute('data-tooltip', 'Close Sidebar');
-      }
+//BUG-1064 Started fixing by koushik
+  const arrow = document.getElementById("sidebarArrow");
+	toggleBtn.addEventListener('click', () => {
+    const sidebar = document.querySelector('.left-panel');
+    sidebar.classList.toggle('collapsed');
+    tooltip.classList.remove('visible');
+    if (sidebar.classList.contains('collapsed')) {
+        arrow.innerHTML = "&gt;";
+        toggleBtn.setAttribute('data-tooltip', 'Open Sidebar');
+    } else {
+        arrow.innerHTML = "&lt;";
+        toggleBtn.setAttribute('data-tooltip', 'Close Sidebar');
+    }
   });
-  
+ //BUG-1064 ended fixing by koushik
   </script>
 </body>
 </html>
