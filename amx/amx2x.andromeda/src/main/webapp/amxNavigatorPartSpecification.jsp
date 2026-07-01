@@ -400,7 +400,7 @@ table.dataTable thead .sorting_desc:after {
       $('#showMyPs').click(function () {
 
           $.ajax({
-              url: BASIC_URL + '/api/datafetchservice/',
+              url: BASIC_URL + '/api/datafetchservice/mypartspecs',
               method: 'GET',
               dataType: 'json',
 
@@ -430,4 +430,4 @@ table.dataTable thead .sorting_desc:after {
   </script>
 </body>
 </html>
-<!-- BUG-1053 fixing Started by koushik -->
+<!-- BUG-1053 fixing ended by koushik -->
