@@ -456,7 +456,7 @@ public class DataFetchService {
     }
     //BUG-1046 Ended by Nageswari
     
-    
+    //Bug-1053 fixing started by Koushik
     @GET
     @Path("/mypartspecs")
     @Produces(MediaType.APPLICATION_JSON)
@@ -465,7 +465,8 @@ public class DataFetchService {
     	return getMyPartSpecs(request);
     	
     }
-    
+        //Bug-1053 fixing ended by Koushik
+
     
     
     //history
@@ -1416,8 +1417,21 @@ public class DataFetchService {
             }
 
             try (Connection conn = DriverManager.getConnection(url, user, db_password)) {
-
-                SecureRandom random = new SecureRandom();
+				//Added by Ajay BUG-1057 New Feature stated
+                String firstState = "Draft"; 
+                try (PreparedStatement psState = conn.prepareStatement("SELECT rulevalue FROM amxschemarules WHERE rulename = 'PartSpecStates'")) {
+                    ResultSet rsState = psState.executeQuery();
+                    if (rsState.next()) {
+                        String states = rsState.getString("rulevalue");
+                        if (states != null && !states.isEmpty()) {
+                            firstState = states.split("\\|")[0]; 
+                        }
+                    }
+                    rsState.close();
+                }
+				//Added by Ajay BUG-1057 New Feature Ended
+                SecureRandom random = new SecureRandom();	
+                
                 byte[] bytes = new byte[8];
                 random.nextBytes(bytes);
                 StringBuilder objectIdBuilder = new StringBuilder();
@@ -1454,8 +1468,8 @@ public class DataFetchService {
                 Timestamp timestampNow = Timestamp.valueOf(now);
                 String createdDateStr = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String insertSQL = "INSERT INTO amxpartspecificationdata " +
-                        "(objectid, name, supertype, type, description, createdtime, modifiedtime, owner, email, connectionid) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        "(objectid, name, supertype, type, description, createdtime, modifiedtime, owner, email, connectionid, currentstate) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; //Added by Ajay BUG-1057 New Feature
 
                 try (PreparedStatement insertPS = conn.prepareStatement(insertSQL)) {
                     insertPS.setString(1, objectId);
@@ -1468,6 +1482,7 @@ public class DataFetchService {
                     insertPS.setString(8, responsibleEngineer);
                     insertPS.setString(9, emailId != null ? emailId : "");
                     insertPS.setString(10, "");
+                    insertPS.setString(11, firstState); //Added by Ajay BUG-1057 New Feature
                     insertPS.executeUpdate();
                 }
                 String historyMsg = "Created by " + username + " at " + createdDateStr;
@@ -1500,6 +1515,7 @@ public class DataFetchService {
                 success.put("Message", "Object created successfully");
                 success.put("ObjectId", objectId);
                 success.put("Name", name);
+                success.put("CurrentState", firstState);//Added by Ajay BUG-1057 New Feature
 
                 return Response.ok(success.toString(), MediaType.APPLICATION_JSON).build();
 
