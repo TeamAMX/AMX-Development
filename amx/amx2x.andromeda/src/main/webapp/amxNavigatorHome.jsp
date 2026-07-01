@@ -660,11 +660,18 @@
         const id = encodeURIComponent(event.data.id);
         
         if (event.data.type === 'part') {
-          contentFrame.src = 'Properties.jsp?name=' + id;
+            contentFrame.src = 'Properties.jsp?name=' + id;
         } else if (event.data.type === 'partcontrol') {
-          contentFrame.src = 'Partcontroldetails.jsp?name=' + id;
-        } else if (event.data.type === 'mpn') {
-          contentFrame.src = 'MPNProperties.jsp?name=' + id;
+            contentFrame.src = 'Partcontroldetails.jsp?name=' + id;
+            
+        }
+      //BUG-1055 Started By Nageswari
+        else if (event.data.type === 'partspecification') {
+            contentFrame.src = 'PartSpecificationdetails.jsp?name=' + id;
+        }
+        //BUG-1055 Ended by Nageswari
+        else if (event.data.type === 'mpn') {
+            contentFrame.src = 'MPNProperties.jsp?name=' + id;
         }
       }
     }
