@@ -1632,8 +1632,8 @@ public class DataFetchService {
                 Timestamp timestampNow = Timestamp.valueOf(now);
                 String createdDateStr = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String insertSQL = "INSERT INTO amxpartspecificationdata " +
-                        "(objectid, name, supertype, type, description, createdtime, modifiedtime, owner, email, connectionid) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        "(objectid, name, supertype, type, description, createdtime, modifiedtime, owner, email, connectionid, currentstate) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; //Added by Ajay BUG-1057 New Feature
 
                 try (PreparedStatement insertPS = conn.prepareStatement(insertSQL)) {
                     insertPS.setString(1, objectId);
@@ -1646,6 +1646,7 @@ public class DataFetchService {
                     insertPS.setString(8, responsibleEngineer);
                     insertPS.setString(9, emailId != null ? emailId : "");
                     insertPS.setString(10, "");
+                    insertPS.setString(11, firstState); //Added by Ajay BUG-1057 New Feature
                     insertPS.executeUpdate();
                 }
                 String historyMsg = "Created by " + username + " at " + createdDateStr;
@@ -1678,6 +1679,7 @@ public class DataFetchService {
                 success.put("Message", "Object created successfully");
                 success.put("ObjectId", objectId);
                 success.put("Name", name);
+                success.put("CurrentState", firstState);//Added by Ajay BUG-1057 New Feature
 
                 return Response.ok(success.toString(), MediaType.APPLICATION_JSON).build();
 
@@ -2107,9 +2109,9 @@ public class DataFetchService {
             }
 			
 			/**
- * @return String - Next sequential part specification name in the format "PS-000001"
+ * @return String - Next sequential part specification name in the format "PASP-000001"
  * @throws SQLException if database access error occurs
- * @usage Retrieves the last part specification name and generates the next sequential name with prefix PS-
+ * @usage Retrieves the last part specification name and generates the next sequential name with prefix PASP-
  */
             public String getNextPartSpecificationName() throws SQLException {
                 String prefix = "PS-";
@@ -2140,8 +2142,8 @@ public class DataFetchService {
             }
 
 /**
- * @args String suffix - Suffix to append to the generated hex ID (e.g., "PS", "CONN")
- * @return String - Generated unique hex ID string like "ABCD.EF12.3456.7890.PS"
+ * @args String suffix - Suffix to append to the generated hex ID (e.g., "PASP", "CONN")
+ * @return String - Generated unique hex ID string like "ABCD.EF12.3456.7890.PASP"
  * @usage Generates a secure random hex ID with the specified suffix for unique object identification.
  */
             public String generateHexaId(String suffix) {
@@ -2427,7 +2429,7 @@ public class DataFetchService {
             @Path("/latestpartspecifications")
             @Produces(MediaType.APPLICATION_JSON)
             public Response latestPartspecification() {
-                String sql = "SELECT * FROM amxpartspecificationdata ORDER BY createddate DESC LIMIT 10";
+                String sql = "SELECT * FROM amxpartspecificationdata ORDER BY createdtime DESC LIMIT 10";// BUG-1053  Fixed by koushik
                 try (Connection conn = getConn(); 
                 	PreparedStatement ps = conn.prepareStatement(sql); 
                 	ResultSet rs = ps.executeQuery()) {
@@ -4024,6 +4026,45 @@ public class DataFetchService {
         	}
            //BUG-1046 Ended By Nageswari
            
+           //BUG-1054 Fixing started by koushik
+           public Response getMyPartSpecs(HttpServletRequest request) {
+        	   
+        	   HttpSession session = request.getSession(false);
+        	   List<Map<String,String>> list = new ArrayList<>();
+        	   if(session == null || session.getAttribute("username") == null) {
+        		   return Response.status(Response.Status.UNAUTHORIZED).entity("{\"error\" :\"user not loggd in\"}").build();
+        	   }
+        	   
+        	   String userName = session.getAttribute("username").toString();
+        	   String query = "SELECT * FROM amxpartspecificationdata WHERE owner =? ORDER BY createdtime DESC";
+        	   
+        	   try(Connection connect = getConn();
+        			   PreparedStatement prep = connect.prepareStatement(query)){
+        		   
+        		   prep.setString(1,userName);
+        		   
+        		   ResultSet rs = prep.executeQuery();
+        		   
+        		   ResultSetMetaData meta = rs.getMetaData();
+        		   
+        		   while(rs.next()) {
+        			   
+        			   HashMap<String,String> row = new LinkedHashMap<>();
+        			   for(int i = 1; i < meta.getColumnCount(); i ++) {
+        				   row.put(meta.getColumnName(i),rs.getString(i));
+        			   }
+        			   
+        			   list.add(row);
+        		   }
+        		  
+        	   }catch(SQLException e) {
+        		   e.printStackTrace();
+        		   
+        		   Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\": \"" + e.getMessage() + "\"}").build();
+        	   }
+        	   return Response.ok(list).build();
+           }
+         //BUG-1054 ended  by koushik
   }
 
 
