@@ -1,0 +1,1 @@
+ALTER TABLE amxcorefiledetails ADD COLUMN description VARCHAR(255);

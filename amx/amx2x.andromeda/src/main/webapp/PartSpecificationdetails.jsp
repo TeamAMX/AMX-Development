@@ -18,6 +18,64 @@
     color: #333;
   }
 
+.files-table-card {
+  background: #ffffff;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  width: 100%;
+  max-width: 1100px;
+  overflow-x: auto;
+}
+#filesTable {
+  width: 100% !important;
+  white-space: nowrap;
+  border-collapse: collapse;
+}
+#filesTable thead th {
+  background: #393a3c !important;
+  color: #e2e8f0 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 10px 26px 10px 12px !important;
+  border-bottom: 2px solid #334155 !important;
+  border-right: 1px solid #334155 !important;
+  white-space: nowrap !important;
+  text-align: left;
+}
+#filesTable tbody td {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  border-right: none !important;
+  vertical-align: middle !important;
+  color: #111111 !important;
+  background: #ffffff !important;
+  font-size: 13px !important;
+}
+#filesTable tbody tr:hover td { background: #f8fafc !important; }
+#filesTable tbody td.file-name-cell a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+#filesTable tbody td.file-name-cell a:hover { text-decoration: underline; }
+#noFilesMsg {
+  padding: 24px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.section-label {
+  font-weight: 700;
+  font-size: 13px;
+  margin: 10px 16px 6px 16px;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
   /* ===== TOPBAR ===== */
   .topbar {
     display: flex;
@@ -108,10 +166,9 @@
     text-decoration: none;
     margin-bottom: 6px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     transition: all 0.2s ease;
-    white-space: nowrap;
 }
   .sidebar a:hover { background-color: #e3e7ea; color: #111827; }
   .sidebar a.active { background-color: #4b5563; color: white; font-weight: 600; }
@@ -368,12 +425,11 @@
 <div class="page-container">
   <!-- Sidebar -->
   <div class="sidebar">
-    <a href="PartSpecificationdetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link active"><i class="fa-solid fa-sliders"></i> PASP-Properties</a>
-   <%--  <a class="nav-link" href="Partcontrolhistory.jsp?name=<%= request.getParameter("name") %>"><i class="fa-regular fa-clock"></i> History</a>
-    <a class="nav-link" href="Partlifecycle.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-arrows-rotate"></i> LifeCycle</a>
-    <a class="nav-link" href="Partcontrolmanagement.jsp?name=<%= request.getParameter("name") %>"><i class="fa-solid fa-shield-halved"></i> Part Management</a>
- --%>  
- </div>
+  <a href="#" id="psPropertiesTab" class="nav-link active"><i class="fa-solid fa-sliders"></i> PS-Properties</a>
+ 
+ <!-- Added by Ajay BUG-1058 New Feature Started -->
+  <a href="#" id="filesTab" class="nav-link"><i class="fa-regular fa-file"></i> Files</a>
+</div>
 
   <!-- Main Panel -->
   <div class="main-panel">
@@ -389,8 +445,22 @@
     <div class="details-card">
       <div class="details-grid" id="detailsCard"></div>
     </div>
+
+<div class="files-table-card" id="filesCard" style="display:none;">
+  <div class="section-label"></div>
+  <div style="overflow-x: auto; padding: 0 16px; width: 100%;">
+    <table id="filesTable">
+      <thead><tr></tr></thead>
+      <tbody></tbody>
+    </table>
   </div>
+  <div id="noFilesMsg" style="display:none;">No files found for this Part Specification.</div>
 </div>
+
+  </div><!-- /.main-panel -->
+</div><!-- /.page-container -->
+ <!-- Added by Ajay BUG-1058 New Feature Ended -->
+
 
 <div id="editPanel">
   <div class="edit-modal">
@@ -646,7 +716,83 @@ $(document).ready(function () {
     };
     return map[key] || key.charAt(0).toUpperCase() + key.slice(1);
   }
+  
+  $('#psPropertiesTab').on('click', function (e) {
+	  e.preventDefault();
+	  $(this).addClass('active');
+	  $('#filesTab').removeClass('active');
+	  $('.toolbar').show();
+	  $('.details-card').show();
+	  $('#filesCard').hide();
+	});
+
+	$('#filesTab').on('click', function (e) {
+	  e.preventDefault();
+	  $(this).addClass('active');
+	  $('#psPropertiesTab').removeClass('active');
+	  $('.toolbar').hide();
+	  $('.details-card').hide();
+	  $('#filesCard').show();
+	  loadFilesTable(objectId);
+	});
+   //Added by Ajay Bug-1059,1060 New Feature Started
+	function loadFilesTable() {
+		  $('#filesTable thead tr').empty();
+		  $('#filesTable tbody').empty();
+		  $('#noFilesMsg').hide();
+		  showLoading(true);
+
+		  $.ajax({
+		    url: BASIC_URL + '/api/datafetchservice/getfilesforpartspec',
+		    method: 'GET',
+		    dataType: 'json',
+		    success: function (files) {
+		      if (!files || !Array.isArray(files) || files.length === 0) {
+		        $('#noFilesMsg').show();
+		        return;
+		      }
+
+		      const excludedFields = ['objectid', 'connectionid', 'linkedobjectid', 'fts_document', 'filedata', 'filename'];
+		      const allKeys = Object.keys(files[0]).filter(k => !excludedFields.includes(k));
+
+		      // Preferred order first, then any remaining columns not explicitly listed
+		      const preferredOrder = ['name', 'title', 'owner', 'filesize'];
+		      const keys = preferredOrder.filter(k => allKeys.includes(k))
+		        .concat(allKeys.filter(k => !preferredOrder.includes(k)));
+
+		      const headerRow = $('#filesTable thead tr');
+		      keys.forEach(function (key) {
+		        headerRow.append('<th>' + key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') + '</th>');
+		      });
+
+		      const tbody = $('#filesTable tbody');
+		      files.forEach(function (file) {
+		        let tr = '<tr>';
+		        keys.forEach(function (key, idx) {
+		          const value = file[key] || '';
+		          if (idx === 0) {
+		            tr += '<td >' + value + '</a></td>';
+		          } else {
+		            tr += '<td>' + value + '</td>';
+		          }
+		        });
+		        tr += '</tr>';
+		        tbody.append(tr);
+		      });
+		    },
+		    error: function () {
+		      showError('Failed to load files.');
+		    },
+		    complete: function () {
+		      showLoading(false);
+		    }
+		  });
+		}
+	   //Added by Ajay Bug-1059,1060 New Feature Started
+
+  
 });
+
 </script>
 </body>
 </html>

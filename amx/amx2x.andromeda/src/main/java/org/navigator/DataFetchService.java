@@ -1547,6 +1547,41 @@ public class DataFetchService {
                         .entity(resp.toString()).build();
             }
         }
+   
+        //Added by Ajay BUG-1059 New Feature Started
+        @GET
+        @Path("/getfilesforpartspec")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getFilesForPartSpec() {
+            List<Map<String, Object>> files = new ArrayList<>();
+            String sql = "SELECT * FROM amxcorefiledetails";
+            try (Connection conn = DriverManager.getConnection(url, user, db_password);
+                 PreparedStatement stmt = conn.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
+
+                ResultSetMetaData meta = rs.getMetaData();
+                int columnCount = meta.getColumnCount();
+
+                while (rs.next()) {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = meta.getColumnLabel(i).toLowerCase();
+                        row.put(columnName, rs.getString(i));
+                    }
+                    files.add(row);
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("{\"Message\":\"Error fetching files.\"}")
+                        .build();
+            }
+            return Response.ok(files).build();
+        }
+        
+        //Added by Ajay BUG-1059 New Feature Ended
+  
         //BUG-1055 ended by Nageswari
         /**
  * @args String supertype - SuperType of the part specification
