@@ -1604,8 +1604,8 @@ public class DataFetchService {
                     objectIdBuilder.append(String.format("%04X", part));
                     if (i < bytes.length - 2) objectIdBuilder.append(".");
                 }
-                String objectId = objectIdBuilder.toString() + ".PS";
-                String prefix = "PS-";
+                String objectId = objectIdBuilder.toString() + ".PASP";
+                String prefix = "PASP-";
                 int maxNum = 0;
                 String selectMaxNum = "SELECT name FROM amxpartspecificationdata WHERE name LIKE ?";
                 try (PreparedStatement ps = conn.prepareStatement(selectMaxNum)) {
@@ -2023,7 +2023,7 @@ public class DataFetchService {
                     return Response.ok(Map.of("error", "A PartSpecification linked to this Part '"+ "' already exists.")).build();
                 }
                 String generatedName = getNextPartSpecificationName();
-                String generatedPartId = generateHexaId("PS");
+                String generatedPartId = generateHexaId("PASP");
                 String existingConnectionId = getConnectionId(sourceObjectId);
                 String connectionIdToUse = (existingConnectionId != null && !existingConnectionId.isEmpty())
                         ? existingConnectionId
@@ -2114,7 +2114,7 @@ public class DataFetchService {
  * @usage Retrieves the last part specification name and generates the next sequential name with prefix PASP-
  */
             public String getNextPartSpecificationName() throws SQLException {
-                String prefix = "PS-";
+                String prefix = "PASP-";
                 String query = "SELECT name FROM amxpartspecificationdata WHERE name LIKE ? ORDER BY name DESC LIMIT 1";
                 String lastName = null;
 
