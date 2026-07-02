@@ -105,6 +105,7 @@
     
     .navbar-brand:hover {
       opacity: 0.8;
+      
     }
     
     .navbar-brand:hover .brand-text {
@@ -252,7 +253,14 @@
       Create MPN
     </a>
   </li>
-
+<!-- BUG-1068 Started by Nageswari -->
+<li>
+    <a class="dropdown-item" href="#" id="createFileLink">
+      <i class="fa-solid fa-file"></i>
+      Create File
+    </a>
+  </li>
+<!-- BUG-1068 Ended by Nageswari -->
             </ul>
           </li>
           <li class="nav-item ms-3 position-relative">
@@ -383,7 +391,6 @@
         		<span class="nav-text"> RunSQL</span>
     		</a>
 		</li>
-		
       </ul>
     </div>
     
@@ -579,6 +586,21 @@
         loadFormInModal('CreateMPNForm.jsp');
     });  
  //Bug-1038 Ended
+/* BUG-1068 started by Nageswari */
+ document.getElementById('createFileLink').addEventListener('click', async function (e) {
+
+        e.preventDefault();
+
+        const access = await getUserAccess();
+
+        if (access && access.toLowerCase() === "reader") {
+            alert("The current user is not having access to process this functionality. Please check your access level.");
+            return;
+        }
+
+        loadFormInModal('CreateFileForm.jsp');
+    });
+ /* BUG-1068 Ended by Nageswari */
     function loadFormInModal(url) {
         const modal = document.getElementById('myModal');
         document.getElementById('nativeFormContainer').style.display = 'none';

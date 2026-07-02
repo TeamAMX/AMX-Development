@@ -591,7 +591,78 @@ public class DataFetchService {
                     .entity("{\"error\": \"Error updating part: " + e.getMessage() + "\"}").build();
         }
     }
-	 
+    //BUG-1069 Started by Nageswari
+    @POST
+    @Path("/createfile")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createFile(String body, @Context HttpServletRequest request) {
+
+        JSONObject resp = new JSONObject();
+
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("username") == null) {
+            resp.put("Status", "Failed");
+            resp.put("Message", "User not logged in.");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(resp.toString()).build();
+        }
+
+        try {
+
+            JSONObject json = new JSONObject(body);
+
+            String fileName = json.getString("fileName");
+            String description = json.getString("description");
+            String fileContentBase64 = json.getString("fileContentBase64");
+            long fileSize = json.getLong("fileSize");
+
+            String owner = (String) session.getAttribute("username");
+
+            String objectId = generateHexId("AFIL");
+            String name = getNextFileName();
+
+            byte[] fileData = Base64.getDecoder().decode(fileContentBase64);
+
+            String sql = "INSERT INTO amxcorefiledetails "
+                    + "(objectid, filename, filedata, filesize, owner, name, title, description) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+            try (Connection conn = DriverManager.getConnection(url, user, db_password);
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setString(1, objectId);
+                ps.setString(2, fileName);
+                ps.setBytes(3, fileData);
+                ps.setLong(4, fileSize);
+                ps.setString(5, owner);
+                ps.setString(6, name);
+                ps.setString(7, fileName);
+                ps.setString(8, description);
+
+                ps.executeUpdate();
+            }
+
+            resp.put("Status", "Success");
+            resp.put("Message", "File created successfully");
+            resp.put("ObjectId", objectId);
+            resp.put("Name", name);
+
+            return Response.ok(resp.toString(), MediaType.APPLICATION_JSON).build();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            resp.put("Status", "Failed");
+            resp.put("Message", e.getMessage());
+
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(resp.toString()).build();
+        }
+    }
+    //BUG-1069 Ended by Nageswari
 	 /**
  * @args none
  * @return JSON list of person access options
@@ -935,6 +1006,39 @@ public class DataFetchService {
 
             return String.format("%s%06d", prefix, nextNumber);
         }
+        //BUG-1069 Started by Nageswari
+        public String getNextFileName() throws SQLException {
+
+            String prefix = "AF-";
+            String query = "SELECT name FROM amxcorefiledetails WHERE name LIKE ? ORDER BY name DESC LIMIT 1";
+
+            String lastName = null;
+
+            try (Connection conn = DriverManager.getConnection(url, user, db_password);
+                 PreparedStatement ps = conn.prepareStatement(query)) {
+
+                ps.setString(1, prefix + "%");
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        lastName = rs.getString("name");
+                    }
+                }
+            }
+
+            int nextNumber = 1;
+
+            if (lastName != null && lastName.startsWith(prefix)) {
+                try {
+                    nextNumber = Integer.parseInt(lastName.substring(prefix.length())) + 1;
+                } catch (Exception e) {
+                    nextNumber = 1;
+                }
+            }
+
+            return String.format("%s%06d", prefix, nextNumber);
+        }
+        //BUG-1069 ended by Nageswari
 /**
  * @args String suffix - suffix to append in the generated ID
  * @return String - generated hex ID string with suffix
