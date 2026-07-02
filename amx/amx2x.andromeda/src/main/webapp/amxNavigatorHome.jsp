@@ -105,7 +105,6 @@
     
     .navbar-brand:hover {
       opacity: 0.8;
-      
     }
     
     .navbar-brand:hover .brand-text {
@@ -159,14 +158,34 @@
     line-height: 1;
 	}
 
-	#sidebarArrow {
+	.sidebar-arrow-icon {
+    width: 26px;
+    height: 26px;
     display: inline-block;
-    width: 18px;
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    user-select: none;
+    transition: transform 0.25s ease;
 	}
+	
+	.sidebar-toggle {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	}
+
+	.sidebar-toggle:focus,
+	.sidebar-toggle:active {
+    outline: none;
+    box-shadow: none;
+	}
+	
+	.sidebar-arrow-icon.rotated {
+    transform: rotate(180deg);
+	}
+	
   </style>
 </head>
 <body>
@@ -347,7 +366,10 @@
     <div class="sidebar-header">
 <!-- BUG-1064 fixing started by koushik -->
     	<button id="sidebarToggle" class="sidebar-toggle" data-tooltip="Close Sidebar">
-    		<span id="sidebarArrow">&lt;</span>
+    		<svg id="sidebarArrow" class="sidebar-arrow-icon" viewBox="0 0 386 386" xmlns="http://www.w3.org/2000/svg">
+    			<circle cx="193" cy="193" r="193" fill="#1e293b"/>
+    			<path d="M 220 100 L 140 193 L 220 286" stroke="#ffffff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    		</svg>
 		</button>
 <!-- BUG-1064 fixing ended by koushik -->	
 		
@@ -748,10 +770,10 @@
     sidebar.classList.toggle('collapsed');
     tooltip.classList.remove('visible');
     if (sidebar.classList.contains('collapsed')) {
-        arrow.innerHTML = "&gt;";
+        arrow.classList.add('rotated');
         toggleBtn.setAttribute('data-tooltip', 'Open Sidebar');
     } else {
-        arrow.innerHTML = "&lt;";
+        arrow.classList.remove('rotated');
         toggleBtn.setAttribute('data-tooltip', 'Close Sidebar');
     }
   });

@@ -373,7 +373,9 @@
   <!-- Files and History are now separate pages; the name/objectId is appended once the page has loaded -->
   <a href="#" id="filesTab" class="nav-link"><i class="fa-regular fa-file"></i>Files</a>
   <a href="#" id="historyTab" class="nav-link"><i class="fa-regular fa-clock"></i> History</a>
-
+  <!-- Added by Koushik BUG-1067 New Feature Started -->
+  <a href="PartSpecificationLifeCycle.jsp?name=<%= request.getParameter("name") %>" id="lifeCycleTab" class="nav-link"><i class="fa-solid fa-arrows-rotate"></i>LifeCycle</a>
+  <!-- Added by Koushik BUG-1067 New Feature ended -->
 </div>
 
   <!-- Main Panel -->

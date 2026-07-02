@@ -1121,7 +1121,7 @@ public class NavigatorUtilites {
     }
     
     
- // MPN Lifecycle - PUT (update state)
+    // MPN Lifecycle - PUT (update state)
     @PUT
     @Path("/updatempnstate/{objectId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -1274,6 +1274,106 @@ public class NavigatorUtilites {
         }
     }
     
+    
+    
+    //BUG-1067 started fixing by koushik
+    /**
+     * @args objectId (String)
+     * @return JSON containing successfull update of the state or error message
+     * @usage updates state of a partspecification by objectId
+     */
+    // Part Specification Lifecycle - PUT (update state)
+    @PUT
+    @Path("/updatepartspecificationstate/{objectId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updatePartSpecificationToSpecificState(@PathParam("objectId") String objectId, String jsonBody, @Context HttpServletRequest request) {
+    	try {
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+    	
+        if (objectId == null || objectId.trim().isEmpty()) {
+            return Response.ok("{\"error\": \"objectId must be provided\"}").build();
+        }
+
+        if (!objectId.endsWith(".PASP")) {
+            return Response.ok("{\"error\": \"Invalid objectId suffix. Expected .PASP\"}").build();
+        }
+
+        String dataTable    = "amxpartspecificationdata";
+        String ruleName     = "PartSpecStates";
+
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
+            JSONObject input = new JSONObject(jsonBody);
+            String newState = input.optString("state", "").trim();
+
+            if (newState.isEmpty()) {
+                return Response.ok("{\"error\": \"State must be provided\"}").build();
+            }
+
+            String currentState = getCurrentState(conn, dataTable, objectId);
+            if (currentState == null) {
+                return Response.ok("{\"error\": \"Part specification not found " + "\"}").build();
+            }
+
+            List<String> validStates = getStateSequence(conn, ruleName);
+            if (!validStates.contains(newState)) {
+                return Response.ok("{\"error\": \"Invalid state: " + newState + "\"}").build();
+            }
+            updatePartState(conn, dataTable, objectId, newState);
+          
+
+            return Response.ok("{\"message\": \"State updated successfully\", \"oldState\": \"" + currentState + "\", \"newState\": \"" + newState + "\"}")
+                    .build();
+
+        } catch (Exception e) {
+            return Response.ok("{\"error\": \"Internal error: " + e.getMessage() + "\"}").build();
+        }
+    	}catch(Exception e) {
+    		return Response.ok("{\"error\": \"Internal error: " + e.getMessage() + "\"}").build();
+    	}
+    }
+    	
+    
+    
+   // PartSpecification Lifecycle - GET (current state)
+    /**
+     * @args objectId (String)
+     * @return JSON containing current state  or error message
+     * @usage retrives current state of a partspecification by objectId
+     */
+    @GET
+    @Path("/updatepartspecificationstate/{objectId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPartSpecificationCurrentStateAPI(@PathParam("objectId") String objectId, @Context HttpServletRequest request) {
+    	try {
+    	String appName =request.getContextPath().replace("/", "");
+    	DBConfig.setAppName(appName);
+        if (objectId == null || objectId.trim().isEmpty()) {
+            return Response.ok("{\"error\": \"objectId must be provided\"}").build();
+        }
+
+        if (!objectId.endsWith(".PASP")) {
+            return Response.ok("{\"error\": \"Invalid objectId suffix. Expected .PASP\"}").build();
+        }
+
+        String dataTable = "amxpartspecificationdata";
+
+        try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
+            String currentState = getCurrentState(conn, dataTable, objectId);
+            if (currentState == null) {
+                return Response.ok("{\"error\": \"Part specification not found " + "\"}").build();
+            }
+            return Response.ok("{\"currentState\": \"" + currentState + "\"}").build();
+        } catch (SQLException e) {
+            return Response.ok("{\"error\": \"Database error: " + e.getMessage() + "\"}").build();
+        }
+    	}catch(Exception e) {
+    		return Response.ok("{\"error\": \"Internal error: " + e.getMessage() + "\"}").build();
+    	}
+    }
+    
+    //BUG-1067 fixing ended by koushik.
     
     /**
      * @args objectId (String)

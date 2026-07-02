@@ -1,3 +1,4 @@
+<!-- BUG-1067 Fixing started by koushik -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String userAccess = (String) session.getAttribute("userAccess");
@@ -9,7 +10,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>MPN LifeCycle</title>
+<title>Part Specification LifeCycle</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -58,7 +59,7 @@
   .state-badge.InWork   { background: #dbeafe; color: #1d4ed8; }
   .state-badge.Frozen   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
   .state-badge.Released { background: #dcfce7; color: #166534; }
-  .state-badge.Obsolete { background: #fef9c3; color: #854d0e; }
+  .state-badge.Draft { background: #fef9c3; color: #854d0e; }
 
   /* ===== LAYOUT ===== */
   .page-container {
@@ -159,7 +160,7 @@
   #stateInWork   { background: #5bc0de; }
   #stateFrozen   { background: #6c757d; }
   #stateReleased { background: #28a745; }
-  #stateObsolete { background: #ffc107; color: #000; }
+  #stateDraft { background: #ffc107; color: #000; }
 
   .arrow {
     margin: 0 12px;
@@ -207,10 +208,10 @@
 
 <div class="topbar">
   <div class="topbar-left">
-    <div class="topbar-icon"><i class="fa-solid fa-microchip"></i></div>
+    <div class="topbar-icon"><i class="fa-solid fa-sliders"></i></div>
     <div>
-      <div class="topbar-name" id="mpnName">MPN LifeCycle</div>
-      <div class="topbar-type" id="mpnType">ManufacturerPartAssembly</div>
+      <div class="topbar-name" id="partSpecificationName">Part Specification LifeCycle</div>
+      <div class="topbar-type" id="patrSpecificationType">Part Specification Assembly</div>
     </div>
   </div>
   <div class="topbar-right">
@@ -221,16 +222,15 @@
 
 <div class="page-container">
   <div class="sidebar">
-    <a class="nav-link" href="MPNProperties.jsp?name=<%= request.getParameter("name") %>">
-      <i class="fa-solid fa-microchip"></i> MPN Properties
+    <a class="nav-link" href="PartSpecificationdetails.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-solid fa-sliders"></i> PSAP Properties
     </a>
-    <a class="nav-link" href="MPNEquivalents.jsp?name=<%= request.getParameter("name") %>">
-      <i class="fa-solid fa-code-compare"></i> Equivalents
+    <!--  -->
+    <a class="nav-link" href="PartSpecificationFiles.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-regular fa-file"></i> Files
     </a>
-    <a class="nav-link" href="MPNHistory.jsp?name=<%= request.getParameter("name") %>">
-      <i class="fa-regular fa-clock"></i> History
-    </a>
-    <a class="nav-link active" href="MPNLifecycle.jsp?name=<%= request.getParameter("name") %>">
+    <!--  -->
+    <a class="nav-link" href="PartSpecificationLifeCycle.jsp?name=<%= request.getParameter("name") %>">
       <i class="fa-solid fa-arrows-rotate"></i> LifeCycle
     </a>
   </div>
@@ -243,13 +243,14 @@
     <div class="lifecycle-wrapper">
       <div class="lifecycle-section-title">Click a state to transition</div>
       <div class="lifecycle-flow">
+        <div class="state-node" id="stateDraft" data-state="Draft">Draft </div>
+        <div class="arrow">➝</div>
         <div class="state-node" id="stateInWork"   data-state="InWork">In Work</div>
         <div class="arrow">➝</div>
         <div class="state-node" id="stateFrozen"   data-state="Frozen">Frozen</div>
         <div class="arrow">➝</div>
         <div class="state-node" id="stateReleased" data-state="Released">Released</div>
-        <div class="arrow">➝</div>
-        <div class="state-node" id="stateObsolete" data-state="Obsolete">Obsolete</div>
+        
       </div>
       <div id="stateMessages"></div>
       <div id="loadingSpinner"></div>
@@ -302,7 +303,7 @@ function fetchStateOnly(objectId) {
     setLoading(true);
     $.ajax({
 
-        url: BASIC_URL+'/api/navigatorutilites/updatempnstate/' + encodeURIComponent(objectId),
+        url: BASIC_URL+'/api/navigatorutilites/updatepartspecificationstate/' + encodeURIComponent(objectId),
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -324,9 +325,8 @@ function fetchStateOnly(objectId) {
 $(document).ready(function() {
     const objectId = getQueryParam("name");
 
-	//BUG- fixing started by koushik
     $.ajax({
-        url: BASIC_URL + '/api/navigatorutilites/updatempnstate/' + encodeURIComponent(objectId),
+        url: BASIC_URL + '/api/navigatorutilites/updatepartspecificationstate/' + encodeURIComponent(objectId),
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -338,8 +338,7 @@ $(document).ready(function() {
             }
         }
     });
-    //BUG- fixing ended by koushik
-
+    
     $("#currentState").text("Loading...");
     setLoading(false);
 
@@ -353,7 +352,7 @@ $(document).ready(function() {
 
         $.ajax({
 
-            url:BASIC_URL+'/api/navigatorutilites/updatempnstate/' + encodeURIComponent(objectId),
+            url:BASIC_URL+'/api/navigatorutilites/updatepartspecificationstate/' + encodeURIComponent(objectId),
             type: 'PUT',
             contentType: "application/json",
             data: JSON.stringify({ state: selectedState }),
@@ -377,7 +376,7 @@ $(document).ready(function() {
         setLoading(true);
         $.ajax({
 
-            url: BASIC_URL+'/api/navigatorutilites/updatempnstate/' + encodeURIComponent(objectId),
+            url: BASIC_URL+'/api/navigatorutilites/updatepartspecificationstate/' + encodeURIComponent(objectId),
             type: 'PUT',
             contentType: "application/json",
             success: function(response) {
@@ -395,7 +394,7 @@ $(document).ready(function() {
             error: function(xhr) {
                 setLoading(false);
                 if (xhr.status === 404) {
-                    $("#errorMessage").text("MPN not found with objectId: " + objectId);
+                    $("#errorMessage").text("Part specification not found with objectId: " + objectId);
                 } else {
                     $("#errorMessage").text("Error updating state: " + xhr.responseText);
                 }
@@ -406,3 +405,4 @@ $(document).ready(function() {
 </script>
 </body>
 </html>
+<!-- BUG-1067 Fixing ended by koushik -->
