@@ -287,6 +287,8 @@
     <a href="PartSpecificationdetails.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-solid fa-sliders"></i> PASP-Properties</a>
     <a href="PartSpecificationFiles.jsp?name=<%= request.getParameter("name") %>" class="nav-link"><i class="fa-regular fa-file"></i> Files</a>
     <a href="PartSpecificationHistory.jsp?name=<%= request.getParameter("name") %>" class="nav-link active"><i class="fa-regular fa-clock"></i> History</a>
+    <a href="PartSpecificationLifeCycle.jsp?name=<%= request.getParameter("name") %>" id="lifeCycleTab" class="nav-link"><i class="fa-solid fa-arrows-rotate"></i>LifeCycle</a>
+  
   </div>
 
   <!-- Main Panel -->
