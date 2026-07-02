@@ -233,7 +233,7 @@
       <i class="fa-regular fa-clock"></i> History
     </a>
     <!--  -->
-    <a class="nav-link" href="PartSpecificationLifeCycle.jsp?name=<%= request.getParameter("name") %>">
+    <a class="nav-link active" href="PartSpecificationLifeCycle.jsp?name=<%= request.getParameter("name") %>">
       <i class="fa-solid fa-arrows-rotate"></i> LifeCycle
     </a>
   </div>

@@ -1302,6 +1302,7 @@ public class NavigatorUtilites {
 
         String dataTable    = "amxpartspecificationdata";
         String ruleName     = "PartSpecStates";
+        String historyTable = "partspecificationhistory";
 
         try (Connection conn = DriverManager.getConnection(DBConfig.getUrl(), user, db_password)) {
             JSONObject input = new JSONObject(jsonBody);
@@ -1320,8 +1321,21 @@ public class NavigatorUtilites {
             if (!validStates.contains(newState)) {
                 return Response.ok("{\"error\": \"Invalid state: " + newState + "\"}").build();
             }
+            int currentIndex = validStates.indexOf(currentState);
+            int newIndex     = validStates.indexOf(newState);
+
+            String direction;
+            if (newIndex == currentIndex + 1) {
+                direction = "Promoted";
+            } else if (newIndex == currentIndex - 1) {
+                direction = "Demoted";
+            } else {
+                return Response.ok("{\"error\": \"Invalid state transition. Only one-step transitions are allowed.\"}").build();
+            }
+			String timestamp      = java.time.LocalDateTime.now().toString();
+            String historyMessage = direction + " to state: " + newState + " at " + timestamp;
             updatePartState(conn, dataTable, objectId, newState);
-          
+            insertHistory(conn, historyTable, objectId, historyMessage);
 
             return Response.ok("{\"message\": \"State updated successfully\", \"oldState\": \"" + currentState + "\", \"newState\": \"" + newState + "\"}")
                     .build();
@@ -1333,8 +1347,6 @@ public class NavigatorUtilites {
     		return Response.ok("{\"error\": \"Internal error: " + e.getMessage() + "\"}").build();
     	}
     }
-    	
-    
     
    // PartSpecification Lifecycle - GET (current state)
     /**
