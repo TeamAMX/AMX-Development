@@ -54,13 +54,13 @@ body {
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
     font-weight: 600;
 }
-
-   .table-scroll {
-  height: 320px;
-  overflow-y: auto;
-  overflow-x: auto;
-  }
- 
+/* BUG-1074 started by Tharun */
+ .table-scroll {
+    height: 67vh;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+ /* BUG-1074 ended by Tharun */
 </style>
 <!-- BUG-1046 Ended by Nageswari -->
 </head>

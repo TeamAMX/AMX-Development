@@ -12,7 +12,13 @@
 
   <style>
     * { box-sizing: border-box; }
-
+	  html,
+/* BUG-1074 started by Tharun  */	  
+body {
+    overflow-y: hidden;
+    overflow-x:hidden;
+}
+/* BUG-1074 ended by Tharun  */
     body {
       font-family: 'Inter', sans-serif;
       padding: 24px;
@@ -212,7 +218,9 @@
       font-size: 13px;
     }
     .table-scroll {
-  height: calc(100vh - 100px);
+    /* BUG-1074 started by Tharun*/
+  height: 67vh;
+  /*BUG-1074 ended by Tharun*/
   overflow-y: auto;
   overflow-x: auto;
 }

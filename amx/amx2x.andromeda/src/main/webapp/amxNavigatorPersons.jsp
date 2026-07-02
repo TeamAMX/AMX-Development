@@ -11,9 +11,17 @@
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
+html,
+body {
+    overflow-y: hidden;
+    overflow-x:hidden;
+}
   body {
     font-family: 'Inter', sans-serif;
-    padding: 28px 24px;
+    /* BUG-1074 started by Tharun */
+    padding: 16px;
+    /* BUG-1074 ended by Tharun */
     background-color: #f7f9fa;
   }
 
@@ -29,7 +37,7 @@
     background: #ffffff;
     border: 1px solid #e2e5e9;
     border-radius: 12px;
-    overflow: hidden;
+    overflow: auto;
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   }
 
@@ -124,17 +132,19 @@
   .dataTables_length,
   .dataTables_filter { display: none !important; }
   /* ===== PAGE HEADER ===== */
-
+/* BUG-1074 started by Tharun  */
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #e2e5e9;
-  border-radius: 12px 12px 0 0;
-  padding: 20px 22px;
-  border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background: #ffffff; */
+    /* border: 1px solid #e2e5e9; */
+    /* border-radius: 12px 12px 0 0; */
+    /* padding: 20px 22px; */
+    margin-bottom: 20px;
+    border-bottom: none;
 }
+/* BUG-1074 ended by Tharun  */
 
 .header-left {
   display: flex;
@@ -183,7 +193,20 @@
   border-radius: 0 0 12px 12px;
   border-top: none;
 }
-  
+#personsTable thead th{
+	position: sticky !important;
+    top: 0;
+    z-index: 100;
+    background: #1e293b !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+/* BUG-1074 started by Tharun  */
+.table-scroll {
+    overflow-y: auto;
+    overflow-x: auto;
+    height: 75vh;
+}
+/* BUG-1074 ended by Tharun  */
 </style>
 
 </head>
@@ -206,6 +229,9 @@
   </div>
 </div>
   <div class="container">
+  <!-- BUG-1074 started by Tharun  -->
+  <div class="table-scroll">
+   <!-- BUG-1074 ended by Tharun  -->  
     <table id="personsTable" class="display" style="width:100%">
       <thead>
         <tr>
@@ -219,6 +245,9 @@
       </thead>
       <tbody></tbody>
     </table>
+      <!-- BUG-1074 started by Tharun  -->
+    </div>
+      <!-- BUG-1074 ended by Tharun  -->
     <div class="error" id="errorMessage"></div>
   </div>
 

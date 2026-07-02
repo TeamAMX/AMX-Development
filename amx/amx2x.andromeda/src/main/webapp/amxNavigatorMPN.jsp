@@ -17,16 +17,18 @@
 body {
     overflow-y: hidden;
     overflow-x:hidden;
-}
+} 
 /* BUG-1032 Ended by Nageswari */
-    body {
-  font-family: 'Inter', sans-serif;
-  padding: 28px 24px;
-  background-color: #f7f9fa;
-  color: #333333;
-  font-size: 13px;
-}
 
+/* BUG-1074 started by Tharun */
+body {
+    font-family: 'Inter', sans-serif;
+    padding: 16px;
+    background-color: #f7f9fa;
+    color: #333333;
+    font-size: 13px;
+}
+/* BUG-1074 ended by Tharun */
     .error {
       text-align: center;
       margin-top: 20px;
@@ -75,18 +77,21 @@ body {
 }
     /* ===== PAGE HEADER ===== */
 
+/* BUG-1074 started by Tharun */
 .page-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px 14px 0 0;
-  padding: 20px 24px;
-  border-bottom: none;
-  box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background: #ffffff; */
+    /* border: 1px solid #e2e8f0; */
+    border-radius: 14px 14px 0 0;
+    /* padding: 20px 24px; */
+    border-bottom: none;
+    box-sizing: border-box;
+    margin-bottom: 20px;
 }
+/* BUG-1074 ended by Tharun */
 
 .header-left {
   display: flex;
@@ -144,12 +149,16 @@ body {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-top: none;
-  border-radius: 0 0 14px 14px;
+  /* BUG-1074 started by Tharun */
+  border-radius: 12px;
+  /* BUG-1074 ended by Tharun */
   overflow: hidden;
 }
 /* BUG-1032 Started by Nageswari */
 .table-scroll {
-  height:315px;
+  /* BUG-1074 started by Tharun */
+  height: 67vh;
+  /* BUG-1074 ended by Tharun */
   overflow-y: auto;
   overflow-x: scroll;
   position: relative;
@@ -203,13 +212,16 @@ table.dataTable thead th:last-child {
 }
 
 table.dataTable tbody td {
-  font-family: 'Inter', sans-serif !important;
-  padding: 8px 16px !important;
-  border-bottom: 1px solid #eef2f7 !important;
-  font-size: 13px !important;
-  color: rgb(0, 0, 0) !important;
-  vertical-align: middle;
-  white-space: nowrap;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    color: #2b303a !important;
+    padding: 10px 14px !important;
+    vertical-align: middle !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    background-color: transparent !important;
+    white-space: nowrap !important;
 }
 
 table.dataTable tbody tr {
