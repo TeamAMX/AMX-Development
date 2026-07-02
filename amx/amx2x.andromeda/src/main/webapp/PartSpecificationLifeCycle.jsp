@@ -229,6 +229,9 @@
     <a class="nav-link" href="PartSpecificationFiles.jsp?name=<%= request.getParameter("name") %>">
       <i class="fa-regular fa-file"></i> Files
     </a>
+     <a class="nav-link" href="PartSpecificationHistory.jsp?name=<%= request.getParameter("name") %>">
+      <i class="fa-regular fa-clock"></i> History
+    </a>
     <!--  -->
     <a class="nav-link" href="PartSpecificationLifeCycle.jsp?name=<%= request.getParameter("name") %>">
       <i class="fa-solid fa-arrows-rotate"></i> LifeCycle
