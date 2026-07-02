@@ -21,6 +21,13 @@ body {
   border-radius: 6px;
   border: 1px solid var(--dx-border) !important;
 }
+#partsTable thead th {
+    position: sticky !important;
+    top: 0;
+    z-index: 100;
+    background: #1e293b !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
 
 table.dataTable, 
 table.table {
@@ -46,21 +53,27 @@ table.table thead th {
   border-left: none !important;
   text-align: left !important;
 }
+/* BUG-1074 started by Tharun */
 table.dataTable thead th {
+    position: sticky;
+    position: sticky;
+    top: 0;
+    z-index: 2;
     background-color: #1f2937 !important;
     color: #e2e8f0 !important;
-    font-weight: 700 !important;
+    font-family: 'Inter', sans-serif !important;
     font-size: 11px !important;
+    font-weight: 700 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.6px !important;
-    position: relative !important; 
-    padding: 14px 40px !important;     
+    letter-spacing: 0.5px !important;
+    padding: 11px 26px 11px 14px !important;
     border-bottom: 2px solid #334155 !important;
     border-right: 1px solid #334155 !important;
-    text-align: left !important;
+    border-top: none !important;
+    border-left: none !important;
     white-space: nowrap !important;
 }
-
+/* BUG-1074 ended by Tharun */
 table.dataTable thead .sorting:before,
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting_asc:before,
@@ -124,22 +137,23 @@ table.table tbody tr:hover {
   color: #dc3545;
   font-weight: 500;
 }
-
+/* BUG-1074 started by Tharun */
 .page-header {
-  width: 100%;
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: space-between;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px 14px 0 0;
-  padding: 20px 24px;
-  margin-bottom: 0;
-  border-bottom: none;
-  box-sizing: border-box;
+    /* width: 100%; */
+    display: flex !important;
+    /* flex-direction: row !important; */
+    justify-content: space-between;
+    align-items: center;
+    /* background: #ffffff; */
+    /* border: 1px solid #e2e8f0; */
+    /* border-radius: 14px 14px 0 0; */
+    /* padding: 20px 24px; */
+    margin-bottom: 0;
+    /* border-bottom: none; */
+    box-sizing: border-box;
+    margin-bottom: 20px;
 }
-
+/* BUG-1074 ended by Tharun */
 .header-left {
   display: flex;
   align-items: center;
@@ -190,6 +204,8 @@ table.table tbody tr:hover {
   flex-direction: column;
 }
 .table-container {
-  border-radius: 0 0 14px 14px;
+	/* BUG-1074 started by Tharun */
+  border-radius: 12px;
+  /* BUG-1074 started by Tharun */
   border-top: none !important;
 }
