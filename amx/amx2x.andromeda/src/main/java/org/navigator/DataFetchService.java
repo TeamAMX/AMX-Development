@@ -1323,6 +1323,44 @@ public class DataFetchService {
                 return Response.ok("{\"error\":\"" + e.getMessage() + "\"}").build();
             }
         }
+        
+        
+        /**
+         * @args String objectId - objectId to fetch history for
+         * @return Response
+         * @usage This method retrieves history records for a Part Specification identified by objectId.
+         */
+        //getpartspecificationhistory
+        //Added by Ajay BUG-1066 New Feature Started
+        @GET
+        @Path("/getpartspecificationhistory")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getPartSpecificationHistory(@QueryParam("objectId") String objectId) {
+            if (objectId == null || objectId.isEmpty()) {
+                return Response.ok("{\"error\":\"ObjectId parameter is required\"}").build();
+            }
+            String sql = "SELECT history FROM partspecificationhistory WHERE objectid = ?";
+            try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, objectId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    List<String> histories = new ArrayList<>();
+                    while (rs.next()) {
+                        histories.add(rs.getString("history"));
+                    }
+                    if (histories.isEmpty()) {
+                        return Response.ok("{\"error\":\"No history found for Part Specification:\"}").build();
+                    }
+                    JSONObject json = new JSONObject();
+                    json.put("objectId", objectId);
+                    json.put("history", histories);
+                    return Response.ok(json.toString()).build();
+                }
+            } catch (SQLException e) {
+                return Response.ok("{\"error\":\"" + e.getMessage() + "\"}").build();
+            }
+        }
+        //Added by Ajay BUG-1066 New Feature Ended
+        
         /**
  * @args String objectid - linked object ID to fetch related PartControl records
  * @return Response - JSON list of PartControl records or error message

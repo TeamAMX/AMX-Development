@@ -371,12 +371,19 @@
         		<span class="nav-text">Part Specification</span>
     		</a>
 		</li>
-		
+		<!-- Added by Ajay BUG-1072 New Feature Started-->
 		<li class="nav-item" >
-        	<a class="nav-link" id="sql-btn" style="display:none;" href="#" onclick="loadRightPanel('amxRunSql.jsp', this)"><i class="fa-solid fa-terminal" ></i>
+        	<a class="nav-link" id="sql-btn"  href="#" onclick="loadRightPanel('Files.jsp', this)"><i class="fa-regular fa-file" ></i>
+        		<span class="nav-text"> Files</span>
+    		</a>
+		</li>
+		<!-- Added by Ajay BUG-1072New Feature  Ended -->
+		<li class="nav-item" >
+        	<a class="nav-link" id="sql-btn" href="#" onclick="loadRightPanel('amxRunSql.jsp', this)"><i class="fa-solid fa-terminal" ></i>
         		<span class="nav-text"> RunSQL</span>
     		</a>
 		</li>
+		
       </ul>
     </div>
     
