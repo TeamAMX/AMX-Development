@@ -1291,6 +1291,13 @@ public class NavigatorUtilites {
     	try {
     	String appName =request.getContextPath().replace("/", "");
     	DBConfig.setAppName(appName);
+    	HttpSession session = request.getSession(false);
+
+    	String username = "Unknown";
+
+    	if (session != null && session.getAttribute("username") != null) {
+    	    username = (String) session.getAttribute("username");
+    	}
     	
         if (objectId == null || objectId.trim().isEmpty()) {
             return Response.ok("{\"error\": \"objectId must be provided\"}").build();
@@ -1333,7 +1340,7 @@ public class NavigatorUtilites {
                 return Response.ok("{\"error\": \"Invalid state transition. Only one-step transitions are allowed.\"}").build();
             }
 			String timestamp      = java.time.LocalDateTime.now().toString();
-            String historyMessage = direction + " to state: " + newState + " at " + timestamp;
+			 String historyMessage =direction + " to state: " + newState +" by " + username +" at " + timestamp;
             updatePartState(conn, dataTable, objectId, newState);
             insertHistory(conn, historyTable, objectId, historyMessage);
 
