@@ -457,10 +457,15 @@ public class DataFetchService {
     //BUG-1046 Ended by Nageswari
     
     //Bug-1054 fixing started by Koushik
+	/**
+ * @args request (HttpServeltRequest)
+ * @return json consists of the owner's part specifications 
+ * @usage Retrieves part specifications of a current logged in user by username
+ */
     @GET
     @Path("/mypartspecs")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response myPartSpecs(@Context HttpServletRequest request) {
+    public Response getMyPartSpecs(@Context HttpServletRequest request) {
     	Response response;
     	try {
     		response = getMyCreatedObjects(request,"amxpartspecificationdata");
