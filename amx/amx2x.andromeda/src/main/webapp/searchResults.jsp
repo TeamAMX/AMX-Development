@@ -9,6 +9,18 @@
 
 <style>
 
+/*  BUG-1073 started by Tharun   */
+html,
+body {
+    overflow-y: hidden;
+    overflow-x:hidden;
+}
+  body {
+    font-family: 'Inter', sans-serif;
+    padding: 16px;
+    background-color: #f7f9fa;
+  }
+/*  BUG-1073 ended by Tharun   */
 .spinner-container {
   position: relative;
   width: 80px;
@@ -63,12 +75,13 @@
   font-size: 1.1rem;
   color: #3498db;
 }
-
+/* commeneted for BUG-1073 by Tharun
 a.apn-link {
 cursor: pointer;
 color: blue;
 text-decoration: underline;
 }
+*/
 .noResults {
   display: none;
   position: fixed; 
@@ -95,11 +108,106 @@ padding: 0;
 font-size: 16px;
 color: #555;
 }
+/*  Commented by Tharun for BUG-1073
 .table-wrapper {
 text-wrap-mode : nowrap;
 position: relative;
 min-height: 200px;
 }
+*/
+/* BUG-1073 started by Tharun */
+.table-container{
+	text-wrap-mode : nowrap;
+	background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e5e9;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+.table-scroll {
+    height: 95vh;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+#resultsTable thead th {
+    position: sticky !important;
+    top: 0;
+    z-index: 100;
+    background: #020913 !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+table.dataTable thead th {
+    background: #1e293b !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 16px !important;
+    border-bottom: none !important;
+    /*border-right: 1px solid rgba(255, 255, 255, 0.08);*/
+    white-space: nowrap;
+    padding-right: 30px !important;
+    position: relative;
+}
+table.dataTable thead .sorting:before,
+  table.dataTable thead .sorting:after,
+  table.dataTable thead .sorting_asc:before,
+  table.dataTable thead .sorting_asc:after,
+  table.dataTable thead .sorting_desc:before,
+  table.dataTable thead .sorting_desc:after {
+    color: rgba(255,255,255,0.75) !important;
+    opacity: 1 !important;
+    display: none!important;
+  }
+  table.dataTable tbody td {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    color: #2b303a !important;
+    padding: 10px 14px !important;
+    vertical-align: middle !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    background-color: transparent !important;
+    white-space: nowrap !important;
+    font-weight:500 !important;
+}
+.apn-link{
+    color:black;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.apn-link:hover{
+    color:black;
+    text-decoration:underline;
+}
+tbody tr:nth-child(even){
+    background:#fafafa;
+}
+
+tbody tr:hover{
+    background:#F4F8FD;
+}
+tbody tr.selected{
+    background:#E9F2FF;
+}
+::-webkit-scrollbar{
+    width:8px;
+    height:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#b9bec6;
+    border-radius:10px;
+}
+thead th{
+    background:#ffffff;
+    color:#5E6C84;
+    border-bottom:2px solid #DFE1E6;
+}
+/* BUG-1073 ended by Tharun  */
 .resultsTable thead th {
 background-color: #f8f9fa;
 }
@@ -129,7 +237,7 @@ background-color: #f8f9fa;
     border-collapse: collapse !important;
     table-layout: auto;
 }
-
+/*  Commented for BUG-1073 by Tharun
 #resultsTable thead th {
     padding: 2px 8px !important;
     font-size: 12px !important;
@@ -137,10 +245,13 @@ background-color: #f8f9fa;
     vertical-align: middle !important;
     height: 28px !important;
 }
+*/
 
 </style>
 </head>
-<body class="container mt-4">
+<!-- BUG-1073 started -->
+<body>
+<!-- BUG-1073 ended -->
     <!-- Loading Spinner -->
 <div id="spinnerOverlay" class="spinner-overlay" style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
   <div class="spinner-container" style="position: relative; width: 80px; height: 80px;">
@@ -164,7 +275,10 @@ background-color: #f8f9fa;
         <li>Try more general keywords.</li>
     </ul>
 </div>
-    <div class="table-wrapper">
+<!-- BUG-1073 started by Tharun -->
+    <div class="table-container">
+    <div class="table-scroll">
+    <!-- BUG-1073 ended by Tharun -->
         <table id="resultsTable" class="display table table-striped" style="width:100%; display:none;">
             <thead>
                 <tr id="tableHeaderRow">
@@ -175,6 +289,7 @@ background-color: #f8f9fa;
                 
             </tbody>
         </table>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -411,7 +526,10 @@ background-color: #f8f9fa;
                 paging: false,
                 info: false,
                 lengthChange: false,
-                ordering: false
+                //BUG-1073 started by Tharun
+                ordering: true,
+                searching: false
+                //BUG-1073 ended
             });
             if (isPCNumberSearch) {
                 $('.dataTables_filter').hide();
