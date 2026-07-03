@@ -372,7 +372,7 @@
     	    }
 
     	    const mode = new URLSearchParams(window.location.search).get('mode');
-
+			//BUG-1022 Fixing started by koushik
     	    if (mode === 'mpn') {
     	        parent.postMessage({ selectedMPNs: selectedRows }, '*');
     	    } else if (mode === 'part') {
@@ -390,6 +390,7 @@
     	        const overlay = parent.document.getElementById('searchOverlay');
     	        if (overlay) overlay.classList.remove('active');
     	    }, 150);
+    	  //BUG-1022 Fixing ended by koushik
     	});
     });
   </script>

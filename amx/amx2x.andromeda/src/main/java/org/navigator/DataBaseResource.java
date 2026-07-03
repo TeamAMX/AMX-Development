@@ -268,6 +268,12 @@ public class DataBaseResource {
     
     
     //BUG-1031 fixing is started here and did by koushik
+    /**
+	@Usage
+	@accepts String search 
+	* This method is used to get all the person's username data from the database that to show 
+	* in the dropdown values for the responsible engineer selection.
+	*/
 	@GET
 	@Path("/persons")
 	@Produces(MediaType.APPLICATION_JSON)
