@@ -128,10 +128,14 @@
     background: #ffffff !important;
     font-size: 13px !important;
   }
-  #filesTable tbody tr:hover td { background: #f8fafc !important; }
-  #filesTable tbody td.file-name-cell {
-    color: #2563eb;
+  #filesTable tbody tr:hover td { background: #E8EAEB !important; }
+ #filesTable tbody td.file-name-cell a {
+    color: inherit;
+    text-decoration: none;
     font-weight: 600;
+  }
+  #filesTable tbody td.file-name-cell a:hover {
+    text-decoration: underline;
   }
   #noFilesMsg {
     padding: 24px;
@@ -249,14 +253,29 @@ $(document).ready(function () {
         keys.forEach(function (key) {
           headerRow.append('<th>' + key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') + '</th>');
         });
+		//Added by Ajay BUG-1088 Enhancement Started
+       function formatFileSize(bytes) {
+    	                    bytes = Number(bytes);
+    	                    if (isNaN(bytes)) return '';
+    	                    if (bytes < 1024)
+    	                        return bytes + " B";
+    	                    else if (bytes < 1024 * 1024)
+    	                        return (bytes / 1024).toFixed(2) + " KB";
+    	                    else
+    	                        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    	                }
 
         const tbody = $('#filesTable tbody');
         files.forEach(function (file) {
           let tr = '<tr>';
           keys.forEach(function (key, idx) {
-            const value = file[key] || '';
+            let value = file[key] || '';
+            if (key === 'filesize') {
+              value = formatFileSize(value);
+            }
             if (idx === 0) {
-              tr += '<td class="file-name-cell">' + value + '</td>';
+              const link = 'FileProperties.jsp?name=' + encodeURIComponent(file.objectid || '');
+              tr += '<td class="file-name-cell"><a href="' + link + '">' + value + '</a></td>';
             } else {
               tr += '<td>' + value + '</td>';
             }
@@ -264,6 +283,8 @@ $(document).ready(function () {
           tr += '</tr>';
           tbody.append(tr);
         });
+		//Added by Ajay BUG-1088 Enhancement Ended
+
       },
       error: function () {
         showError('Failed to load files.');

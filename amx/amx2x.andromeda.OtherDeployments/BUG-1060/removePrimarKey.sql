@@ -1,0 +1,1 @@
+ALTER TABLE partspecificationhistory DROP CONSTRAINT partspecificationhistory_pkey;

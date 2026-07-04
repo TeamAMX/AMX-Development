@@ -380,32 +380,38 @@ $(document).ready(function () {
         keys.forEach(function (key) {
           headerRow.append('<th>' + key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') + '</th>');
         });
-
+        
+        function formatFileSize(bytes) {
+            bytes = Number(bytes);
+            if (isNaN(bytes)) return '';
+            if (bytes < 1024)
+                return bytes + " B";
+            else if (bytes < 1024 * 1024)
+                return (bytes / 1024).toFixed(2) + " KB";
+            else
+                return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+        }
         const tbody = $('#filesTable tbody');
         files.forEach(function (file) {
           let tr = '<tr>';
-          
           //BUG-1062 started by koushik
-         keys.forEach(function (key, idx) {
-   		 const value = file[key] || '';
-
-    	 if (idx === 0) {
-         tr += '<td class="file-name-cell">' +
-         		'<input type="checkbox" class="file-row-checkbox" ' +
-         		'data-objectid="' + (file.objectid || '') + '" ' +
-         		'data-filename="' + (file.filename || file.name || '') + '" ' +
-         		'style="margin-right:8px;">' +
-                value +
-                '</td>';
-         } else {
-         tr += '<td>' + value + '</td>';
-         }
-         });
-          //BUG-1062 ended by koushik
-          
+          keys.forEach(function (key, idx) {
+            let value = file[key] || '';
+            if (key === 'filesize') {
+              value = formatFileSize(value);
+            }
+            if (idx === 0) {
+              const link = 'FileProperties.jsp?name=' + encodeURIComponent(file.objectid || '');
+              tr += '<td class="file-name-cell">' + value + '</a></td>';
+            } else {
+              tr += '<td>' + value + '</td>';
+            }
+          });
           tr += '</tr>';
           tbody.append(tr);
         });
+        //BUG-1062 ended by koushik
+
       },
       error: function () {
         showError('Failed to load files.');
