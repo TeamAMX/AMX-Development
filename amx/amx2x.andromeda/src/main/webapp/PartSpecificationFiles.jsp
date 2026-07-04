@@ -394,19 +394,25 @@ $(document).ready(function () {
         const tbody = $('#filesTable tbody');
         files.forEach(function (file) {
           let tr = '<tr>';
+          
           //BUG-1062 started by koushik
-          keys.forEach(function (key, idx) {
-            let value = file[key] || '';
-            if (key === 'filesize') {
-              value = formatFileSize(value);
-            }
-            if (idx === 0) {
-              const link = 'FileProperties.jsp?name=' + encodeURIComponent(file.objectid || '');
-              tr += '<td class="file-name-cell">' + value + '</a></td>';
-            } else {
-              tr += '<td>' + value + '</td>';
-            }
-          });
+         keys.forEach(function (key, idx) {
+   		 const value = file[key] || '';
+
+    	 if (idx === 0) {
+         tr += '<td class="file-name-cell">' +
+         		'<input type="checkbox" class="file-row-checkbox" ' +
+         		'data-objectid="' + (file.objectid || '') + '" ' +
+         		'data-filename="' + (file.filename || file.name || '') + '" ' +
+         		'style="margin-right:8px;">' +
+                value +
+                '</td>';
+         } else {
+         tr += '<td>' + value + '</td>';
+         }
+         });
+          //BUG-1062 ended by koushik
+          
           tr += '</tr>';
           tbody.append(tr);
         });

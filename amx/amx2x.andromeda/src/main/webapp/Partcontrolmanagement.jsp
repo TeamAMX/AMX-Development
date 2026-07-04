@@ -581,7 +581,7 @@ function loadPartTable() {
             title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
             render: function(data, type, row) {
                 if (type === 'display') {
-                    return '<a href="javascript:void(0)" class="part-name-link" data-objectid="' + (row.objectid || '') + '" style="color:#2563eb;text-decoration:underline;cursor:pointer;">' + data + '</a>';
+                    return '<a href="javascript:void(0)" class="part-name-link" data-objectid="' + (row.objectid || '') + '" style="color:black;text-decoration:underline;cursor:pointer;">' + data + '</a>';//BUG-1080 fixed by koushik
                 }
                 return data;
             }
