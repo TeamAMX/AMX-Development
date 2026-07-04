@@ -622,7 +622,8 @@ public class DataFetchService {
             String description = json.getString("description");
             String fileContentBase64 = json.getString("fileContentBase64");
             long fileSize = json.getLong("fileSize");
-
+            //BUG-1061 by Nageswari
+            String partSpecObjectId = json.optString("objectId", "");
             String owner = (String) session.getAttribute("username");
 
             String objectId = generateHexId("AFIL");
@@ -647,6 +648,48 @@ public class DataFetchService {
                 ps.setString(8, description);
 
                 ps.executeUpdate();
+                //BUG-1061 started by Nageswari
+                if (partSpecObjectId != null && !partSpecObjectId.isBlank()) {
+
+                	String connectionId = generateHexId("CONN");
+
+                	String partSpecName = "";
+
+                	String getNameSql = "SELECT name FROM amxpartspecificationdata WHERE objectid = ?";
+
+                	try (PreparedStatement psName = conn.prepareStatement(getNameSql)) {
+
+                	    psName.setString(1, partSpecObjectId);
+
+                	    try (ResultSet rs = psName.executeQuery()) {
+
+                	        if (rs.next()) {
+                	            partSpecName = rs.getString("name");
+                	        }
+                	    }
+                	}
+
+                	String connectionSql =
+                	        "INSERT INTO amxcoreconnectiondata "
+                	      + "(connectionid, type, name, fromid, toid, fromname, toname, createddate) "
+                	      + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+                	try (PreparedStatement psConnection = conn.prepareStatement(connectionSql)) {
+
+                	    psConnection.setString(1, connectionId);
+                	    psConnection.setString(2, "PartSpecification");
+                	    psConnection.setString(3, partSpecName);
+                	    psConnection.setString(4, partSpecObjectId);
+                	    psConnection.setString(5, objectId);
+                	    psConnection.setString(6, "partSpecification");
+                	    psConnection.setString(7, "file");
+                	    psConnection.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
+
+                	    psConnection.executeUpdate();
+                	}
+
+                }
+                //BUG-1061 Ended by Nageswari
             }
 
             resp.put("Status", "Success");

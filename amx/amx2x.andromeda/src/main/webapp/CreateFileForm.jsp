@@ -353,6 +353,8 @@ input[readonly], textarea[readonly] {
   <script>
   
   const BASIC_URL = '<%= request.getContextPath() %>';
+  /* BUG-1061  by Nageswari */
+  const objectId = new URLSearchParams(window.location.search).get("name");
     window.addEventListener('DOMContentLoaded', async () => {
     	const fileInput = document.getElementById("fileInput");
     	const addFileBtn = document.getElementById("addFileBtn");
@@ -451,6 +453,7 @@ input[readonly], textarea[readonly] {
 
     	    if (file.size > MAX_FILE_SIZE) {
     	        alert("File size should not exceed 10 MB.");
+    	        window.parent.postMessage({ action: "closeOnly" }, "*");
     	        return;
     	    }
     	    const reader = new FileReader();
@@ -463,7 +466,9 @@ input[readonly], textarea[readonly] {
     	            fileName: file.name,
     	            fileSize: file.size,
     	            description: descriptionInput.value.trim(),
-    	            fileContentBase64: base64
+    	            fileContentBase64: base64,
+    	            /* BUG-1061  by Nageswari */
+    	            objectId: objectId
     	        };
 
     	        $.ajax({

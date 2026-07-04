@@ -207,6 +207,35 @@
     font-size: 13px;
     display: none;
   }
+  /* BUG-1061 started by Nageswari */
+  /* ===== TOOLBAR ===== */
+.toolbar {
+    background: #000;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+}
+
+.toolbar button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+.toolbar button:hover {
+    background: #334155;
+}
+
+.toolbar img {
+    width: 18px;
+    height: 18px;
+    filter: invert(1);
+}
+  /* BUG-1061 started by Nageswari */
+    
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -245,7 +274,13 @@
   <div class="main-panel">
     <div id="loadingSpinner"></div>
     <div id="errorMessage"></div>
-
+    <!-- BUG-1061 started by Nageswari -->
+<div class="toolbar">
+    <button id="uploadBtn" title="Upload File">
+        <img src="https://img.icons8.com/?size=450&id=e2tnuDc86xd6&format=png&color=000000" alt="Upload">
+    </button>
+    <!-- BUG-1061 Ended by Nageswai -->
+</div>
     <div class="files-table-card" id="filesCard">
       <div class="section-label"></div>
       <div style="overflow-x: auto; padding: 0 16px; width: 100%;">
@@ -352,6 +387,17 @@ $(document).ready(function () {
     });
   }
 });
+/* BUG-1061 Started by Nageswari */
+document.getElementById("uploadBtn").addEventListener("click", function () {
+
+    const objectId = new URLSearchParams(window.location.search).get("name");
+
+    window.parent.loadFormInModal(
+        "CreateFileForm.jsp?name=" + encodeURIComponent(objectId)
+    );
+
+});
+/* BUG-1061 Ended by Nageswari */
 </script>
 </body>
 </html>
