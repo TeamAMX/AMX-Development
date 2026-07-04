@@ -115,14 +115,14 @@
 }
   /* BUG-1086 Started by Nageswari */
   #filesTable thead th {
-    background: #101c33 !important;
-    color: #ffffff !important;
+    background: #ffffff !important;
+    color: #111827 !important;
     font-size: 12px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     padding: 12px 26px 12px 12px !important;
-    border-bottom: 2px solid #000000 !important;
+    border-bottom: 2px solid #1f2937 !important;
     border-right: none !important;
     white-space: nowrap !important;
     text-align: left;
@@ -144,9 +144,10 @@
     background: #ffffff !important;
     font-size: 13px !important;
   }
-  #filesTable tbody tr:hover td { background: #f8fafc !important; }
-  #filesTable tbody td.file-name-cell {
-    color: #2563eb;
+  #filesTable tbody tr:hover td { background: #E8EAEB !important; }
+ #filesTable tbody td.file-name-cell a {
+    color: inherit;
+    text-decoration: none;
     font-weight: 600;
   }
   #filesTable tbody td.file-name-cell a:hover {
@@ -291,9 +292,13 @@ $(document).ready(function () {
         files.forEach(function (file) {
           let tr = '<tr>';
           keys.forEach(function (key, idx) {
-            const value = file[key] || '';
+            let value = file[key] || '';
+            if (key === 'filesize') {
+              value = formatFileSize(value);
+            }
             if (idx === 0) {
-              tr += '<td class="file-name-cell">' + value + '</td>';
+              const link = 'FileProperties.jsp?name=' + encodeURIComponent(file.objectid || '');
+              tr += '<td class="file-name-cell"><a href="' + link + '">' + value + '</a></td>';
             } else {
               tr += '<td>' + value + '</td>';
             }
