@@ -377,20 +377,19 @@ public class NavigatorUtilites {
                         }
                     }
                 } else {
+                	//BUG-1089 fixing started by koushik
                 	String[] parts = searchTerm.split("[^a-zA-Z0-9]+");
                 	List<String> tsParts = new ArrayList<>();
                 	for (String part : parts) {
                 	    if (!part.trim().isEmpty()) {
-//                	        tsParts.add(part + ":*");
-                	    	
-                	    	if(part.matches("\\d+")){
-                	    	    tsParts.add("-" + part + ":*");
-                	    	}else{
-                	    	    tsParts.add(part + ":*");
-                	    	}
-                	    	
+                	        if (part.matches("\\d+")) {
+                	            tsParts.add("(" + part + ":* | -" + part + ":*)");
+                	        } else {
+                	            tsParts.add(part + ":*");
+                	        }
                 	    }
                 	}
+                	//BUG-1089 fixing ended by koushik
                 	String tsQuery = String.join(" & ", tsParts);
                 	//BUG-1065 started by Nageswari
                 	String sql;
@@ -399,7 +398,13 @@ public class NavigatorUtilites {
 
                 	    sql = "SELECT * FROM amxpartspecificationdata WHERE fts_document @@ to_tsquery(?)";
 
-                	} else {
+                	}
+                	//BUG-1089 fixing started by koushik
+                	else if(searchTerm.equalsIgnoreCase("mpn") || searchTerm.matches("^mpn[-_].*")) {
+                		sql = "SELECT * FROM amxcorempndetails WHERE fts_document @@ to_tsquery(?)";
+                	}
+                	//BUG-1089 fixing ended by koushik
+                	else {
 
                 	    sql = "SELECT * FROM amxpartcontroldata WHERE fts_document @@ to_tsquery(?)";
 
@@ -1474,3 +1479,4 @@ public class NavigatorUtilites {
     //BUG-1038 End
     
 }
+												

@@ -409,7 +409,9 @@ background-color: #f8f9fa;
             resultsBody.innerHTML = '';
             tableHeaderRow.innerHTML = '';
 			//BUG-1043 fixing stated by koushik
-            const isPCNumberSearch = searchQuery === 'pc-0000' || /^pc-0000[0-9]+$/.test(searchQuery);
+            const isPCNumberSearch = searchQuery === 'pc-0000' || /^pc-0000[0-9]+$/.test(searchQuery);//BUG-1089 fixed by koushik
+            const isMPNQuery = searchQuery === 'mpn' || /^mpn[-_]/.test(searchQuery);
+            const isMPNNumberSearch = /^mpn[-_]\d+$/.test(searchQuery);
             let headerMap;
             if (isPCNumberSearch) {
                 headerMap = {"Name": "name","SuperType": "supertype","Type": "type","Description": "description",
@@ -421,6 +423,14 @@ background-color: #f8f9fa;
                     "Createddate": "createddate","Owner": "owner","Email": "email","Assignee": "assignee","Currentstate": "currentstate"
                 };
             } 
+            //BUG-1089 fixing started by koushik
+			else if (isMPNQuery) {
+   				 headerMap = {"Name": "name","SuperType": "supertype","Type": "type","Description": "description",
+       			 "Createddate": "createddate","Owner": "owner","Email": "email","Currentstate": "currentstate"
+   				 };
+			}
+
+           //BUG-1089 fixing ended by koushik
             //BUG-1065 Started by Nageswari
             else if (searchQuery === 'pasp'|| searchQuery === 'pasp-' || searchQuery === 'pasp-000') {
 
@@ -479,13 +489,18 @@ background-color: #f8f9fa;
                     	        searchQuery === 'pasp-00' ||
                     	        searchQuery === 'pasp-000' ||
                     	        searchQuery === 'pasp-0000' ||
+                    	        
                     	        searchQuery === 'pc' ||
                     	        searchQuery === 'pc-' ||
                     	        searchQuery === 'pc-0' ||
                     	        searchQuery === 'pc-00' ||
                     	        searchQuery === 'pc-000' ||
                     	        searchQuery === 'pc-0000' ||
-                    	        /^pc-0000[0-9]+$/.test(searchQuery)
+                    	        searchQuery === 'pc-0000' ||
+                    	        /^pc-0000[0-9]+$/.test(searchQuery) ||
+                    	        //BUG-1089 started by koushik
+								isMPNQuery
+                    	        //BUG-1089 ended by koushik
                     	    )
                     	)
                     	{
@@ -498,7 +513,13 @@ background-color: #f8f9fa;
                         /* BUG-1065 started by Nageswari */
                         if (searchQuery === 'pasp') {
                             a.setAttribute('data-type', 'ps-name');
-                        } else {
+                        }
+                        //BUG-1089 Started by koushik
+						else if (isMPNQuery) {
+  						  a.setAttribute('data-type', 'mpn-name');
+						}
+                        //BUG-1089 ended by koushik
+                        else {
                             a.setAttribute('data-type', 'pc-name');
                         }
                         /* BUG-1065 Ended by Nageswari */
@@ -531,7 +552,7 @@ background-color: #f8f9fa;
                 searching: false
                 //BUG-1073 ended
             });
-            if (isPCNumberSearch) {
+            if (isPCNumberSearch || isMPNNumberSearch) {
                 $('.dataTables_filter').hide();
             }
           //BUG-1043 fixing ended by koushik
@@ -587,6 +608,11 @@ background-color: #f8f9fa;
     			propertiesUrl = BASIC_URL+'/PartSpecificationdetails.jsp?name=' + encodeURIComponent(objectId);
 			}
             //BUG-1065 ended by Nageswari
+            //BUG-1089 started by koushik
+			else if (type === 'mpn-name') {
+ 			   propertiesUrl = BASIC_URL+'/MPNProperties.jsp?name=' + encodeURIComponent(objectId);
+			}
+            //BUG-1089 ended by koushik
             else if (type === 'person-username') {
                 propertiesUrl = BASIC_URL+'/PersonProperties.jsp?name=' + encodeURIComponent(objectId);
             } else {
