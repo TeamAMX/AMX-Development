@@ -742,6 +742,11 @@
         else if (event.data.type === 'mpn') {
             contentFrame.src = 'MPNProperties.jsp?name=' + id;
         }
+        //Added by Ajay BUG-1070 New Feature
+        else if (event.data.type === 'file') {
+            contentFrame.src = 'FileProperties.jsp?name=' + id;
+        }
+        //Added by Ajay BUG-1070 New Feature
       }
     }
   });
