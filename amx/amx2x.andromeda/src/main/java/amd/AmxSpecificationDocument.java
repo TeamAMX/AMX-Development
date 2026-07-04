@@ -107,6 +107,18 @@ public class AmxSpecificationDocument {
                 }
             }
         }
+        //BUG-1062 started by koushik
+        String query2 = "SELECT filedata FROM amxcorefiledetails WHERE objectid = ? AND filename = ?";
+        try (Connection conn = DriverManager.getConnection(url, user, db_password);PreparedStatement pstmt = conn.prepareStatement(query2)) {
+            pstmt.setString(1, objectid);
+            pstmt.setString(2, filename);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new AmxSpecificationDocument(0, filename, rs.getBytes("filedata"));
+                }
+            }
+        }
+      //BUG-1062 ended by koushik
         return null;
     }
     
@@ -125,8 +137,20 @@ public class AmxSpecificationDocument {
             pstmt.setString(1, objectid);
             pstmt.setString(2, filename);
             int rowsAffected = pstmt.executeUpdate();
-            
+        //BUG-1063 fixing started by koushik
+            if (rowsAffected > 0) {
+                return true;
+            }
+        }
+        
+        String query2 = "DELETE FROM amxcorefiledetails WHERE objectid = ? AND filename = ?";
+        try (Connection conn = DriverManager.getConnection(url, user, db_password);
+             PreparedStatement pstmt = conn.prepareStatement(query2)) {
+            pstmt.setString(1, objectid);
+            pstmt.setString(2, filename);
+            int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         }
+      //BUG-1063 fixing ended by koushik
     }
 }

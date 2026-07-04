@@ -6,6 +6,7 @@
 <title>Part Specification - Files</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
   * { box-sizing: border-box; }
@@ -234,6 +235,10 @@
     height: 18px;
     filter: invert(1);
 }
+.toolbar button .fa-file-circle-minus {
+    color: #f87171;
+    font-size: 18px;
+}
   /* BUG-1061 started by Nageswari */
     
 </style>
@@ -280,6 +285,12 @@
         <img src="https://img.icons8.com/?size=450&id=e2tnuDc86xd6&format=png&color=000000" alt="Upload">
     </button>
     <!-- BUG-1061 Ended by Nageswai -->
+    <button id="downloadBtn" title="download File">
+        <img src="https://img.icons8.com/?size=150&id=0xU3XgGHcgvR&format=png&color=000000" alt="Download">
+    </button>
+    <button data-bs-toggle="tooltip" title="Remove file" id="removeBtn">
+      <i class="fa-solid fa-file-circle-minus"></i>
+    </button>
 </div>
     <div class="files-table-card" id="filesCard">
       <div class="section-label"></div>
@@ -307,7 +318,14 @@ $(document).ready(function () {
 
   populateTopBarFromSession();
   loadFilesTable(objectId);
-
+  //BUG-1062 started by koushik
+  //Only one file can be selected
+  $(document).on('change', '.file-row-checkbox', function () {
+      if ($(this).is(':checked')) {
+          $('.file-row-checkbox').not(this).prop('checked', false);
+      }
+  });
+  //BUG-1062 ended by koushik
   function populateTopBarFromSession() {
     const partInfo = JSON.parse(sessionStorage.getItem('partInfo') || 'null');
     if (!partInfo) return;
@@ -366,14 +384,25 @@ $(document).ready(function () {
         const tbody = $('#filesTable tbody');
         files.forEach(function (file) {
           let tr = '<tr>';
-          keys.forEach(function (key, idx) {
-            const value = file[key] || '';
-            if (idx === 0) {
-              tr += '<td class="file-name-cell">' + value + '</td>';
-            } else {
-              tr += '<td>' + value + '</td>';
-            }
-          });
+          
+          //BUG-1062 started by koushik
+         keys.forEach(function (key, idx) {
+   		 const value = file[key] || '';
+
+    	 if (idx === 0) {
+         tr += '<td class="file-name-cell">' +
+         		'<input type="checkbox" class="file-row-checkbox" ' +
+         		'data-objectid="' + (file.objectid || '') + '" ' +
+         		'data-filename="' + (file.filename || file.name || '') + '" ' +
+         		'style="margin-right:8px;">' +
+                value +
+                '</td>';
+         } else {
+         tr += '<td>' + value + '</td>';
+         }
+         });
+          //BUG-1062 ended by koushik
+          
           tr += '</tr>';
           tbody.append(tr);
         });
@@ -398,6 +427,64 @@ document.getElementById("uploadBtn").addEventListener("click", function () {
 
 });
 /* BUG-1061 Ended by Nageswari */
+//BUG-1062 started by koushik
+document.getElementById("downloadBtn").addEventListener("click", function () {
+    const checkedFile = document.querySelector(".file-row-checkbox:checked");
+    if (!checkedFile) {
+        alert("Please select a file");
+        return;
+    }
+    const fileObjectId = checkedFile.dataset.objectid;
+    const fileName = checkedFile.dataset.filename;
+    downloadFile(fileObjectId, fileName);
+});
+
+function downloadFile(objectId, fileName) {
+    if (!objectId || !fileName) {
+        return;
+    }
+    const downloadUrl =
+        BASIC_URL +
+        "/api/datafetchservice/download?objectid=" +
+        encodeURIComponent(objectId) +
+        "&fileName=" +
+        encodeURIComponent(fileName);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+document.getElementById("removeBtn").addEventListener("click", function () {
+    const checkedFile = document.querySelector(".file-row-checkbox:checked");
+    if (!checkedFile) {
+        alert("Please select a file");
+        return;
+    }
+    const fileObjectId = checkedFile.dataset.objectid;
+    const fileName = checkedFile.dataset.filename;
+
+    if (!confirm("Are you sure you want to delete this file?")) {
+        return;
+    }
+
+    $.ajax({
+        url: BASIC_URL + "/api/datafetchservice/deleteFile" +
+             "?objectid=" + encodeURIComponent(fileObjectId) +
+             "&fileName=" + encodeURIComponent(fileName),
+        type: "DELETE",
+        success: function () {
+            alert("File deleted successfully");
+            location.reload();
+        },
+        error: function () {
+            alert("Failed to delete file");
+        }
+    });
+});
+//BUG-1062 ended by koushik
 </script>
 </body>
 </html>
