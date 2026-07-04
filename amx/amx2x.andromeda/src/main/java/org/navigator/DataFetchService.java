@@ -1087,6 +1087,60 @@ public class DataFetchService {
             return String.format("%s%06d", prefix, nextNumber);
         }
         //BUG-1069 ended by Nageswari
+        
+      //BUG-1070 Started by Ajay - fetch single file details for File Properties page
+        /**
+         * @args objectId
+         * @return String - next available PartControl name (e.g., PC-000001)
+         * @throws SQLException
+         * @usage Generates the next PartControl name based on existing names in the database
+         */
+        @GET
+        @Path("/getfiledetails")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getFileDetails(@QueryParam("objectId") String objectId) {
+
+            if (objectId == null || objectId.trim().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\":\"objectId is required\"}").build();
+            }
+
+            String sql = "SELECT filename,filename, filesize, name, description "
+                    + "FROM amxcorefiledetails WHERE objectid = ?";
+            // Note: filedata (bytea) is intentionally excluded - it's binary content,
+            // not something the properties page needs, and rs.getString() on it
+            // would return garbage/escaped bytes rather than useful text.
+
+            try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setString(1, objectId);
+
+                try (ResultSet rs = ps.executeQuery()) {
+
+                    if (!rs.next()) {
+                        return Response.status(Status.NOT_FOUND)
+                                .entity("{\"error\":\"File not found\"}").build();
+                    }
+
+                    JSONObject obj = new JSONObject();
+                    ResultSetMetaData md = rs.getMetaData();
+
+                    for (int i = 1; i <= md.getColumnCount(); i++) {
+                        obj.put(md.getColumnName(i), rs.getString(i));
+                    }
+
+                    return Response.ok(obj.toString(), MediaType.APPLICATION_JSON).build();
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return Response.status(Status.INTERNAL_SERVER_ERROR)
+                        .entity("{\"error\":\"" + e.getMessage() + "\"}").build();
+            }
+        }
+        //BUG-1070 Ended by Ajay
+        
+        
 /**
  * @args String suffix - suffix to append in the generated ID
  * @return String - generated hex ID string with suffix

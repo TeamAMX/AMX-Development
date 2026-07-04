@@ -353,8 +353,7 @@ input[readonly], textarea[readonly] {
   <script>
   
   const BASIC_URL = '<%= request.getContextPath() %>';
-  /* BUG-1061  by Nageswari */
-  const objectId = new URLSearchParams(window.location.search).get("name");
+    /* BUG-1061  by Nageswari */
     window.addEventListener('DOMContentLoaded', async () => {
     	const fileInput = document.getElementById("fileInput");
     	const addFileBtn = document.getElementById("addFileBtn");
@@ -453,7 +452,6 @@ input[readonly], textarea[readonly] {
 
     	    if (file.size > MAX_FILE_SIZE) {
     	        alert("File size should not exceed 10 MB.");
-    	        window.parent.postMessage({ action: "closeOnly" }, "*");
     	        return;
     	    }
     	    const reader = new FileReader();
@@ -466,9 +464,9 @@ input[readonly], textarea[readonly] {
     	            fileName: file.name,
     	            fileSize: file.size,
     	            description: descriptionInput.value.trim(),
-    	            fileContentBase64: base64,
+    	            fileContentBase64: base64
     	            /* BUG-1061  by Nageswari */
-    	            objectId: objectId
+
     	        };
 
     	        $.ajax({
@@ -482,9 +480,11 @@ input[readonly], textarea[readonly] {
     	            data: JSON.stringify(payload),
     	            success: function(response) {
 
-    	                let res = (typeof response === "string")
-    	                        ? JSON.parse(response)
-    	                        : response;
+    	            	let res = (typeof response === "string")
+                        ? JSON.parse(response)
+                        : response;
+				
+                const fileObjectId = res.ObjectId || res.Name;//Added by Ajay BUG-1070 New Feature
 
     	                function formatFileSize(bytes) {
     	                    bytes = Number(bytes);
@@ -498,15 +498,23 @@ input[readonly], textarea[readonly] {
     	                }
 
     	                alert(
-    	                    "The following File was created successfully!\n\n" +
-    	                    "File Name : " + file.name + "\n" +
-    	                    "Name : " + res.Name + "\n" +
-    	                    "Size : " + formatFileSize(file.size)
-    	                );
+        	                    "The following File was created successfully!\n\n" +
+        	                    "File Name : " + file.name + "\n" +
+        	                    "Name : " + res.Name + "\n" +
+        	                    "Size : " + formatFileSize(file.size)
+        	                );
+							//Added by Ajay BUG-1070 New Feature started
+        	                if (window.self !== window.top) {
+        	                    window.parent.postMessage(
+        	                        { action: "loadProperties", type: "file", id: fileObjectId },
+        	                        "*"
+        	                    );
+        	                } else {
+        	                    window.location.href = BASIC_URL
+        	                        + "/FileProperties.jsp?name=" + encodeURIComponent(fileObjectId);
+        	                }
+							//Added by Ajay BUG-1070 New Feature Ended
 
-    	                if (window.self !== window.top) {
-    	                    window.parent.postMessage({ action: "closeOnly" }, "*");
-    	                }
     	            },
 
     	            error: function(xhr) {
