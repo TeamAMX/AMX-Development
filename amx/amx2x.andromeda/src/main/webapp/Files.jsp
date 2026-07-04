@@ -79,46 +79,62 @@
   .files-table-card {
     background: #ffffff;
     border: 1px solid #e2e5e9;
-    border-radius: 12px;
-    width: 100%;
+    border-radius: 0 0 12px 12px;   /* Top corners square */
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-  }
-
-  .files-toolbar {
+}
+/* BUG-1086 Started by Nageswari */
+ .files-toolbar {
     background-color: #101c33;
     padding: 10px 16px;
     display: flex;
     align-items: center;
     gap: 10px;
-  }
-  .files-toolbar i {
-    color: #e2e8f0;
-    font-size: 15px;
-  }
+
+    margin-bottom: 2px;
+    /* margin-bottom: 4px; */
+    border-radius: 0; 
+}
+ .files-toolbar i {
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+}
+/* BUG-1086 Ended by Nageswari */
+
 
   .files-table-scroll {
     width: 100%;
     overflow-x: auto;
   }
-  #filesTable {
+ #filesTable {
     width: 100% !important;
     white-space: nowrap;
-    border-collapse: collapse;
-  }
+    border-collapse: separate;
+    border-spacing: 0;
+}
+  /* BUG-1086 Started by Nageswari */
   #filesTable thead th {
-    background: #ffffff !important;
-    color: #111827 !important;
+    background: #101c33 !important;
+    color: #ffffff !important;
     font-size: 12px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     padding: 12px 26px 12px 12px !important;
-    border-bottom: 2px solid #1f2937 !important;
+    border-bottom: 2px solid #000000 !important;
     border-right: none !important;
     white-space: nowrap !important;
     text-align: left;
-  }
+}
+#filesTable thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+#filesTable thead th:last-child {
+    border-top-right-radius: 8px;
+}
+/* BUG-1086 Ended by Nageswari */
   #filesTable tbody td {
     padding: 10px 12px !important;
     border-bottom: 1px solid #f1f5f9 !important;
@@ -128,10 +144,9 @@
     background: #ffffff !important;
     font-size: 13px !important;
   }
-  #filesTable tbody tr:hover td { background: #E8EAEB !important; }
- #filesTable tbody td.file-name-cell a {
-    color: inherit;
-    text-decoration: none;
+  #filesTable tbody tr:hover td { background: #f8fafc !important; }
+  #filesTable tbody td.file-name-cell {
+    color: #2563eb;
     font-weight: 600;
   }
   #filesTable tbody td.file-name-cell a:hover {
@@ -193,9 +208,13 @@
   <div id="errorMessage"></div>
 
   <div class="files-table-card">
-    <div class="files-toolbar">
-      <i class="fa-regular fa-file"></i>
-    </div>
+  <!-- BUG-1087 Started by Nageswari -->
+<div class="files-toolbar">
+    <i class="fa-solid fa-address-card"
+       id="showMyFiles"
+       title="Show All My Files"></i>
+</div>
+<!-- BUG-1087 Ended by Nageswari -->
     <div class="files-table-scroll">
       <table id="filesTable">
         <thead><tr></tr></thead>
@@ -212,6 +231,9 @@ const BASIC_URL = '<%= request.getContextPath() %>';
 
 $(document).ready(function () {
   loadFilesTable();
+  $("#showMyFiles").click(function () {
+	    loadMyFilesTable();
+	});
 
   function showLoading(show) {
     $('#loadingSpinner').css('display', show ? 'block' : 'none');
@@ -269,13 +291,9 @@ $(document).ready(function () {
         files.forEach(function (file) {
           let tr = '<tr>';
           keys.forEach(function (key, idx) {
-            let value = file[key] || '';
-            if (key === 'filesize') {
-              value = formatFileSize(value);
-            }
+            const value = file[key] || '';
             if (idx === 0) {
-              const link = 'FileProperties.jsp?name=' + encodeURIComponent(file.objectid || '');
-              tr += '<td class="file-name-cell"><a href="' + link + '">' + value + '</a></td>';
+              tr += '<td class="file-name-cell">' + value + '</td>';
             } else {
               tr += '<td>' + value + '</td>';
             }
@@ -294,6 +312,78 @@ $(document).ready(function () {
       }
     });
   }
+  function loadMyFilesTable() {
+
+	    $('#filesTable thead tr').empty();
+	    $('#filesTable tbody').empty();
+	    $('#noFilesMsg').hide();
+	    showLoading(true);
+
+	    $.ajax({
+	        url: BASIC_URL + '/api/datafetchservice/myfiles',
+	        method: 'GET',
+	        dataType: 'json',
+
+	        success: function(files) {
+
+	            if (!files || files.length === 0) {
+	                $('#noFilesMsg').show();
+	                $('#recordCountText').text('0 Records');
+	                return;
+	            }
+
+	            $('#recordCountText').text(files.length + (files.length === 1 ? ' Record' : ' Records'));
+
+	            const excludedFields = ['objectid','connectionid','linkedobjectid','fts_document','filedata','filename'];
+	            const allKeys = Object.keys(files[0]).filter(k => !excludedFields.includes(k));
+
+	            const preferredOrder = ['name','title','owner','filesize'];
+	            const keys = preferredOrder.filter(k => allKeys.includes(k))
+	                    .concat(allKeys.filter(k => !preferredOrder.includes(k)));
+
+	            const headerRow = $('#filesTable thead tr');
+
+	            keys.forEach(function(key){
+	                headerRow.append('<th>' + key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g,' ') + '</th>');
+	            });
+
+	            const tbody = $('#filesTable tbody');
+
+	            files.forEach(function(file){
+
+	                let tr = "<tr>";
+
+	                keys.forEach(function(key,index){
+
+	                    if(index==0){
+	                        tr += '<td class="file-name-cell">'+(file[key]||"")+'</td>';
+	                    }else{
+	                        tr += '<td>'+(file[key]||"")+'</td>';
+	                    }
+
+	                });
+
+	                tr+="</tr>";
+
+	                tbody.append(tr);
+
+	            });
+
+	           
+
+	        },
+	        error: function(xhr, status, error) {
+	            console.log(xhr.responseText);
+	            console.log(status);
+	            console.log(error);
+	            showError("Failed to load My Files.");
+	        },
+	        complete:function(){
+	            showLoading(false);
+	        }
+	    });
+
+	}
 });
 </script>
 </body>

@@ -353,6 +353,7 @@ input[readonly], textarea[readonly] {
   <script>
   
   const BASIC_URL = '<%= request.getContextPath() %>';
+  const openProperties = new URLSearchParams(window.location.search).get('openProperties') === 'true';
     /* BUG-1061  by Nageswari */
     window.addEventListener('DOMContentLoaded', async () => {
     	const fileInput = document.getElementById("fileInput");
@@ -503,17 +504,25 @@ input[readonly], textarea[readonly] {
         	                    "Name : " + res.Name + "\n" +
         	                    "Size : " + formatFileSize(file.size)
         	                );
-							//Added by Ajay BUG-1070 New Feature started
-        	                if (window.self !== window.top) {
-        	                    window.parent.postMessage(
-        	                        { action: "loadProperties", type: "file", id: fileObjectId },
-        	                        "*"
-        	                    );
-        	                } else {
-        	                    window.location.href = BASIC_URL
-        	                        + "/FileProperties.jsp?name=" + encodeURIComponent(fileObjectId);
-        	                }
-							//Added by Ajay BUG-1070 New Feature Ended
+
+						//Added by Ajay BUG-1070 New Feature started
+						if (openProperties) {
+							if (window.self !== window.top) {
+								window.parent.postMessage(
+									{ action: "loadProperties", type: "file", id: fileObjectId },
+									"*"
+								);
+							} else {
+								window.location.href = BASIC_URL
+									+ "/FileProperties.jsp?name=" + encodeURIComponent(fileObjectId);
+							}
+						} else {
+							// Default: just close the modal, don't navigate anywhere
+							if (window.self !== window.top) {
+								window.parent.postMessage({ action: "closeOnly" }, "*");
+							}
+						}
+						//Added by Ajay BUG-1070 New Feature Ended
 
     	            },
 

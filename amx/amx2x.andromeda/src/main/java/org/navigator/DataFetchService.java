@@ -45,11 +45,6 @@ public class DataFetchService {
     public static final String db_password = "admin@1234";
     public static final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
-    //BUG-1062 fixing started by koushik
-    @Context
-    private HttpServletRequest servletRequest;
-  //BUG-1062 fixing ended by koushik
-    
     static {
         try {
             Class.forName("org.postgresql.Driver");
@@ -458,6 +453,13 @@ public class DataFetchService {
     public Response myMpns(@Context HttpServletRequest request) {
 
         return getMyCreatedObjects(request, "amxcorempndetails");
+    }
+    @GET
+    @Path("/myfiles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response myFiles(@Context HttpServletRequest request) {
+
+        return getMyCreatedObjects(request, "amxcorefiledetails");
     }
     //BUG-1046 Ended by Nageswari
     
@@ -1092,60 +1094,6 @@ public class DataFetchService {
             return String.format("%s%06d", prefix, nextNumber);
         }
         //BUG-1069 ended by Nageswari
-        
-      //BUG-1070 Started by Ajay - fetch single file details for File Properties page
-        /**
-         * @args objectId
-         * @return String - next available PartControl name (e.g., PC-000001)
-         * @throws SQLException
-         * @usage Generates the next PartControl name based on existing names in the database
-         */
-        @GET
-        @Path("/getfiledetails")
-        @Produces(MediaType.APPLICATION_JSON)
-        public Response getFileDetails(@QueryParam("objectId") String objectId) {
-
-            if (objectId == null || objectId.trim().isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"error\":\"objectId is required\"}").build();
-            }
-
-            String sql = "SELECT filename,filename, filesize, name, description "
-                    + "FROM amxcorefiledetails WHERE objectid = ?";
-            // Note: filedata (bytea) is intentionally excluded - it's binary content,
-            // not something the properties page needs, and rs.getString() on it
-            // would return garbage/escaped bytes rather than useful text.
-
-            try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-                ps.setString(1, objectId);
-
-                try (ResultSet rs = ps.executeQuery()) {
-
-                    if (!rs.next()) {
-                        return Response.status(Status.NOT_FOUND)
-                                .entity("{\"error\":\"File not found\"}").build();
-                    }
-
-                    JSONObject obj = new JSONObject();
-                    ResultSetMetaData md = rs.getMetaData();
-
-                    for (int i = 1; i <= md.getColumnCount(); i++) {
-                        obj.put(md.getColumnName(i), rs.getString(i));
-                    }
-
-                    return Response.ok(obj.toString(), MediaType.APPLICATION_JSON).build();
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return Response.status(Status.INTERNAL_SERVER_ERROR)
-                        .entity("{\"error\":\"" + e.getMessage() + "\"}").build();
-            }
-        }
-        //BUG-1070 Ended by Ajay
-        
-        
 /**
  * @args String suffix - suffix to append in the generated ID
  * @return String - generated hex ID string with suffix
@@ -2657,10 +2605,6 @@ public class DataFetchService {
             @Produces(MediaType.APPLICATION_OCTET_STREAM)
             public Response downloadFile(@QueryParam("objectid") String objectid,@QueryParam("fileName") String fileName) {
                 try {
-                	//BUG-1062 started  by koushik
-                	 String appName = servletRequest.getContextPath().replace("/", "");
-                     DBConfig.setAppName(appName);	
-                   //BUG-1062 ended by koushik
                     AmxSpecificationDocument doc = AmxSpecificationDocument.getFileObjectIdAndFileName(objectid, fileName);
                     if (doc == null) {
                         return Response.status(Response.Status.NOT_FOUND).entity("File not found").build();
@@ -3772,11 +3716,6 @@ public class DataFetchService {
            public Response deleteFile( @QueryParam("objectid") String objectid, @QueryParam("fileName") String fileName) {
 
         	   try {
-        		   
-        		   //BUG-1063 fixing started by koushik
-        	       String appName = servletRequest.getContextPath().replace("/", "");
-        	       DBConfig.setAppName(appName);
-        	       //BUG-1063 fixing ended by koushik
                    if (objectid == null || objectid.trim().isEmpty()) {
                        return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"objectid is required\"}").build();
                    }
@@ -4276,7 +4215,7 @@ public class DataFetchService {
                }
                return null;
            }
-           //BUG-11046 Strated By Nageswari
+           //BUG-1046 Strated By Nageswari
            private Response getMyCreatedObjects(HttpServletRequest request, String tableName) {
 
         	    HttpSession session = request.getSession(false);
@@ -4292,6 +4231,10 @@ public class DataFetchService {
         	    String sql;
         	    if(tableName == "amxpartspecificationdata") {
         	    	sql = "SELECT * FROM " + tableName + " WHERE owner=? ORDER BY createdtime DESC";
+        	    }
+        	    else if(tableName.equals("amxcorefiledetails"))
+        	    {
+        	    	sql = "SELECT * FROM " + tableName + " WHERE owner=?";
         	    }
         	    else {
         	    	sql = "SELECT * FROM " + tableName + " WHERE owner=? ORDER BY createddate DESC";
