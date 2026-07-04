@@ -620,8 +620,8 @@
             return;
         }
 
-        loadFormInModal('CreateFileForm.jsp');
-    });
+        loadFormInModal('CreateFileForm.jsp?openProperties=true');
+        });
  /* BUG-1068 Ended by Nageswari */
     function loadFormInModal(url) {
         const modal = document.getElementById('myModal');
