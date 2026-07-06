@@ -45,6 +45,12 @@ public class DataFetchService {
     public static final String db_password = "admin@1234";
     public static final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
+    
+    //BUG-1062 fixing started by koushik
+    @Context
+    private HttpServletRequest servletRequest;
+  //BUG-1062 fixing ended by koushik
+    
     static {
         try {
             Class.forName("org.postgresql.Driver");
@@ -2605,6 +2611,12 @@ public class DataFetchService {
             @Produces(MediaType.APPLICATION_OCTET_STREAM)
             public Response downloadFile(@QueryParam("objectid") String objectid,@QueryParam("fileName") String fileName) {
                 try {
+                	
+                	//BUG-1062 fixing started by koushik
+                	  String appName = servletRequest.getContextPath().replace("/", "");
+                      DBConfig.setAppName(appName);
+                    //BUG-1062 fixing ended by koushik
+                      
                     AmxSpecificationDocument doc = AmxSpecificationDocument.getFileObjectIdAndFileName(objectid, fileName);
                     if (doc == null) {
                         return Response.status(Response.Status.NOT_FOUND).entity("File not found").build();
@@ -3716,6 +3728,10 @@ public class DataFetchService {
            public Response deleteFile( @QueryParam("objectid") String objectid, @QueryParam("fileName") String fileName) {
 
         	   try {
+        		 //BUG-1062 fixing started by koushik
+             	  String appName = servletRequest.getContextPath().replace("/", "");
+                   DBConfig.setAppName(appName);
+                 //BUG-1062 fixing ended by koushik
                    if (objectid == null || objectid.trim().isEmpty()) {
                        return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"objectid is required\"}").build();
                    }
