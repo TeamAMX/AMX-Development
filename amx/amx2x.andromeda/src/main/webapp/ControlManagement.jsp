@@ -299,7 +299,7 @@
         padding: 24px; 
         border-radius: 18px;
         width: 100%;
-        max-width: 820px; 
+        max-width: 600px;	//Bug 1079 started and ended by Alen
         box-shadow: 0 25px 60px rgba(0,0,0,0.18);
         overflow: hidden;
         border: none;
@@ -605,7 +605,9 @@ function loadPartControlTable() {
                         title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                return '<a href="javascript:void(0)" class="part-control-link" data-objectid="' + (row.objectid || '') + '" data-name="' + data + '" style="color:#2563eb;text-decoration:underline;cursor:pointer;">' + data + '</a>';
+                            	BUG-1081 Started by Alen
+                                return '<a href="javascript:void(0)" class="part-control-link" data-objectid="' + (row.objectid || '') + '" data-name="' + data + '" style="color:black;text-decoration:underline;cursor:pointer;">' + data + '</a>';
+                            	BUG-1081 Ended by Alen
                             }
                             return data;
                         }
