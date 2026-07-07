@@ -114,10 +114,11 @@
     border-spacing: 0;
 }
   /* BUG-1086 Started by Nageswari */
+  /* BUG-1086 Started by Alen (changed background,color and font-size) */
   #filesTable thead th {
-    background: #ffffff !important;
-    color: #111827 !important;
-    font-size: 12px !important;
+    background: #1e293b !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
@@ -127,6 +128,7 @@
     white-space: nowrap !important;
     text-align: left;
 }
+/* BUG-1086 Ended by Alen */
 #filesTable thead th:first-child {
     border-top-left-radius: 8px;
 }
