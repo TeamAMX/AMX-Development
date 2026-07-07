@@ -207,7 +207,11 @@ String username = (String) session.getAttribute("username");
 
   /* State colors */
   #stateInWork      { background: #5bc0de; }
-  #stateInApproval  { background: #6c757d; }
+  /*BUG-1082 started by Tharun */
+  #stateInApproval  { 
+  white-space: nowrap;
+  background: #6c757d; }
+  /*BUG-1082 ended */
   #stateCompleted   { background: #28a745; }
   #stateCancelled   { background: #f23535; color: #ffffff; }
 
@@ -217,6 +221,14 @@ String username = (String) session.getAttribute("username");
     color: #d1d5db;
     flex-shrink: 0;
   }
+  /*BUG-1082 started by Tharun */
+  .arrow_gap{
+  	margin: 0 12px;
+    font-size: 20px;
+    color: #d1d5db;
+    flex-shrink: 0;
+}
+/*BUG-1082 ended */
   .arrow.no-gap { margin: 0; }
 
   .arrow-segment {
@@ -224,6 +236,8 @@ String username = (String) session.getAttribute("username");
     align-items: center;
   }
   .arrow-segment .line {
+  /*BUG-1082 started by Tharun */
+  	margin-top: 14px;
     height: 2px;
     background-color: #d1d5db;
     width: 12px;
@@ -232,7 +246,9 @@ String username = (String) session.getAttribute("username");
     width: 20px;
     height: 20px;
     cursor: pointer;
-    margin: 0 4px;
+    /*BUG-1082 Tharun */
+    margin: 5px 4px;
+    /*BUG-1082 end */
   }
 
   /* State message */
@@ -315,16 +331,31 @@ String username = (String) session.getAttribute("username");
       <div class="arrow" id="arrow-InWork-InApproval">➝</div>
       <div class="state-node" id="stateInApproval" data-state="InApproval">In Approval</div>
       <div class="arrow-segment">
+      <!-- BUG-1082 fix by Tharun  -->
+      <div class= "before_route1">
+      	<div class="arrow_gap">➝</div>
+      </div>
+      <div class= "route1" style="display:none;">
         <div class="line"></div>
-        <img id="reviewIconInApproval" src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000" alt="Review Icon" class="popup-icon" title="Open RoutePopup Page" onclick="openPopup('InApproval')" style="display:none;" />
+        <img id="reviewIconInApproval" src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000" alt="Review Icon" class="popup-icon" title="Open RoutePopup Page" onclick="openPopup('InApproval')" />
         <div class="arrow no-gap">➝</div>
+      </div>
+      
       </div>
       <div class="state-node" id="stateCompleted" data-state="Completed">Completed</div>
       <div class="arrow-segment">
-        <div class="line"></div>
-        <img id="reviewIconCompleted" src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000" alt="Review Icon" class="popup-icon" title="Open RouteStatePopup Page" onclick="openPopup('Completed')" style="display:none;" />
+      
+      <div class= "before_route2">
+      	<div class="arrow_gap">➝</div>
+      </div>
+      <div class= "route2" style="display:none;">
+      	<div class="line"></div>
+        <img id="reviewIconCompleted" src="https://img.icons8.com/?size=100&id=103521&format=png&color=000000" alt="Review Icon" class="popup-icon" title="Open RouteStatePopup Page" onclick="openPopup('Completed')" />
         <div class="arrow no-gap">➝</div>
       </div>
+        
+      </div>
+      <!-- BUG-1082 end -->
       <div class="state-node" id="stateCancelled" data-state="Cancelled">Cancelled</div>
     </div>
     <div id="stateMessages"></div>
@@ -401,15 +432,22 @@ function highlightCurrentState(state) {
 }
 
 function showReviewIcon(currentState) {
-    $("#reviewIconInApproval").hide();
-    $("#reviewIconCompleted").hide();
-
+	//BUG-1082 fix by Tharun
+    document.querySelector(".route1").style.display="none";
+    document.querySelector(".route2").style.display="none";
+	//BUG-1082 end
     if (!currentState) return;
 
     if (currentState.toLowerCase() === "inapproval") {
-        $("#reviewIconInApproval").fadeIn();
+    //BUG-1082 fix by Tharun
+    	document.querySelector(".route1").style.display="flex";
+    	document.querySelector(".before_route1").style.display="none";
+    //BUG-1082 end
     } else if (currentState.toLowerCase() === "completed") {
-        $("#reviewIconCompleted").fadeIn();
+    //BUG-1082 fix by Tharun
+    	document.querySelector(".route2").style.display="flex";
+    	document.querySelector(".before_route2").style.display="none";
+    //BUG-1082 end	
     }
 }
 
