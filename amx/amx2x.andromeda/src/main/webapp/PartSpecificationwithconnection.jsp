@@ -164,7 +164,10 @@
 
       <div class="mb-3">
         <label for="inputResponsibleEngineer" class="form-label">Responsible Engineer</label>
-        <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>
+       <!--   <textarea id="inputResponsibleEngineer" class="form-control" rows="1" readonly></textarea>  -->
+       	<!-- BUG-1083 Started by Alen  -->
+        <input type="text" id="inputResponsibleEngineer" class="form-control" required="" readonly="">
+        <!-- BUG-1083 Ended by Alen  -->
       </div>
     </div>
 
