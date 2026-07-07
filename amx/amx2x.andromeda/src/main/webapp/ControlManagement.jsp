@@ -603,11 +603,11 @@ function loadPartControlTable() {
                     return {
                         data: key,
                         title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
-                        render: function(data, type, row) {
+                        render: function(data, type, row) {                
                             if (type === 'display') {
-                            	BUG-1081 Started by Alen
-                                return '<a href="javascript:void(0)" class="part-control-link" data-objectid="' + (row.objectid || '') + '" data-name="' + data + '" style="color:black;text-decoration:underline;cursor:pointer;">' + data + '</a>';
-                            	BUG-1081 Ended by Alen
+                            	//BUG-1081 Started by Alen(changed color:black in style)
+                                return '<a href="javascript:void(0)" class="part-control-link" data-objectid="' + (row.objectid || '') + '" data-name="' + data + '" style="color:black;text-decoration:underline;cursor:pointer;">' + data + '</a>';	
+                            	//BUG-1081 Ended by Alen 
                             }
                             return data;
                         }
