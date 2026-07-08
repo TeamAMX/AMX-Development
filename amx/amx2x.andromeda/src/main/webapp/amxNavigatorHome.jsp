@@ -480,12 +480,16 @@
     });
     function logout() {
       sessionStorage.removeItem('loggedInUser');
-      window.location.href = 'amxNavigatorLogin.jsp';
+      //BUG-1075 fix started by Tharun
+      window.location.replace('amxNavigatorLogin.jsp');
+      //BUG-1075 fix ended
     }
     function updateProfileDropdown() {
     	  const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
     	  if (!user) {
-    	    window.location.href = 'amxNavigatorLogin.jsp';
+    	   //BUG-1075 fix started by Tharun
+    		  window.location.replace('amxNavigatorLogin.jsp');
+    	   //BUG-1075 fix ended
     	    return;
     	  }
     	  document.getElementById('usernameDisplay').textContent = user.username || '';

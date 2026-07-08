@@ -450,7 +450,9 @@
                 access: res.Access 
               }));
               setTimeout(() => {
-                window.location.href = 'amxNavigatorHome.jsp';
+              //BUG-1075 fix started by Tharun
+            	  window.location.replace('amxNavigatorHome.jsp');
+              //BUG-1075 ended
               }, 1000);
             } else {
               showMessage('Login failed: ' + res.Message, 'error');
