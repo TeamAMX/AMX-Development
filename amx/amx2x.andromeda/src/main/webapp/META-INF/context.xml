@@ -1,0 +1,4 @@
+<Context>
+    <Manager className="org.apache.catalina.session.StandardManager"
+             pathname="SESSIONS.ser" />
+</Context>

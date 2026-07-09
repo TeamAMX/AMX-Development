@@ -26,6 +26,9 @@ public class MyApplication extends Application {
         classes.add(DataBaseConnection.class);
         classes.add(SearchData.class);
         classes.add(AmxControlTriggers.class);
+        //BUG-1094 new AI log tab
+        classes.add(LogAnalysis.class);
+        //BUG-1094 ended
         return classes;
 	}
 	

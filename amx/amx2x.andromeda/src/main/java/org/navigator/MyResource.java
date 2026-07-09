@@ -206,6 +206,28 @@ public class MyResource {
         }
     }
     
+    //BUG-1076 fix started by Tharun
+    @POST
+    @Path("/logout")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response logout(@Context HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("Status", "Success");
+        response.put("Message", "Logged out successfully");
+
+        return Response.ok(
+            response.toString(),
+            MediaType.APPLICATION_JSON
+        ).build();
+    }
+  //BUG-1076 fix ended   
   
 
 }

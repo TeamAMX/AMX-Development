@@ -1440,7 +1440,10 @@ public class NavigatorUtilites {
         public Response getUserAccess(@Context HttpServletRequest request) {
 
             JSONObject resp = new JSONObject();
-
+			//BUG-1076 fix started by Tharun
+            String appName =request.getContextPath().replace("/", "");
+        	DBConfig.setAppName(appName);
+            //BUG-1076 fix ended
             HttpSession session = request.getSession(false);
             String username = (session != null) ? (String) session.getAttribute("username") : null;
 

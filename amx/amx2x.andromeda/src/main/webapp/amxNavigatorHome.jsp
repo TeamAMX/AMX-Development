@@ -1,4 +1,21 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!-- BUG-1076 fix started by Tharun  -->
+<%
+    if (session == null
+            || session.getAttribute("username") == null
+            || session.getAttribute("emailId") == null) {
+%>
+
+<script>
+    alert("Session expired. Please login again.");
+    window.location.replace("amxNavigatorLogin.jsp");
+</script>
+
+<%
+        return;
+    }
+%>
+<!-- BUG-1076 fix ended  -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -407,6 +424,13 @@
     		</a>
 		</li>
 		<!-- Added by Ajay BUG-1072New Feature  Ended -->
+		<!-- BUG-1094 newAIlog tab started by Tharun  -->
+		<li class="nav-item" >
+        	<a class="nav-link" id="sql-btn" href="#" onclick="loadRightPanel('amxNavigatorLogs.jsp', this)"><i class="fa-solid fa-robot"></i>
+        		<span class="nav-text">AI Audit Logs</span>
+    		</a>
+		</li>
+		<!-- BUG-1094 ended  -->
 		<li class="nav-item" >
         	<a class="nav-link" id="sql-btn" href="#" onclick="loadRightPanel('amxRunSql.jsp', this)"><i class="fa-solid fa-terminal" ></i>
         		<span class="nav-text"> RunSQL</span>
@@ -478,12 +502,19 @@
         dropdown.style.display = 'none';
       }
     });
-    function logout() {
-      sessionStorage.removeItem('loggedInUser');
-      //BUG-1075 fix started by Tharun
-      window.location.replace('amxNavigatorLogin.jsp');
-      //BUG-1075 fix ended
+    //BUG-1076 fix started by Tharun
+    async function logout() {
+
+        await fetch(BASIC_URL + '/api/myresource/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        sessionStorage.removeItem('loggedInUser');
+
+        window.location.replace('amxNavigatorLogin.jsp');
     }
+    //BUG-1076 fix ended
     function updateProfileDropdown() {
     	  const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
     	  if (!user) {
